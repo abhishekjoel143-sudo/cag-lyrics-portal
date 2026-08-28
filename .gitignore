@@ -6,3 +6,5 @@ __pycache__/
 *.pyc
 .venv/
 songs_to_import/
+*.ppt
+*.pptx
