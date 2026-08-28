@@ -1,0 +1,73 @@
+﻿{% extends "base.html" %}
+
+{% block title %}{{ song.title }}{% endblock %}
+
+{% block content %}
+
+<div class="song-view-screen">
+
+  <div class="song-view-header">
+    <div>
+      <p class="eyebrow">Song Lyrics</p>
+      <h2>{{ song.title }}</h2>
+    </div>
+
+
+<a class="btn btn-link" href="{{ url_for('song_list') }}">
+  &larr; Back to Search
+</a>
+
+
+  </div>
+
+  <!-- Add to Listed Songs -->
+
+  <div class="listed-song-action">
+    <form method="POST" action="{{ url_for('add_to_list', song_id=song.id) }}">
+      <button type="submit" class="btn btn-primary">
+        Add to Listed Songs
+      </button>
+    </form>
+  </div>
+
+  <!-- Language Selection -->
+
+  <div class="lang-toggle">
+
+
+<a
+  href="{{ url_for('song_view', song_id=song.id, lang='kannada') }}"
+  class="btn {{ 'btn-primary' if lang == 'kannada' else 'btn-secondary' }}">
+  ಕನ್ನಡ
+</a>
+
+<a
+  href="{{ url_for('song_view', song_id=song.id, lang='english') }}"
+  class="btn {{ 'btn-primary' if lang == 'english' else 'btn-secondary' }}">
+  English 
+</a>
+
+
+  </div>
+
+  <!-- Lyrics -->
+
+  <div class="lyrics-box">
+
+
+{% if lang == 'english' %}
+
+  <pre class="lyrics-text">{{ song.english_text }}</pre>
+
+{% else %}
+
+  <pre class="lyrics-text lyrics-kannada">{{ song.kannada_text }}</pre>
+
+{% endif %}
+
+
+  </div>
+
+</div>
+
+{% endblock %}

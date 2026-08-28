@@ -1,0 +1,47 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Upload PPT{% endblock %}
+
+{% block content %}
+
+<div class="auth-screen">
+  <div class="auth-card wide-card">
+
+    <h2>Upload New Song PPT</h2>
+
+    <p class="subtitle">
+      The file is automatically converted before it is saved to the song database.
+    </p>
+
+    <form method="POST" enctype="multipart/form-data">
+
+      <label for="title">Song Title</label>
+
+      <input type="text" id="title" name="title" required autofocus>
+
+      <label for="pptx_file">PowerPoint File (.pptx)</label>
+
+      <input
+        type="file"
+        id="pptx_file"
+        name="pptx_file"
+        accept=".pptx"
+        required
+      >
+
+      <button type="submit" class="btn btn-primary btn-block">
+        Upload → Convert → Add to Database
+      </button>
+
+    </form>
+
+    <p class="auth-footer">
+      <a href="{{ url_for('admin_dashboard') }}">
+        ← Back to dashboard
+      </a>
+    </p>
+
+  </div>
+</div>
+
+{% endblock %}

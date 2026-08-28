@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Bulk Upload Songs{% endblock %}
+
+{% block content %}
+
+<div class="auth-screen">
+
+  <div class="auth-card wide-card">
+
+    <h2>Bulk Upload Songs</h2>
+
+    <p class="subtitle">
+      Select multiple PowerPoint files and upload them together.
+      Each PPTX will be converted automatically and added to the song database.
+    </p>
+
+    <form
+      method="POST"
+      action="{{ url_for('admin_bulk_upload') }}"
+      enctype="multipart/form-data"
+    >
+
+      <label for="pptx_files">
+        Select PPTX Songs
+      </label>
+
+      <input
+        type="file"
+        id="pptx_files"
+        name="pptx_files"
+        accept=".pptx"
+        multiple
+        required
+      >
+
+      <p class="subtitle">
+        You can select multiple .pptx files at the same time.
+      </p>
+
+      <button
+        type="submit"
+        class="btn btn-primary btn-block"
+      >
+        Upload All Songs
+      </button>
+
+    </form>
+
+    <p class="auth-footer">
+      <a href="{{ url_for('admin_dashboard') }}">
+        ← Back to dashboard
+      </a>
+    </p>
+
+  </div>
+
+</div>
+
+{% endblock %}

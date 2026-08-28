@@ -1,0 +1,18 @@
+﻿{% extends "base.html" %}
+{% block title %}Welcome{% endblock %}
+{% block content %}
+<div class="welcome-screen">
+  <div class="welcome-card">
+    <img src="{{ url_for('static', filename='cag-logo.png') }}" alt="CAG Logo" class="church-logo">
+    <h1>{{ church_name }}</h1>
+    <p class="tagline">Lyrics &amp; Song Portal</p>
+
+    <div class="welcome-buttons">
+      <a class="btn btn-primary" href="{{ url_for('user_login') }}">User Login</a>
+      <a class="btn btn-secondary" href="{{ url_for('register') }}">New User? Register</a>
+      <a class="btn btn-admin" href="{{ url_for('admin_login') }}">Admin Login</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

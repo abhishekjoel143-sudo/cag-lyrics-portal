@@ -1,0 +1,444 @@
+{% extends "base.html" %}
+
+{% block title %}Visitor Records{% endblock %}
+
+{% block content %}
+
+<div class="visitor-page">
+
+```
+<!-- HEADER -->
+<div class="visitor-header">
+
+    <div>
+        <p class="eyebrow">Administration</p>
+        <h1>Visitor Records</h1>
+        <p class="visitor-subtitle">
+            Track visitors who access the CAG Lyrics Portal.
+        </p>
+    </div>
+
+    <div class="visitor-header-actions">
+
+        <a
+            href="{{ url_for('admin_dashboard') }}"
+            class="btn btn-secondary"
+        >
+            ← Back to Dashboard
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- TOTAL VISITS -->
+<div class="visitor-summary">
+
+    <div class="visitor-stat-card">
+
+        <div class="visitor-stat-title">
+            Total Visits
+        </div>
+
+        <div class="visitor-stat-number">
+            {{ total_visitors }}
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- VISITOR TABLE -->
+<div class="visitor-table-card">
+
+    <div class="visitor-table-header">
+
+        <h2>All Visitor Records</h2>
+
+        <span>
+            {{ total_visitors }} record(s)
+        </span>
+
+    </div>
+
+
+    {% if visitors %}
+
+    <div class="visitor-table-wrapper">
+
+        <table class="visitor-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+
+                    <th>Email</th>
+
+                    <th>IP Address</th>
+
+                    <th>Page</th>
+
+                    <th>Browser / Device</th>
+
+                    <th>Visited At</th>
+                     <th>Action</th>
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for visitor in visitors %}
+
+                <tr>
+
+                    <!-- ID -->
+                    <td class="visitor-id">
+                        {{ visitor.id }}
+                    </td>
+
+
+                    <!-- EMAIL -->
+                    <td class="visitor-email">
+
+                        {% if visitor.email %}
+
+                            <strong>
+                                {{ visitor.email }}
+                            </strong>
+
+                        {% else %}
+
+                            <span class="anonymous">
+                                Anonymous
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- IP ADDRESS -->
+                    <td>
+
+                        <span class="ip-address">
+                            {{ visitor.ip_address or "Unknown" }}
+                        </span>
+
+                    </td>
+
+
+                    <!-- PAGE -->
+                    <td>
+
+                        <span class="page-badge">
+                            {{ visitor.page or "/" }}
+                        </span>
+
+                    </td>
+
+
+                    <!-- BROWSER / DEVICE -->
+                    <td class="browser-cell">
+
+                        {% if visitor.user_agent %}
+
+                            {{ visitor.user_agent }}
+
+                        {% else %}
+
+                            Unknown
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- VISITED AT -->
+                    <td class="visited-time">
+
+                        {% if visitor.visited_at %}
+
+                            {{ visitor.visited_at.strftime(
+                                '%d %b %Y, %I:%M:%S %p'
+                            ) }}
+
+                        {% else %}
+
+                            Unknown
+
+                        {% endif %}
+
+                    </td>
+<td>
+
+    <form
+        method="POST"
+        action="{{ url_for('delete_visitor', visitor_id=visitor.id) }}"
+        onsubmit="return confirm('Are you sure you want to delete this visitor record?');"
+    >
+
+        <button
+            type="submit"
+            class="btn btn-danger-sm"
+        >
+            Delete
+        </button>
+
+    </form>
+
+</td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% else %}
+
+    <!-- NO RECORDS -->
+
+    <div class="visitor-empty">
+
+        <div class="visitor-empty-icon">
+            👥
+        </div>
+
+        <h3>No Visitor Records</h3>
+
+        <p>
+            Visitor records will appear here when people
+            visit your website.
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</div>
+```
+
+</div>
+
+<!-- =====================================================
+     VISITOR TABLE CSS
+     ===================================================== -->
+
+<style>
+
+.visitor-page {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+.visitor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.visitor-header h1 {
+    margin: 5px 0;
+}
+
+.visitor-subtitle {
+    margin: 5px 0 0;
+    opacity: 0.7;
+}
+
+.visitor-header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.visitor-summary {
+    display: flex;
+    margin-bottom: 25px;
+}
+
+.visitor-stat-card {
+    min-width: 220px;
+    padding: 20px 25px;
+    border-radius: 12px;
+    background: var(--card-bg, #ffffff);
+    border: 1px solid rgba(0,0,0,0.08);
+}
+
+.visitor-stat-title {
+    font-size: 14px;
+    opacity: 0.65;
+    margin-bottom: 8px;
+}
+
+.visitor-stat-number {
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.visitor-table-card {
+    width: 100%;
+    background: var(--card-bg, #ffffff);
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+.visitor-table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.visitor-table-header h2 {
+    margin: 0;
+}
+
+.visitor-table-header span {
+    opacity: 0.65;
+}
+
+.visitor-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.visitor-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1100px;
+}
+
+.visitor-table th {
+    padding: 15px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    background: rgba(0,0,0,0.04);
+    border-bottom: 2px solid rgba(0,0,0,0.08);
+}
+
+.visitor-table td {
+    padding: 15px;
+    border-bottom: 1px solid rgba(0,0,0,0.07);
+    vertical-align: top;
+    font-size: 14px;
+}
+
+.visitor-table tbody tr:hover {
+    background: rgba(0,0,0,0.025);
+}
+
+.visitor-id {
+    font-weight: 700;
+    width: 60px;
+}
+
+.visitor-email {
+    min-width: 220px;
+}
+
+.visitor-email strong {
+    word-break: break-word;
+}
+
+.anonymous {
+    opacity: 0.55;
+    font-style: italic;
+}
+
+.ip-address {
+    white-space: nowrap;
+    font-family: monospace;
+}
+
+.page-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 6px;
+    background: rgba(0,0,0,0.06);
+    font-family: monospace;
+    white-space: nowrap;
+}
+
+.browser-cell {
+    min-width: 380px;
+    max-width: 500px;
+    word-break: break-word;
+    line-height: 1.5;
+}
+
+.visited-time {
+    min-width: 190px;
+    white-space: nowrap;
+}
+
+.visitor-empty {
+    text-align: center;
+    padding: 70px 20px;
+}
+
+.visitor-empty-icon {
+    font-size: 45px;
+    margin-bottom: 15px;
+}
+
+.visitor-empty h3 {
+    margin-bottom: 8px;
+}
+
+.visitor-empty p {
+    opacity: 0.65;
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 768px) {
+
+    .visitor-page {
+        padding: 15px;
+    }
+
+    .visitor-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .visitor-header-actions {
+        width: 100%;
+    }
+
+    .visitor-header-actions a {
+        width: 100%;
+        text-align: center;
+    }
+
+    .visitor-stat-card {
+        width: 100%;
+    }
+
+}
+
+</style>
+
+{% endblock %}

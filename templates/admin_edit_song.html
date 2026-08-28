@@ -1,0 +1,30 @@
+﻿{% extends "base.html" %}
+{% block title %}Edit {{ song.title }}{% endblock %}
+{% block content %}
+<div class="edit-screen">
+  <div class="dashboard-header">
+    <div>
+      <p class="eyebrow">Administration</p>
+      <h2>Edit Complete Song</h2>
+    </div>
+    <a class="btn btn-link" href="{{ url_for('admin_dashboard') }}">&larr; Dashboard</a>
+  </div>
+
+  <form method="POST" class="edit-card">
+    <label for="title">Song Title</label>
+    <input type="text" id="title" name="title" value="{{ song.title }}" required>
+
+    <label for="kannada_text">Kannada / Unicode Lyrics</label>
+    <textarea id="kannada_text" name="kannada_text" rows="18">{{ song.kannada_text }}</textarea>
+
+    <label for="english_text">English Pronunciation Lyrics</label>
+    <textarea id="english_text" name="english_text" rows="18">{{ song.english_text }}</textarea>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Save Entire Song</button>
+      <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
+

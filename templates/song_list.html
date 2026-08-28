@@ -1,0 +1,180 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Song Search{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-screen">
+
+  <div class="search-hero">
+
+
+<h1>Find Your Song Lyrics</h1>
+
+<p>Search by song name. Similar song titles will also appear.</p>
+
+<form class="main-search" method="GET" action="{{ url_for('song_list') }}">
+
+  <input
+    id="songSearch"
+    type="search"
+    name="q"
+    value="{{ query or '' }}"
+    placeholder="Search song lyrics..."
+    autocomplete="off"
+    autofocus
+  >
+
+  <button class="btn btn-primary" type="submit">
+    Search
+  </button>
+
+</form>
+
+<div id="liveResults" class="live-results"></div>
+
+
+  </div>
+
+  <div class="section-heading">
+
+
+<h2>
+  {% if query %}
+    Search Results
+  {% else %}
+    All Songs
+  {% endif %}
+</h2>
+
+<div>
+
+  <a
+    class="btn btn-link"
+    href="{{ url_for('listed_songs') }}"
+  >
+    Listed Songs
+  </a>
+
+  <a
+    class="btn btn-link"
+    href="{{ url_for('logout') }}"
+  >
+    Log Out
+  </a>
+
+</div>
+
+
+  </div>
+
+{% if songs %}
+
+
+<div class="song-grid">
+
+  {% for song in songs %}
+
+    <a
+      class="song-card"
+      href="{{ url_for('song_view', song_id=song.id) }}"
+    >
+
+      <span class="song-title">
+        {{ song.title }}
+      </span>
+
+      <span class="song-open">
+        Open lyrics →
+      </span>
+
+    </a>
+
+  {% endfor %}
+
+</div>
+
+
+{% else %}
+
+
+<div class="empty-state">
+
+  <h3>No matching song found</h3>
+
+  <p>
+    Try another spelling or a shorter part of the song title.
+  </p>
+
+</div>
+
+
+{% endif %}
+
+</div>
+
+<script>
+
+const input = document.getElementById("songSearch");
+const results = document.getElementById("liveResults");
+
+let timer;
+
+input.addEventListener("input", () => {
+
+  clearTimeout(timer);
+
+  const q = input.value.trim();
+
+  if (!q) {
+    results.innerHTML = "";
+    return;
+  }
+
+  timer = setTimeout(async () => {
+
+    try {
+
+      const response = await fetch(
+        "{{ url_for('api_song_search') }}?q=" +
+        encodeURIComponent(q)
+      );
+
+      const songs = await response.json();
+
+      results.innerHTML = songs.length
+        ? songs.map(
+            s =>
+              `<a href="/songs/${s.id}">${escapeHtml(s.title)}</a>`
+          ).join("")
+        : "<span>No similar songs found</span>";
+
+    } catch (e) {
+
+      results.innerHTML = "";
+
+    }
+
+  }, 180);
+
+});
+
+
+function escapeHtml(value) {
+
+  return value.replace(
+    /[&<>"']/g,
+    ch => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    }[ch])
+  );
+
+}
+
+</script>
+
+{% endblock %}

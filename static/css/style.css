@@ -1,0 +1,625 @@
+:root {
+--primary:#7a1f2b;
+--primary-dark:#5c1620;
+--gold:#c9a227;
+--bg:#f7f3ec;
+--card-bg:#fff;
+--text:#2b2b2b;
+--muted:#6b6b6b;
+--danger:#b3261e;
+--border:#e4ddd3;
+}
+
+* {
+  box-sizing:border-box;
+  }
+
+body {
+margin:0;
+font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+background:var(--bg);
+color:var(--text);
+}
+
+.page {
+min-height:100vh;
+display:flex;
+flex-direction:column;
+}
+
+/* =========================
+TOP BAR
+========================= */
+
+.topbar {
+min-height:70px;
+background:#fff;
+border-bottom:1px solid var(--border);
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:10px 28px;
+position:sticky;
+top:0;
+z-index:20;
+}
+
+.brand {
+display:flex;
+align-items:center;
+gap:10px;
+text-decoration:none;
+color:var(--primary-dark);
+font-weight:800;
+font-size:18px;
+}
+
+/* Small logo in top navigation */
+.brand img {
+width:44px;
+height:44px;
+object-fit:contain;
+display:block;
+}
+
+.user-badge {
+display:flex;
+align-items:center;
+gap:12px;
+background:#f8f3ea;
+border:1px solid #eadfce;
+padding:8px 13px;
+border-radius:999px;
+font-size:13px;
+}
+
+.user-email {
+color:var(--muted);
+}
+
+.admin-badge {
+color:#3a2f00;
+background:#f5e9b9;
+}
+
+/* =========================
+FLASH MESSAGES
+========================= */
+
+.flash-wrap {
+max-width:900px;
+margin:16px auto 0;
+width:100%;
+padding:0 20px;
+}
+
+.flash {
+padding:11px 14px;
+border-radius:9px;
+margin-bottom:8px;
+font-size:14px;
+}
+
+.flash-success {
+background:#e3f5e6;
+color:#1b5e20;
+}
+
+.flash-error {
+background:#fdecea;
+color:var(--danger);
+}
+
+/* =========================
+WELCOME / AUTH
+========================= */
+
+.welcome-screen,
+.auth-screen {
+flex:1;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:30px 20px;
+}
+
+.welcome-card,
+.auth-card {
+background:var(--card-bg);
+border-radius:18px;
+padding:38px 32px;
+max-width:460px;
+width:100%;
+text-align:center;
+box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+.auth-card {
+text-align:left;
+max-width:430px;
+}
+
+.wide-card {
+max-width:650px;
+}
+
+/* Welcome page logo */
+.church-logo {
+width:105px;
+height:105px;
+object-fit:contain;
+display:block;
+margin:0 auto 15px;
+}
+
+/* Login / Register logo */
+.auth-logo {
+width:60px;
+height:60px;
+object-fit:contain;
+display:block;
+margin:0 auto 15px;
+}
+
+.welcome-card h1 {
+font-size:24px;
+color:var(--primary-dark);
+margin:0 0 6px;
+line-height:1.3;
+}
+
+.auth-card h2 {
+margin:0 0 8px;
+color:var(--primary-dark);
+}
+
+.tagline {
+color:var(--muted);
+margin:0 0 28px;
+font-size:14px;
+}
+
+.welcome-buttons {
+display:flex;
+flex-direction:column;
+gap:12px;
+}
+
+.auth-card .subtitle {
+color:var(--muted);
+font-size:14px;
+margin:0 0 14px;
+}
+
+/* =========================
+FORMS
+========================= */
+
+form label {
+display:block;
+font-size:13px;
+font-weight:700;
+margin:14px 0 6px;
+}
+
+form input[type=text],
+form input[type=email],
+form input[type=password],
+form input[type=file],
+form input[type=search],
+textarea {
+width:100%;
+padding:11px 12px;
+border:1px solid #ddd;
+border-radius:9px;
+font-size:15px;
+font-family:inherit;
+background:#fff;
+}
+
+textarea {
+resize:vertical;
+line-height:1.6;
+}
+
+/* =========================
+BUTTONS
+========================= */
+
+.btn {
+display:inline-block;
+text-align:center;
+padding:11px 18px;
+border-radius:8px;
+font-weight:700;
+font-size:14px;
+text-decoration:none;
+border:none;
+cursor:pointer;
+}
+
+.btn-block {
+width:100%;
+margin-top:20px;
+}
+
+.btn-primary {
+background:var(--primary);
+color:#fff;
+}
+
+.btn-primary:hover {
+background:var(--primary-dark);
+}
+
+.btn-secondary {
+background:#efe6d8;
+color:var(--primary-dark);
+}
+
+.btn-admin {
+background:var(--gold);
+color:#3a2f00;
+}
+
+.btn-link {
+background:none;
+color:var(--primary);
+padding:8px 0;
+text-decoration:underline;
+}
+
+.btn-danger-sm {
+background:var(--danger);
+color:#fff;
+padding:7px 12px;
+font-size:12px;
+border-radius:6px;
+}
+
+.btn-small {
+padding:7px 10px;
+font-size:12px;
+}
+
+.auth-footer {
+text-align:center;
+font-size:14px;
+margin-top:16px;
+color:var(--muted);
+}
+
+.auth-footer a {
+color:var(--primary);
+}
+
+/* =========================
+SONG SEARCH
+========================= */
+
+.dashboard-screen {
+max-width:1050px;
+margin:0 auto;
+padding:35px 20px;
+width:100%;
+}
+
+.search-hero {
+text-align:center;
+max-width:800px;
+margin:10px auto 40px;
+}
+
+.search-hero h1 {
+font-size:32px;
+color:var(--primary-dark);
+margin:8px 0;
+}
+
+.search-hero p {
+color:var(--muted);
+}
+
+.main-search {
+display:flex;
+gap:10px;
+max-width:720px;
+margin:24px auto 0;
+}
+
+.main-search input {
+font-size:17px;
+padding:14px 16px;
+border-radius:12px;
+}
+
+.main-search button {
+min-width:110px;
+}
+
+.live-results {
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:8px;
+margin-top:12px;
+}
+
+.live-results a,
+.live-results span {
+background:#fff;
+border:1px solid var(--border);
+border-radius:999px;
+padding:8px 12px;
+text-decoration:none;
+color:var(--primary-dark);
+font-size:13px;
+}
+
+.section-heading,
+.dashboard-header {
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:12px;
+margin-bottom:20px;
+flex-wrap:wrap;
+}
+
+.section-heading h2,
+.dashboard-header h2 {
+margin:0;
+color:var(--primary-dark);
+}
+
+.eyebrow {
+margin:0 0 4px;
+color:var(--gold);
+font-size:12px;
+font-weight:800;
+text-transform:uppercase;
+letter-spacing:.08em;
+}
+
+/* =========================
+SONG CARDS
+========================= */
+
+.song-grid {
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+gap:15px;
+}
+
+.song-card {
+background:#fff;
+border-radius:12px;
+padding:20px 17px;
+text-decoration:none;
+color:var(--primary-dark);
+font-weight:700;
+box-shadow:0 4px 14px rgba(0,0,0,.06);
+border-left:4px solid var(--gold);
+display:flex;
+flex-direction:column;
+gap:8px;
+}
+
+.song-card:hover {
+box-shadow:0 7px 20px rgba(0,0,0,.1);
+transform:translateY(-1px);
+}
+
+.song-open {
+font-size:12px;
+color:var(--muted);
+font-weight:500;
+}
+
+.empty-state {
+background:#fff;
+border-radius:14px;
+color:var(--muted);
+text-align:center;
+padding:45px 20px;
+}
+
+/* =========================
+SONG VIEW
+========================= */
+
+.song-view-screen,
+.edit-screen {
+max-width:900px;
+margin:0 auto;
+padding:35px 20px;
+width:100%;
+}
+
+.song-view-header {
+display:flex;
+align-items:center;
+justify-content:space-between;
+margin-bottom:16px;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.song-view-header h2 {
+margin:0;
+color:var(--primary-dark);
+}
+
+.lang-toggle {
+display:flex;
+gap:10px;
+margin-bottom:20px;
+flex-wrap:wrap;
+}
+
+.lyrics-box {
+background:#fff;
+border-radius:14px;
+padding:25px;
+box-shadow:0 4px 14px rgba(0,0,0,.06);
+}
+
+.lyrics-text {
+white-space:pre-wrap;
+font-size:18px;
+line-height:1.9;
+font-family:"Noto Sans Kannada","Segoe UI",sans-serif;
+margin:0;
+}
+
+.lyrics-kannada {
+font-size:21px;
+}
+
+/* =========================
+ADMIN
+========================= */
+
+.admin-note {
+background:#fff8df;
+border:1px solid #ead99c;
+padding:13px 15px;
+border-radius:10px;
+margin-bottom:20px;
+font-size:14px;
+}
+
+.table-wrap {
+overflow:auto;
+border-radius:12px;
+}
+
+.song-table {
+width:100%;
+border-collapse:collapse;
+background:#fff;
+min-width:750px;
+}
+
+.song-table th,
+.song-table td {
+padding:12px 14px;
+text-align:left;
+border-bottom:1px solid #eee;
+font-size:13px;
+}
+
+.song-table th {
+background:#f1e9dc;
+color:var(--primary-dark);
+}
+
+.actions-cell {
+display:flex;
+gap:8px;
+align-items:center;
+}
+
+.actions-cell form {
+margin:0;
+}
+
+.edit-card {
+background:#fff;
+padding:25px;
+border-radius:14px;
+box-shadow:0 4px 14px rgba(0,0,0,.06);
+}
+
+.form-actions {
+display:flex;
+gap:10px;
+margin-top:20px;
+}
+
+/* =========================
+LISTED SONGS FLOATING BUTTON
+========================= */
+
+.listed-songs-floating {
+position:fixed;
+right:22px;
+bottom:22px;
+z-index:9999;
+
+display:inline-flex;
+align-items:center;
+gap:7px;
+
+padding:12px 18px;
+border-radius:30px;
+
+background:var(--primary);
+color:#fff;
+
+text-decoration:none;
+font-size:14px;
+font-weight:700;
+
+box-shadow:0 5px 18px rgba(0,0,0,.20);
+
+transition:transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.listed-songs-floating:hover {
+transform:translateY(-2px);
+box-shadow:0 8px 22px rgba(0,0,0,.25);
+}
+
+/* =========================
+MOBILE
+========================= */
+
+@media(max-width:650px) {
+
+.topbar {
+padding:8px 14px;
+}
+
+.brand span {
+display:none;
+}
+
+.user-badge {
+font-size:11px;
+gap:6px;
+}
+
+.user-email {
+display:none;
+}
+
+.search-hero h1 {
+font-size:26px;
+}
+
+.main-search {
+flex-direction:column;
+}
+
+.main-search button {
+width:100%;
+}
+
+.song-grid {
+grid-template-columns:1fr;
+}
+
+.dashboard-screen,
+.song-view-screen,
+.edit-screen {
+padding:25px 14px;
+}
+
+.listed-songs-floating {
+right:14px;
+bottom:14px;
+padding:11px 15px;
+font-size:13px;
+}
+}

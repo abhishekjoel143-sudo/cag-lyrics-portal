@@ -1,0 +1,296 @@
+
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-screen">
+
+    <!-- =====================================================
+         DASHBOARD HEADER
+         ===================================================== -->
+
+    <div class="dashboard-header">
+
+        <div>
+            <p class="eyebrow">Administration</p>
+            <h2>Song Database</h2>
+        </div>
+
+        <div class="dashboard-actions">
+
+            <a class="btn btn-primary"
+               href="{{ url_for('admin_upload') }}">
+                + Upload PPT
+            </a>
+
+            <a class="btn btn-primary"
+               href="{{ url_for('admin_bulk_upload') }}">
+                + Bulk Upload PPTs
+            </a>
+
+            <!-- VISITOR RECORDS -->
+            <a class="btn btn-primary"
+               href="{{ url_for('admin_visitors') }}">
+                👥 Visitor Records
+            </a>
+
+            <a class="btn btn-link"
+               href="{{ url_for('admin_logout') }}">
+                Log Out
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ADMIN NOTE
+         ===================================================== -->
+
+    <div class="admin-note">
+
+        <strong>Upload flow:</strong>
+
+        PPTX → Nudi/Unicode converter → Kannada + English
+        pronunciation → database.
+
+    </div>
+
+
+    <!-- =====================================================
+         ADMIN SEARCH
+         ===================================================== -->
+
+    <div class="admin-search-box">
+
+        <form method="GET"
+              action="{{ url_for('admin_dashboard') }}"
+              class="search-form">
+
+            <input
+                type="text"
+                name="q"
+                value="{{ query or '' }}"
+                placeholder="Search songs by title..."
+                autocomplete="off"
+            >
+
+            <button type="submit"
+                    class="btn btn-primary">
+                Search
+            </button>
+
+            {% if query %}
+
+                <a href="{{ url_for('admin_dashboard') }}"
+                   class="btn btn-secondary">
+                    Clear
+                </a>
+
+            {% endif %}
+
+        </form>
+
+    </div>
+
+
+    <!-- =====================================================
+         SONG COUNT
+         ===================================================== -->
+
+    <div class="admin-song-count">
+
+        {% if query %}
+
+            <strong>
+                Search results for:
+                "{{ query }}"
+            </strong>
+
+            <span>
+                {{ songs|length }} song(s) found
+            </span>
+
+        {% else %}
+
+            <strong>
+                Total Songs:
+            </strong>
+
+            <span>
+                {{ total_songs }}
+            </span>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =====================================================
+         SONG TABLE
+         ===================================================== -->
+
+    {% if songs %}
+
+        <div class="table-wrap">
+
+            <table class="song-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Title</th>
+
+                        <th>Uploaded</th>
+
+                        <th>Original PPT</th>
+
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for song in songs %}
+
+                        <tr>
+
+                            <td>
+
+                                <strong>
+                                    {{ song.title }}
+                                </strong>
+
+                            </td>
+
+
+                            <td>
+
+                                {% if song.uploaded_at %}
+
+                                    {{ song.uploaded_at.strftime(
+                                        '%d %b %Y, %I:%M %p'
+                                    ) }}
+
+                                {% else %}
+
+                                    —
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                {{ song.original_filename or '—' }}
+
+                            </td>
+
+
+                            <td class="actions-cell">
+
+                                <a
+                                    class="btn btn-secondary btn-small"
+                                    href="{{ url_for(
+                                        'admin_edit_song',
+                                        song_id=song.id
+                                    ) }}"
+                                >
+                                    Edit Lyrics
+                                </a>
+
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for(
+                                        'admin_delete_song',
+                                        song_id=song.id
+                                    ) }}"
+                                    onsubmit="return confirm(
+                                        'Delete this song from the database?'
+                                    );"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-danger-sm"
+                                    >
+                                        Delete
+                                    </button>
+
+                                </form>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+    {% else %}
+
+        {% if query %}
+
+            <div class="empty-state">
+
+                No songs found for
+                <strong>"{{ query }}"</strong>.
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+
+                No songs in the database yet.
+
+                Upload a PPTX to add the first song.
+
+            </div>
+
+        {% endif %}
+
+    {% endif %}
+
+
+</div>
+
+{% endblock %}
+
+
+### Now check the visitor page
+
+
+@app.route("/admin/visitors")
+@admin_required
+def admin_visitors():
+
+    visitors = (
+        Visitor.query
+        .order_by(
+            Visitor.visited_at.desc()
+        )
+        .all()
+    )
+
+    total_visitors = Visitor.query.count()
+
+    return render_template(
+        "admin_visitors.html",
+        visitors=visitors,
+        total_visitors=total_visitors
+    )

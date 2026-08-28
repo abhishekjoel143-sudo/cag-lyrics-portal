@@ -1,0 +1,72 @@
+﻿{% extends "base.html" %}
+
+{% block title %}User Login{% endblock %}
+
+{% block content %}
+
+<div class="auth-screen">
+
+  <div class="auth-card">
+
+
+<img
+  src="{{ url_for('static', filename='cag-logo.png') }}"
+  alt="CAG Logo"
+  class="auth-logo"
+>
+
+<h2>User Login</h2>
+
+<p class="subtitle">
+  Sign in to search and view song lyrics.
+</p>
+
+<form method="POST">
+
+  <label for="email">Email</label>
+
+  <input
+    type="email"
+    id="email"
+    name="email"
+    required
+    autofocus
+  >
+
+  <label for="password">Password</label>
+
+  <input
+    type="password"
+    id="password"
+    name="password"
+    required
+  >
+
+  <button
+    type="submit"
+    class="btn btn-primary btn-block"
+  >
+    Log In
+  </button>
+
+</form>
+
+<p class="auth-footer">
+  New here?
+  <a href="{{ url_for('register') }}">
+    Create an account
+  </a>
+</p>
+
+<p class="auth-footer">
+  <a href="{{ url_for('welcome') }}">
+    &larr; Back to home
+  </a>
+</p>
+
+
+  </div>
+
+</div>
+
+{% endblock %}
