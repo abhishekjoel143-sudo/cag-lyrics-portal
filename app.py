@@ -1,10 +1,9 @@
 import os
 import random
-import smtplib
 import resend
 
 from datetime import datetime, timedelta
-from email.mime.text import MIMEText
+
 from functools import wraps
 from difflib import SequenceMatcher
 
@@ -283,86 +282,100 @@ def track_visitor():
 # ============================================================
 # SEND OTP EMAIL
 # ============================================================
+# ============================================================
+# SEND OTP EMAIL USING RESEND
+# ============================================================
+
 def send_otp_email(to_email: str, code: str):
+
     try:
-        if not MAIL_USERNAME or not MAIL_PASSWORD:
-            print("[EMAIL ERROR] Gmail email settings are not configured.")
-            return False
 
-        msg = MIMEText(
-            f"""
-CAG Lyrics Portal
+        resend_api_key = os.environ.get(
+            "RESEND_API_KEY",
+            ""
+        ).strip()
 
-Your email verification OTP is:
+        if not resend_api_key:
 
-{code}
-
-This OTP expires in {OTP_TTL_MINUTES} minutes.
-
-Please do not share this OTP with anyone.
-""",
-            "plain",
-            "utf-8"
-        )
-
-        msg["Subject"] = "CAG Lyrics Portal - Email Verification OTP"
-        msg["From"] = MAIL_FROM
-        msg["To"] = to_email
-
-        with smtplib.SMTP(MAIL_SERVER, MAIL_PORT) as server:
-            server.starttls()
-            server.login(MAIL_USERNAME, MAIL_PASSWORD)
-            server.sendmail(
-                MAIL_FROM,
-                [to_email],
-                msg.as_string()
+            print(
+                "[EMAIL ERROR] RESEND_API_KEY is not configured."
             )
 
-        print(f"[EMAIL SUCCESS] OTP sent to {to_email}")
+            return False
+
+        resend.api_key = resend_api_key
+
+        params = {
+            "from": "CAG Lyrics Portal <onboarding@resend.dev>",
+            "to": [to_email],
+            "subject": "CAG Lyrics Portal - Email Verification OTP",
+            "html": f"""
+                <div style="
+                    font-family: Arial, sans-serif;
+                    max-width: 600px;
+                    margin: auto;
+                    padding: 20px;
+                ">
+
+                    <h2>CAG Lyrics Portal</h2>
+
+                    <p>
+                        Your email verification OTP is:
+                    </p>
+
+                    <div style="
+                        font-size: 32px;
+                        font-weight: bold;
+                        letter-spacing: 8px;
+                        margin: 20px 0;
+                    ">
+                        {code}
+                    </div>
+
+                    <p>
+                        This OTP expires in
+                        <strong>
+                            {OTP_TTL_MINUTES} minutes
+                        </strong>.
+                    </p>
+
+                    <p>
+                        Please do not share this OTP with anyone.
+                    </p>
+
+                    <hr>
+
+                    <p style="
+                        font-size: 12px;
+                        color: #777;
+                    ">
+                        CAG Lyrics Portal
+                    </p>
+
+                </div>
+            """
+        }
+
+        email = resend.Emails.send(params)
+
+        print(
+            f"[EMAIL SUCCESS] OTP sent to {to_email}"
+        )
+
+        print(
+            f"[RESEND RESPONSE] {email}"
+        )
+
         return True
 
     except Exception as exc:
-        print(f"[EMAIL ERROR] Could not send OTP to {to_email}: {exc}")
-        return False# ============================================================
-# GENERATE OTP
-# ============================================================
 
-def generate_otp_code():
-
-    return f"{random.randint(0, 999999):06d}"
-
-
-# ============================================================
-# LOGIN REQUIRED
-# ============================================================
-
-def login_required(view):
-
-    @wraps(view)
-    def wrapped(
-        *args,
-        **kwargs
-    ):
-
-        if not session.get("user_id"):
-
-            flash(
-                "Please log in to continue.",
-                "error"
-            )
-
-            return redirect(
-                url_for("user_login")
-            )
-
-        return view(
-            *args,
-            **kwargs
+        print(
+            f"[EMAIL ERROR] Could not send OTP to "
+            f"{to_email}: {exc}"
         )
 
-    return wrapped
-
-
+        return False
 # ============================================================
 # ADMIN REQUIRED
 # ============================================================
