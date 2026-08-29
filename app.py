@@ -1,7 +1,8 @@
 import os
 import random
-import resend
+import smtplib
 
+from email.message import EmailMessage
 from datetime import datetime, timedelta
 
 from functools import wraps
@@ -291,84 +292,93 @@ def generate_otp_code():
 # SEND OTP EMAIL USING RESEND
 # ============================================================
 
+# ============================================================
+# SEND OTP EMAIL USING GMAIL SMTP
+# ============================================================
+
 def send_otp_email(to_email: str, code: str):
 
     try:
+        mail_server = os.environ.get(
+            "MAIL_SERVER",
+            "smtp.gmail.com"
+        ).strip()
 
-        resend_api_key = os.environ.get(
-            "RESEND_API_KEY",
+        mail_port = int(
+            os.environ.get(
+                "MAIL_PORT",
+                "587"
+            )
+        )
+
+        mail_username = os.environ.get(
+            "MAIL_USERNAME",
             ""
         ).strip()
 
-        if not resend_api_key:
+        mail_password = os.environ.get(
+            "MAIL_PASSWORD",
+            ""
+        ).strip()
+
+        mail_from = os.environ.get(
+            "MAIL_FROM",
+            mail_username
+        ).strip()
+
+        if not mail_username or not mail_password:
 
             print(
-                "[EMAIL ERROR] RESEND_API_KEY is not configured."
+                "[EMAIL ERROR] Gmail email settings are not configured."
             )
 
             return False
 
-        resend.api_key = resend_api_key
+        msg = EmailMessage()
 
-        params = {
-            "from": "CAG Lyrics Portal <onboarding@resend.dev>",
-            "to": [to_email],
-            "subject": "CAG Lyrics Portal - Email Verification OTP",
-            "html": f"""
-                <div style="
-                    font-family: Arial, sans-serif;
-                    max-width: 600px;
-                    margin: auto;
-                    padding: 20px;
-                ">
+        msg["Subject"] = (
+            "CAG Lyrics Portal - Email Verification OTP"
+        )
 
-                    <h2>CAG Lyrics Portal</h2>
+        msg["From"] = mail_from
 
-                    <p>
-                        Your email verification OTP is:
-                    </p>
+        msg["To"] = to_email
 
-                    <div style="
-                        font-size: 32px;
-                        font-weight: bold;
-                        letter-spacing: 8px;
-                        margin: 20px 0;
-                    ">
-                        {code}
-                    </div>
+        msg.set_content(
+            f"""
+CAG Lyrics Portal
 
-                    <p>
-                        This OTP expires in
-                        <strong>
-                            {OTP_TTL_MINUTES} minutes
-                        </strong>.
-                    </p>
+Your email verification OTP is:
 
-                    <p>
-                        Please do not share this OTP with anyone.
-                    </p>
+{code}
 
-                    <hr>
+This OTP expires in {OTP_TTL_MINUTES} minutes.
 
-                    <p style="
-                        font-size: 12px;
-                        color: #777;
-                    ">
-                        CAG Lyrics Portal
-                    </p>
+Please do not share this OTP with anyone.
 
-                </div>
-            """
-        }
+CAG Lyrics Portal
+"""
+        )
 
-        email = resend.Emails.send(params)
+        with smtplib.SMTP(
+            mail_server,
+            mail_port,
+            timeout=20
+        ) as server:
+
+            server.starttls()
+
+            server.login(
+                mail_username,
+                mail_password
+            )
+
+            server.send_message(
+                msg
+            )
 
         print(
             f"[EMAIL SUCCESS] OTP sent to {to_email}"
-        )
-
-        print(
-            f"[RESEND RESPONSE] {email}"
         )
 
         return True
@@ -381,7 +391,6 @@ def send_otp_email(to_email: str, code: str):
         )
 
         return False
-
 
 # ============================================================
 # ADMIN REQUIRED
