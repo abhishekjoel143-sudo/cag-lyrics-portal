@@ -12,9 +12,132 @@ content="width=device-width, initial-scale=1.0"
 
 >
 
+  <!-- =====================================================
+       SEO INFORMATION
+  ====================================================== -->
+
+<meta
+name="description"
+content="CAG Lyrics Portal is a Kannada Christian song lyrics website where you can find, read and sing Kannada Christian worship songs with Kannada and English lyrics."
+
+>
+
+<meta
+name="keywords"
+content="CAG Lyrics, CAG Lyrics Portal, Kannada Christian Songs, Kannada Christian Lyrics, Kannada Worship Songs, Christian Songs Kannada, CAG Songs, Kannada Gospel Songs, Kannada Praise and Worship"
+
+>
+
+<meta
+name="author"
+content="CAG Lyrics Portal"
+
+>
+
+<meta
+name="robots"
+content="index, follow"
+
+>
+
+  <!-- =====================================================
+       GOOGLE / SEARCH ENGINE INFORMATION
+  ====================================================== -->
+
+<meta
+name="googlebot"
+content="index, follow"
+
+>
+
+  <!-- =====================================================
+       CANONICAL URL
+  ====================================================== -->
+
+{% if request.endpoint == 'welcome' %}
+
+  <link
+    rel="canonical"
+    href="{{ request.url_root }}"
+  >
+
+{% endif %}
+
+  <!-- =====================================================
+       OPEN GRAPH / SOCIAL SHARING
+  ====================================================== -->
+
+<meta
+property="og:title"
+content="CAG Lyrics Portal - Kannada Christian Lyrics"
+
+>
+
+<meta
+property="og:description"
+content="Find and sing Kannada Christian worship songs with Kannada and English lyrics."
+
+>
+
+<meta
+property="og:type"
+content="website"
+
+>
+
+<meta
+property="og:url"
+content="{{ request.url }}"
+
+>
+
+<meta
+property="og:image"
+content="{{ url_for('static', filename='cag-logo.png', _external=True) }}"
+
+>
+
+  <!-- =====================================================
+       TWITTER / SOCIAL CARD
+  ====================================================== -->
+
+<meta
+name="twitter:card"
+content="summary"
+
+>
+
+<meta
+name="twitter:title"
+content="CAG Lyrics Portal - Kannada Christian Lyrics"
+
+>
+
+<meta
+name="twitter:description"
+content="Find and sing Kannada Christian worship songs with Kannada and English lyrics."
+
+>
+
+<meta
+name="twitter:image"
+content="{{ url_for('static', filename='cag-logo.png', _external=True) }}"
+
+>
+
+  <!-- =====================================================
+       PAGE TITLE
+  ====================================================== -->
+
   <title>
-    {% block title %}CAG Lyrics Portal{% endblock %}
+    {% block title %}
+      CAG Lyrics Portal - Kannada Christian Lyrics
+    {% endblock %}
   </title>
+
+  <!-- =====================================================
+       CSS
+  ====================================================== -->
 
   <link
     rel="stylesheet"
@@ -27,14 +150,16 @@ content="width=device-width, initial-scale=1.0"
 
 <div class="page">
 
-  <!-- =========================
+  <!-- =====================================================
        TOP BAR
-  ========================== -->
+  ====================================================== -->
 
   <header class="topbar">
 
-
-<!-- CAG BRAND -->
+```
+<!-- ===================================================
+     CAG BRAND
+==================================================== -->
 
 <a
   class="brand"
@@ -43,7 +168,7 @@ content="width=device-width, initial-scale=1.0"
 
   <img
     src="{{ url_for('static', filename='cag-logo.png') }}"
-    alt="CAG Logo"
+    alt="CAG Lyrics Portal Logo"
   >
 
   <span>
@@ -53,7 +178,9 @@ content="width=device-width, initial-scale=1.0"
 </a>
 
 
-<!-- USER INFORMATION -->
+<!-- ===================================================
+     USER INFORMATION
+==================================================== -->
 
 {% if current_user %}
 
@@ -87,17 +214,17 @@ content="width=device-width, initial-scale=1.0"
   </div>
 
 {% endif %}
-
+```
 
   </header>
 
-  <!-- =========================
+  <!-- =====================================================
        FLASH MESSAGES
-  ========================== -->
+  ====================================================== -->
 
 {% with messages = get_flashed_messages(with_categories=true) %}
 
-
+```
 {% if messages %}
 
   <div class="flash-wrap">
@@ -115,13 +242,13 @@ content="width=device-width, initial-scale=1.0"
   </div>
 
 {% endif %}
-
+```
 
 {% endwith %}
 
-  <!-- =========================
+  <!-- =====================================================
        PAGE CONTENT
-  ========================== -->
+  ====================================================== -->
 
 {% block content %}
 

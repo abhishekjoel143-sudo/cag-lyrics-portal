@@ -1,10 +1,10 @@
+
 import os
 import random
 import smtplib
 
 from email.message import EmailMessage
 from datetime import datetime, timedelta
-
 from functools import wraps
 from difflib import SequenceMatcher
 
@@ -16,8 +16,9 @@ from flask import (
     request,
     redirect,
     url_for,
-    session,
     flash,
+    send_from_directory,
+    session,
     jsonify,
 )
 
@@ -46,9 +47,7 @@ load_dotenv()
 # DIRECTORIES
 # ============================================================
 
-BASE_DIR = os.path.abspath(
-    os.path.dirname(__file__)
-)
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 UPLOAD_DIR = os.path.join(
     BASE_DIR,
@@ -60,15 +59,8 @@ INSTANCE_DIR = os.path.join(
     "instance"
 )
 
-os.makedirs(
-    UPLOAD_DIR,
-    exist_ok=True
-)
-
-os.makedirs(
-    INSTANCE_DIR,
-    exist_ok=True
-)
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+os.makedirs(INSTANCE_DIR, exist_ok=True)
 
 
 # ============================================================
@@ -94,12 +86,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-
-# ============================================================
-# LARGE FILE UPLOAD LIMIT
-# 2 GB
-# ============================================================
-
+# 2 GB upload limit
 app.config["MAX_CONTENT_LENGTH"] = (
     2 * 1024 * 1024 * 1024
 )
@@ -162,15 +149,22 @@ MAIL_FROM = os.environ.get(
     MAIL_USERNAME or "no-reply@example.com"
 )
 
+OTP_TTL_MINUTES = 10
+
+
 print("=== EMAIL CONFIG CHECK ===")
 print("MAIL_SERVER:", MAIL_SERVER)
 print("MAIL_PORT:", MAIL_PORT)
-print("MAIL_USERNAME configured:", bool(MAIL_USERNAME))
-print("MAIL_PASSWORD configured:", bool(MAIL_PASSWORD))
+print(
+    "MAIL_USERNAME configured:",
+    bool(MAIL_USERNAME)
+)
+print(
+    "MAIL_PASSWORD configured:",
+    bool(MAIL_PASSWORD)
+)
 print("MAIL_FROM:", MAIL_FROM)
 print("==========================")
-
-OTP_TTL_MINUTES = 10
 
 
 # ============================================================
@@ -186,10 +180,7 @@ def allowed_file(filename):
 
     return (
         "." in filename
-        and filename.rsplit(
-            ".",
-            1
-        )[1].lower()
+        and filename.rsplit(".", 1)[1].lower()
         in ALLOWED_EXTENSIONS
     )
 
@@ -201,58 +192,37 @@ def allowed_file(filename):
 @app.before_request
 def track_visitor():
 
-    # --------------------------------------------------------
     # Only track GET requests
-    # --------------------------------------------------------
-
     if request.method != "GET":
         return
 
-    # --------------------------------------------------------
     # Don't track admin pages
-    # --------------------------------------------------------
-
     if request.path.startswith("/admin"):
         return
 
-    # --------------------------------------------------------
     # Don't track static files
-    # --------------------------------------------------------
-
     if request.path.startswith("/static"):
         return
 
-    # --------------------------------------------------------
     # Don't track favicon
-    # --------------------------------------------------------
-
     if request.path == "/favicon.ico":
         return
 
     try:
 
-        # ----------------------------------------------------
-        # Get logged-in user's email
-        # ----------------------------------------------------
-
         visitor_email = None
 
-        user_id = session.get(
-            "user_id"
-        )
+        user_id = session.get("user_id")
 
         if user_id:
 
-            user = User.query.get(
+            user = db.session.get(
+                User,
                 user_id
             )
 
             if user:
                 visitor_email = user.email
-
-        # ----------------------------------------------------
-        # Create visitor record
-        # ----------------------------------------------------
 
         visitor = Visitor(
             email=visitor_email,
@@ -264,10 +234,7 @@ def track_visitor():
             visited_at=datetime.utcnow()
         )
 
-        db.session.add(
-            visitor
-        )
-
+        db.session.add(visitor)
         db.session.commit()
 
     except Exception as exc:
@@ -285,20 +252,26 @@ def track_visitor():
 # ============================================================
 
 def generate_otp_code():
-    return str(random.randint(100000, 999999))
 
+    return str(
+        random.randint(
+            100000,
+            999999
+        )
+    )
 
-# ============================================================
-# SEND OTP EMAIL USING RESEND
-# ============================================================
 
 # ============================================================
 # SEND OTP EMAIL USING GMAIL SMTP
 # ============================================================
 
-def send_otp_email(to_email: str, code: str):
+def send_otp_email(
+    to_email: str,
+    code: str
+):
 
     try:
+
         mail_server = os.environ.get(
             "MAIL_SERVER",
             "smtp.gmail.com"
@@ -329,7 +302,8 @@ def send_otp_email(to_email: str, code: str):
         if not mail_username or not mail_password:
 
             print(
-                "[EMAIL ERROR] Gmail email settings are not configured."
+                "[EMAIL ERROR] "
+                "Gmail email settings are not configured."
             )
 
             return False
@@ -373,9 +347,7 @@ CAG Lyrics Portal
                 mail_password
             )
 
-            server.send_message(
-                msg
-            )
+            server.send_message(msg)
 
         print(
             f"[EMAIL SUCCESS] OTP sent to {to_email}"
@@ -392,6 +364,7 @@ CAG Lyrics Portal
 
         return False
 
+
 # ============================================================
 # ADMIN REQUIRED
 # ============================================================
@@ -399,10 +372,7 @@ CAG Lyrics Portal
 def admin_required(view):
 
     @wraps(view)
-    def wrapped(
-        *args,
-        **kwargs
-    ):
+    def wrapped(*args, **kwargs):
 
         if not session.get("is_admin"):
 
@@ -421,6 +391,8 @@ def admin_required(view):
         )
 
     return wrapped
+
+
 # ============================================================
 # LOGIN REQUIRED
 # ============================================================
@@ -428,10 +400,7 @@ def admin_required(view):
 def login_required(view):
 
     @wraps(view)
-    def wrapped(
-        *args,
-        **kwargs
-    ):
+    def wrapped(*args, **kwargs):
 
         if not session.get("user_id"):
 
@@ -453,10 +422,6 @@ def login_required(view):
 
 
 # ============================================================
-# ADMIN REQUIRED
-# ============================================================
-
-# ============================================================
 # GLOBAL USER INFORMATION
 # ============================================================
 
@@ -469,7 +434,8 @@ def inject_user():
 
         try:
 
-            user = User.query.get(
+            user = db.session.get(
+                User,
                 session["user_id"]
             )
 
@@ -486,15 +452,40 @@ def inject_user():
 
 
 # ============================================================
-# WELCOME
+# WELCOME PAGE
 # ============================================================
 
 @app.route("/")
 def welcome():
 
     return render_template(
-        "welcome.html",
-        church_name=CHURCH_NAME
+        "welcome.html"
+    )
+
+
+# ============================================================
+# ROBOTS.TXT
+# ============================================================
+
+@app.route("/robots.txt")
+def robots_txt():
+
+    return send_from_directory(
+        app.static_folder,
+        "robots.txt"
+    )
+
+# ============================================================
+# SITEMAP.XML
+# ============================================================
+
+@app.route("/sitemap.xml")
+def sitemap():
+
+    return send_from_directory(
+        app.static_folder,
+        "sitemap.xml",
+        mimetype="application/xml"
     )
 
 
@@ -580,14 +571,9 @@ def register():
                 email=email
             )
 
-            db.session.add(
-                existing
-            )
+            db.session.add(existing)
 
-        existing.set_password(
-            password
-        )
-
+        existing.set_password(password)
         existing.is_verified = False
 
         db.session.commit()
@@ -606,10 +592,7 @@ def register():
             )
         )
 
-        db.session.add(
-            otp
-        )
-
+        db.session.add(otp)
         db.session.commit()
 
         sent = send_otp_email(
@@ -783,10 +766,7 @@ def resend_otp():
         )
     )
 
-    db.session.add(
-        otp
-    )
-
+    db.session.add(otp)
     db.session.commit()
 
     if send_otp_email(
@@ -872,7 +852,7 @@ def user_login():
 
             db.session.commit()
 
-            send_otp_email(
+            sent = send_otp_email(
                 email,
                 code
             )
@@ -881,10 +861,19 @@ def user_login():
                 "pending_verification_email"
             ] = email
 
-            flash(
-                "Please verify your email with the OTP.",
-                "success"
-            )
+            if sent:
+
+                flash(
+                    "Please verify your email with the OTP.",
+                    "success"
+                )
+
+            else:
+
+                flash(
+                    "OTP email could not be sent.",
+                    "error"
+                )
 
             return redirect(
                 url_for("verify_otp")
@@ -1027,10 +1016,12 @@ def song_view(song_id):
         "kannada"
     )
 
-    from_listed = request.args.get(
-        "from_listed",
-        "0"
-    ) == "1"
+    from_listed = (
+        request.args.get(
+            "from_listed",
+            "0"
+        ) == "1"
+    )
 
     return render_template(
         "song_view.html",
@@ -1038,6 +1029,8 @@ def song_view(song_id):
         lang=lang,
         from_listed=from_listed
     )
+
+
 # ============================================================
 # SONG SEARCH API
 # ============================================================
@@ -1152,10 +1145,7 @@ def add_to_list(song_id):
             song_id=song.id
         )
 
-        db.session.add(
-            listed_song
-        )
-
+        db.session.add(listed_song)
         db.session.commit()
 
         flash(
@@ -1224,10 +1214,7 @@ def delete_listed_song(listed_id):
             url_for("listed_songs")
         )
 
-    db.session.delete(
-        listed
-    )
-
+    db.session.delete(listed)
     db.session.commit()
 
     flash(
@@ -1383,9 +1370,7 @@ def admin_visitors():
         .all()
     )
 
-    total_visitors = (
-        Visitor.query.count()
-    )
+    total_visitors = Visitor.query.count()
 
     return render_template(
         "admin_visitors.html",
@@ -1411,10 +1396,7 @@ def delete_visitor(visitor_id):
 
     try:
 
-        db.session.delete(
-            visitor
-        )
-
+        db.session.delete(visitor)
         db.session.commit()
 
         flash(
@@ -1563,9 +1545,7 @@ def admin_upload():
             filename
         )
 
-        if os.path.exists(
-            save_path
-        ):
+        if os.path.exists(save_path):
 
             base, ext = os.path.splitext(
                 filename
@@ -1573,9 +1553,7 @@ def admin_upload():
 
             counter = 1
 
-            while os.path.exists(
-                save_path
-            ):
+            while os.path.exists(save_path):
 
                 filename = (
                     f"{base}_{counter}{ext}"
@@ -1590,9 +1568,7 @@ def admin_upload():
 
         try:
 
-            file.save(
-                save_path
-            )
+            file.save(save_path)
 
             kannada_text, english_text = (
                 convert_pptx_to_lyrics(
@@ -1635,10 +1611,7 @@ def admin_upload():
             original_filename=filename
         )
 
-        db.session.add(
-            song
-        )
-
+        db.session.add(song)
         db.session.commit()
 
         flash(
@@ -1722,9 +1695,7 @@ def admin_bulk_upload():
                 filename
             )
 
-            if os.path.exists(
-                save_path
-            ):
+            if os.path.exists(save_path):
 
                 base, ext = os.path.splitext(
                     filename
@@ -1732,9 +1703,7 @@ def admin_bulk_upload():
 
                 counter = 1
 
-                while os.path.exists(
-                    save_path
-                ):
+                while os.path.exists(save_path):
 
                     filename = (
                         f"{base}_{counter}{ext}"
@@ -1749,9 +1718,7 @@ def admin_bulk_upload():
 
             try:
 
-                file.save(
-                    save_path
-                )
+                file.save(save_path)
 
                 kannada_text, english_text = (
                     convert_pptx_to_lyrics(
@@ -1805,9 +1772,7 @@ def admin_bulk_upload():
                     original_filename=filename
                 )
 
-                db.session.add(
-                    song
-                )
+                db.session.add(song)
 
                 processed += 1
 
@@ -1946,10 +1911,7 @@ def admin_delete_song(song_id):
         song_id
     )
 
-    db.session.delete(
-        song
-    )
-
+    db.session.delete(song)
     db.session.commit()
 
     flash(

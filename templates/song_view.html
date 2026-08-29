@@ -12,7 +12,7 @@
 
   <div class="song-view-header">
 
-
+```
 <div>
 
   <p class="eyebrow">
@@ -24,42 +24,20 @@
   </h2>
 
 </div>
-
-
-  </div>
-
-  <!-- =====================================================
-       ADD TO LISTED SONGS
-  ====================================================== -->
-
-  <div class="listed-song-action">
-
-
-<form
-  method="POST"
-  action="{{ url_for('add_to_list', song_id=song.id) }}"
->
-
-  <button
-    type="submit"
-    class="btn btn-primary"
-  >
-    Add to Listed Songs
-  </button>
-
-</form>
-
+```
 
   </div>
 
   <!-- =====================================================
-       LANGUAGE + ZOOM CONTROLS
+       LANGUAGE + ZOOM + LISTED SONG + BACK CONTROLS
   ====================================================== -->
 
-  <div class="lang-toggle">
+  <div class="lyrics-controls">
 
-
-<!-- Kannada -->
+```
+<!-- =================================================
+     KANNADA
+================================================== -->
 
 <a
   href="{{ url_for(
@@ -74,7 +52,9 @@
 </a>
 
 
-<!-- English -->
+<!-- =================================================
+     ENGLISH
+================================================== -->
 
 <a
   href="{{ url_for(
@@ -89,7 +69,9 @@
 </a>
 
 
-<!-- Both -->
+<!-- =================================================
+     BOTH
+================================================== -->
 
 <a
   href="{{ url_for(
@@ -104,7 +86,9 @@
 </a>
 
 
-<!-- Zoom Out -->
+<!-- =================================================
+     ZOOM OUT
+================================================== -->
 
 <button
   type="button"
@@ -116,7 +100,9 @@
 </button>
 
 
-<!-- Zoom In -->
+<!-- =================================================
+     ZOOM IN
+================================================== -->
 
 <button
   type="button"
@@ -127,6 +113,39 @@
   +
 </button>
 
+
+<!-- =================================================
+     ADD TO LISTED SONGS
+================================================== -->
+
+<form
+  method="POST"
+  action="{{ url_for('add_to_list', song_id=song.id) }}"
+  class="listed-song-form"
+>
+
+  <button
+    type="submit"
+    class="btn btn-primary listed-song-button"
+  >
+    Add to Listed Songs
+  </button>
+
+</form>
+
+
+<!-- =================================================
+     BACK BUTTON
+     This is now on the TOP RIGHT
+================================================== -->
+
+<a
+  href="{{ url_for('listed_songs') if from_listed else url_for('song_list') }}"
+  class="btn btn-secondary back-button"
+>
+  ← Back
+</a>
+```
 
   </div>
 
@@ -139,10 +158,12 @@
     id="lyricsBox"
   >
 
-
+```
 {% if lang == 'english' %}
 
-  <!-- English Only -->
+  <!-- ===============================================
+       ENGLISH ONLY
+  ================================================ -->
 
   <div class="single-lyrics-section">
 
@@ -157,12 +178,15 @@
 
 {% elif lang == 'both' %}
 
-  <!-- Kannada + English -->
+  <!-- ===============================================
+       KANNADA + ENGLISH
+  ================================================ -->
 
   <div class="both-lyrics-container">
 
-
-    <!-- Kannada LEFT -->
+    <!-- =============================================
+         KANNADA LEFT
+    ============================================== -->
 
     <div class="both-lyrics-column">
 
@@ -177,7 +201,9 @@
     </div>
 
 
-    <!-- English RIGHT -->
+    <!-- =============================================
+         ENGLISH RIGHT
+    ============================================== -->
 
     <div class="both-lyrics-column">
 
@@ -196,7 +222,9 @@
 
 {% else %}
 
-  <!-- Kannada Only -->
+  <!-- ===============================================
+       KANNADA ONLY
+  ================================================ -->
 
   <div class="single-lyrics-section">
 
@@ -211,52 +239,7 @@
   </div>
 
 {% endif %}
-
-
-  </div>
-
-  <!-- =====================================================
-       BOTTOM NAVIGATION
-  ====================================================== -->
-
-  <div class="song-bottom-actions">
-
-
-<!-- LEFT: BACK -->
-
-<div class="song-bottom-left">
-
-  <a
-    href="{{ url_for('listed_songs') if from_listed else url_for('song_list') }}"
-    class="btn btn-secondary"
-  >
-    &larr; Back
-  </a>
-
-</div>
-
-
-<!-- RIGHT: LISTED SONGS + LOGOUT -->
-
-<div class="song-bottom-right">
-
-  <a
-    href="{{ url_for('listed_songs') }}"
-    class="btn btn-primary"
-  >
-    Listed Songs
-  </a>
-
-
-  <a
-    href="{{ url_for('logout') }}"
-    class="btn btn-secondary"
-  >
-    Logout
-  </a>
-
-</div>
-
+```
 
   </div>
 
@@ -319,10 +302,101 @@
 </script>
 
 <!-- =====================================================
-     BOTH LYRICS LAYOUT
+     STYLES
 ====================================================== -->
 
 <style>
+
+  /* =====================================================
+     TOP CONTROLS
+  ====================================================== */
+
+  .lyrics-controls {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    width: 100%;
+
+    margin-top: 20px;
+
+    margin-bottom: 20px;
+
+    flex-wrap: wrap;
+
+  }
+
+
+  /* =====================================================
+     LISTED SONG FORM
+  ====================================================== */
+
+  .listed-song-form {
+
+    margin: 0;
+
+    padding: 0;
+
+    display: flex;
+
+    align-items: center;
+
+  }
+
+
+  /* =====================================================
+     LISTED SONG BUTTON
+  ====================================================== */
+
+  .listed-song-button {
+
+    white-space: nowrap;
+
+  }
+
+
+  /* =====================================================
+     BACK BUTTON
+  ====================================================== */
+
+  .back-button {
+
+    white-space: nowrap;
+
+  }
+
+
+  /* =====================================================
+     ZOOM BUTTONS
+  ====================================================== */
+
+  .zoom-button {
+
+    min-width: 45px !important;
+
+    width: 45px;
+
+    height: 45px;
+
+    padding: 0;
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+  }
+
 
   /* =====================================================
      BOTH LYRICS CONTAINER
@@ -411,85 +485,40 @@
 
 
   /* =====================================================
-     BOTTOM NAVIGATION
-  ====================================================== */
-
-  .song-bottom-actions {
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    gap: 20px;
-
-    margin-top: 30px;
-
-    margin-bottom: 30px;
-
-    width: 100%;
-
-  }
-
-
-  /* LEFT BACK BUTTON */
-
-  .song-bottom-left {
-
-    display: flex;
-
-    align-items: center;
-
-  }
-
-
-  /* RIGHT BUTTONS */
-
-  .song-bottom-right {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 15px;
-
-  }
-
-
-  /* BUTTON SIZE */
-
-  .song-bottom-actions .btn {
-
-    min-width: 130px;
-
-    text-align: center;
-
-    text-decoration: none;
-
-  }
-
-
-  /* =====================================================
-     ZOOM BUTTONS
-  ====================================================== */
-
-  .zoom-button {
-
-    min-width: 45px !important;
-
-    font-size: 20px;
-
-    font-weight: bold;
-
-  }
-
-
-  /* =====================================================
      MOBILE
   ====================================================== */
 
   @media (max-width: 768px) {
+
+    .lyrics-controls {
+
+      justify-content: center;
+
+      gap: 8px;
+
+    }
+
+
+    .lyrics-controls .btn {
+
+      min-width: auto;
+
+    }
+
+
+    .listed-song-button {
+
+      width: auto;
+
+    }
+
+
+    .back-button {
+
+      width: auto;
+
+    }
+
 
     .both-lyrics-container {
 
@@ -510,40 +539,6 @@
       border-right: none;
 
       border-bottom: 2px solid #ddd;
-
-    }
-
-
-    .song-bottom-actions {
-
-      flex-direction: column;
-
-      align-items: stretch;
-
-      gap: 15px;
-
-    }
-
-
-    .song-bottom-left {
-
-      justify-content: flex-start;
-
-    }
-
-
-    .song-bottom-right {
-
-      justify-content: center;
-
-      gap: 12px;
-
-    }
-
-
-    .song-bottom-actions .btn {
-
-      min-width: 110px;
 
     }
 

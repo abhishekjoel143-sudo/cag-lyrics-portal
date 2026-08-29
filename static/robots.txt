@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://cag-lyrics-portal.onrender.com/sitemap.xml
