@@ -283,64 +283,47 @@ def track_visitor():
 # ============================================================
 # SEND OTP EMAIL
 # ============================================================
-def send_otp_email(
-    to_email: str,
-    code: str
-):
-    resend_api_key = os.environ.get(
-        "RESEND_API_KEY",
-        ""
-    )
-
-    if not resend_api_key:
-        print(
-            f"[DEV MODE] RESEND_API_KEY is not configured. "
-            f"OTP for {to_email}: {code}"
-        )
-        return False
-
+def send_otp_email(to_email: str, code: str):
     try:
-        resend.api_key = resend_api_key
+        if not MAIL_USERNAME or not MAIL_PASSWORD:
+            print("[EMAIL ERROR] Gmail email settings are not configured.")
+            return False
 
-        params = {
-            "from": "onboarding@resend.dev",
-            "to": [to_email],
-            "subject": "CAG Lyrics Portal - Email Verification OTP",
-            "html": f"""
-                <h2>CAG Lyrics Portal</h2>
+        msg = MIMEText(
+            f"""
+CAG Lyrics Portal
 
-                <p>Your email verification code is:</p>
+Your email verification OTP is:
 
-                <h1>{code}</h1>
+{code}
 
-                <p>
-                    This OTP expires in
-                    {OTP_TTL_MINUTES} minutes.
-                </p>
+This OTP expires in {OTP_TTL_MINUTES} minutes.
 
-                <p>
-                    Please do not share this code with anyone.
-                </p>
-            """
-        }
-
-        email = resend.Emails.send(params)
-
-        print(
-            f"[EMAIL SUCCESS] OTP sent to {to_email}: {email}"
+Please do not share this OTP with anyone.
+""",
+            "plain",
+            "utf-8"
         )
 
+        msg["Subject"] = "CAG Lyrics Portal - Email Verification OTP"
+        msg["From"] = MAIL_FROM
+        msg["To"] = to_email
+
+        with smtplib.SMTP(MAIL_SERVER, MAIL_PORT) as server:
+            server.starttls()
+            server.login(MAIL_USERNAME, MAIL_PASSWORD)
+            server.sendmail(
+                MAIL_FROM,
+                [to_email],
+                msg.as_string()
+            )
+
+        print(f"[EMAIL SUCCESS] OTP sent to {to_email}")
         return True
 
     except Exception as exc:
-        print(
-            f"[EMAIL ERROR] "
-            f"Could not send OTP to "
-            f"{to_email}: {exc}"
-        )
-
-        return False
-# ============================================================
+        print(f"[EMAIL ERROR] Could not send OTP to {to_email}: {exc}")
+        return False# ============================================================
 # GENERATE OTP
 # ============================================================
 
