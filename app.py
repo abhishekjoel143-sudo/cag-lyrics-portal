@@ -405,7 +405,40 @@ def admin_required(view):
         )
 
     return wrapped
+# ============================================================
+# LOGIN REQUIRED
+# ============================================================
 
+def login_required(view):
+
+    @wraps(view)
+    def wrapped(
+        *args,
+        **kwargs
+    ):
+
+        if not session.get("user_id"):
+
+            flash(
+                "Please log in to continue.",
+                "error"
+            )
+
+            return redirect(
+                url_for("user_login")
+            )
+
+        return view(
+            *args,
+            **kwargs
+        )
+
+    return wrapped
+
+
+# ============================================================
+# ADMIN REQUIRED
+# ============================================================
 
 # ============================================================
 # GLOBAL USER INFORMATION
