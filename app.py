@@ -1,6 +1,7 @@
 import os
 import random
 import smtplib
+import resend
 
 from datetime import datetime, timedelta
 from email.mime.text import MIMEText
@@ -161,6 +162,14 @@ MAIL_FROM = os.environ.get(
     MAIL_USERNAME or "no-reply@example.com"
 )
 
+print("=== EMAIL CONFIG CHECK ===")
+print("MAIL_SERVER:", MAIL_SERVER)
+print("MAIL_PORT:", MAIL_PORT)
+print("MAIL_USERNAME configured:", bool(MAIL_USERNAME))
+print("MAIL_PASSWORD configured:", bool(MAIL_PASSWORD))
+print("MAIL_FROM:", MAIL_FROM)
+print("==========================")
+
 OTP_TTL_MINUTES = 10
 
 
@@ -279,60 +288,52 @@ def send_otp_email(
     to_email: str,
     code: str
 ):
+    resend_api_key = os.environ.get(
+        "RESEND_API_KEY",
+        ""
+    )
 
-    if not (
-        MAIL_SERVER
-        and MAIL_USERNAME
-        and MAIL_PASSWORD
-    ):
-
+    if not resend_api_key:
         print(
-            f"[DEV MODE] SMTP is not configured. "
+            f"[DEV MODE] RESEND_API_KEY is not configured. "
             f"OTP for {to_email}: {code}"
         )
-
         return False
 
-    msg = MIMEText(
-        f"Your Calvary Assembly of God Church "
-        f"(CAG) verification code is: {code}\n\n"
-        f"OTP: {code}\n"
-        f"This code expires in "
-        f"{OTP_TTL_MINUTES} minutes."
-    )
-
-    msg["Subject"] = (
-        "CAG Lyrics Portal - Email Verification OTP"
-    )
-
-    msg["From"] = MAIL_FROM
-    msg["To"] = to_email
-
     try:
+        resend.api_key = resend_api_key
 
-        with smtplib.SMTP(
-            MAIL_SERVER,
-            MAIL_PORT,
-            timeout=20
-        ) as server:
+        params = {
+            "from": "onboarding@resend.dev",
+            "to": [to_email],
+            "subject": "CAG Lyrics Portal - Email Verification OTP",
+            "html": f"""
+                <h2>CAG Lyrics Portal</h2>
 
-            server.starttls()
+                <p>Your email verification code is:</p>
 
-            server.login(
-                MAIL_USERNAME,
-                MAIL_PASSWORD
-            )
+                <h1>{code}</h1>
 
-            server.sendmail(
-                MAIL_FROM,
-                [to_email],
-                msg.as_string()
-            )
+                <p>
+                    This OTP expires in
+                    {OTP_TTL_MINUTES} minutes.
+                </p>
+
+                <p>
+                    Please do not share this code with anyone.
+                </p>
+            """
+        }
+
+        email = resend.Emails.send(params)
+
+        print(
+            f"[EMAIL SUCCESS] OTP sent to {to_email}: {email}"
+        )
 
         return True
 
     except Exception as exc:
-
         print(
             f"[EMAIL ERROR] "
             f"Could not send OTP to "
@@ -340,8 +341,6 @@ def send_otp_email(
         )
 
         return False
-
-
 # ============================================================
 # GENERATE OTP
 # ============================================================
