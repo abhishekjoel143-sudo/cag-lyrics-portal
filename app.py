@@ -469,11 +469,13 @@ def welcome():
 
 @app.route("/robots.txt")
 def robots_txt():
-
-    return send_from_directory(
-        app.static_folder,
-        "robots.txt"
-    )
+    return (
+        "User-agent: *\n"
+        "Allow: /\n\n"
+        "Sitemap: https://cag-lyrics-portal.onrender.com/sitemap.xml\n"
+    ), 200, {
+        "Content-Type": "text/plain; charset=utf-8"
+    }
 
 # ============================================================
 # SITEMAP.XML
