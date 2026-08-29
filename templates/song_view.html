@@ -1,4 +1,4 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 
 {% block title %}{{ song.title }}{% endblock %}
 
@@ -12,11 +12,11 @@
       <h2>{{ song.title }}</h2>
     </div>
 
-
+```
 <a class="btn btn-link" href="{{ url_for('song_list') }}">
   &larr; Back to Search
 </a>
-
+```
 
   </div>
 
@@ -30,11 +30,11 @@
     </form>
   </div>
 
-  <!-- Language Selection -->
+  <!-- Language Selection + Zoom Controls -->
 
   <div class="lang-toggle">
 
-
+```
 <a
   href="{{ url_for('song_view', song_id=song.id, lang='kannada') }}"
   class="btn {{ 'btn-primary' if lang == 'kannada' else 'btn-secondary' }}">
@@ -44,30 +44,130 @@
 <a
   href="{{ url_for('song_view', song_id=song.id, lang='english') }}"
   class="btn {{ 'btn-primary' if lang == 'english' else 'btn-secondary' }}">
-  English 
+  English
 </a>
 
+<a
+  href="{{ url_for('song_view', song_id=song.id, lang='both') }}"
+  class="btn {{ 'btn-primary' if lang == 'both' else 'btn-secondary' }}">
+  Both
+</a>
+
+<!-- Zoom Controls -->
+
+<button
+  type="button"
+  class="btn btn-secondary"
+  onclick="zoomOut()"
+  title="Zoom Out">
+  −
+</button>
+
+<button
+  type="button"
+  class="btn btn-secondary"
+  onclick="zoomIn()"
+  title="Zoom In">
+  +
+</button>
+```
 
   </div>
 
   <!-- Lyrics -->
 
-  <div class="lyrics-box">
+  <div class="lyrics-box" id="lyricsBox">
 
-
+```
 {% if lang == 'english' %}
+
+  <!-- English Lyrics -->
 
   <pre class="lyrics-text">{{ song.english_text }}</pre>
 
+{% elif lang == 'both' %}
+
+  <!-- Kannada Lyrics -->
+
+  <div class="lyrics-section">
+
+    <h3 class="lyrics-language-title">ಕನ್ನಡ</h3>
+
+    <pre class="lyrics-text lyrics-kannada">{{ song.kannada_text }}</pre>
+
+  </div>
+
+  <hr class="lyrics-divider">
+
+  <!-- English Lyrics -->
+
+  <div class="lyrics-section">
+
+    <h3 class="lyrics-language-title">English</h3>
+
+    <pre class="lyrics-text">{{ song.english_text }}</pre>
+
+  </div>
+
 {% else %}
+
+  <!-- Kannada Lyrics -->
 
   <pre class="lyrics-text lyrics-kannada">{{ song.kannada_text }}</pre>
 
 {% endif %}
-
+```
 
   </div>
 
 </div>
+
+<!-- Zoom JavaScript -->
+
+<script>
+
+  let currentZoom = 100;
+
+  const MIN_ZOOM = 70;
+  const MAX_ZOOM = 200;
+  const ZOOM_STEP = 10;
+
+  function updateZoom() {
+
+    const lyrics = document.querySelectorAll(".lyrics-text");
+
+    lyrics.forEach(function(element) {
+
+      element.style.fontSize = currentZoom + "%";
+
+    });
+
+  }
+
+  function zoomIn() {
+
+    if (currentZoom < MAX_ZOOM) {
+
+      currentZoom += ZOOM_STEP;
+
+      updateZoom();
+
+    }
+
+  }
+
+  function zoomOut() {
+
+    if (currentZoom > MIN_ZOOM) {
+
+      currentZoom -= ZOOM_STEP;
+
+      updateZoom();
+
+    }
+
+  }
+
+</script>
 
 {% endblock %}
