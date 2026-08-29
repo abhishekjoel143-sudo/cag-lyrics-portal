@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 
 {% block title %}Listed Songs - CAG Lyrics{% endblock %}
@@ -6,103 +7,191 @@
 
 <section class="songs-page">
 
-  <div class="page-heading">
+  <!-- PAGE TITLE -->
 
+  <div class="listed-page-heading">
 
-<div>
-  <h1>Listed Songs</h1>
-  <p>Your personal saved songs</p>
-</div>
+    <h1>Listed Songs</h1>
 
-<a
-  href="{{ url_for('song_list') }}"
-  class="btn"
->
-  Back to Songs
-</a>
-
+    <p>Your personal saved songs</p>
 
   </div>
 
-{% if listed_songs %}
+
+  <!-- BACK TO SONGS -->
+
+  <div class="listed-back-button">
+
+    <a
+      href="{{ url_for('song_list') }}"
+      class="btn btn-secondary"
+    >
+      &larr; Back to Songs
+    </a>
+
+  </div>
 
 
-<div class="song-grid">
+  <!-- SONG LIST -->
 
-  {% for item in listed_songs %}
+  {% if listed_songs %}
 
-    <div class="song-card">
+    <div class="song-grid">
 
-      <div class="song-card-content">
+      {% for item in listed_songs %}
 
-        <h3>
-          {{ item.song.title }}
-        </h3>
+        <div class="song-card">
 
-        <p class="song-added">
-          Added to your list
-        </p>
+          <div class="song-card-content">
 
-      </div>
+<a
+  href="{{ url_for('song_view', song_id=item.song.id, from_listed='1') }}"
+  class="listed-song-title"
+>
+  {{ item.song.title }}
+</a>
 
+            <p class="song-added">
+              Added to your list
+            </p>
 
-      <div class="song-actions">
-
-        <a
-          href="{{ url_for('song_view', song_id=item.song.id) }}"
-          class="btn"
-        >
-          Open Song
-        </a>
+          </div>
 
 
-        <form
-          method="POST"
-          action="{{ url_for('delete_listed_song', listed_id=item.id) }}"
-          onsubmit="return confirm('Remove this song from your list?');"
-        >
+          <div class="song-actions">
 
-          <button
-            type="submit"
-            class="btn btn-danger"
-          >
-            Remove
-          </button>
+            <!-- OPEN SONG -->
 
-        </form>
+            <a
+              href="{{ url_for('song_view', song_id=item.song.id, from_listed='1') }}"
+              class="btn btn-primary"
+            >
+              Open Song
+            </a>
 
-      </div>
+
+            <!-- REMOVE -->
+
+            <form
+              method="POST"
+              action="{{ url_for('delete_listed_song', listed_id=item.id) }}"
+              onsubmit="return confirm('Remove this song from your list?');"
+            >
+
+              <button
+                type="submit"
+                class="btn btn-danger"
+              >
+                Remove
+              </button>
+
+            </form>
+
+          </div>
+
+        </div>
+
+      {% endfor %}
 
     </div>
 
-  {% endfor %}
 
-</div>
+  {% else %}
 
+    <!-- EMPTY LIST -->
 
-{% else %}
+    <div class="empty-state">
 
+      <h2>No Listed Songs Yet</h2>
 
-<div class="empty-state">
+      <p>
+        You haven't added any songs to your list.
+      </p>
 
-  <h2>No Listed Songs Yet</h2>
+      <a
+        href="{{ url_for('song_list') }}"
+        class="btn btn-primary"
+      >
+        Find Songs
+      </a>
 
-  <p>
-    You haven't added any songs to your list.
-  </p>
+    </div>
 
-  <a
-    href="{{ url_for('song_list') }}"
-    class="btn"
-  >
-    Find Songs
-  </a>
-
-</div>
-
-
-{% endif %}
+  {% endif %}
 
 </section>
+
+
+<!-- LISTED SONGS PAGE STYLE -->
+
+<style>
+
+  .listed-page-heading {
+
+    text-align: center;
+
+    margin-bottom: 10px;
+
+  }
+
+
+  .listed-page-heading h1 {
+
+    font-size: 34px;
+
+    margin-top: 10px;
+
+    margin-bottom: 8px;
+
+  }
+
+
+  .listed-page-heading p {
+
+    font-size: 20px;
+
+    margin-top: 0;
+
+    margin-bottom: 25px;
+
+  }
+
+
+  .listed-back-button {
+
+    display: flex;
+
+    justify-content: flex-start;
+
+    margin-bottom: 25px;
+
+  }
+
+
+  .listed-back-button .btn {
+
+    text-decoration: none;
+
+  }
+
+
+  @media (max-width: 768px) {
+
+    .listed-page-heading h1 {
+
+      font-size: 28px;
+
+    }
+
+
+    .listed-page-heading p {
+
+      font-size: 18px;
+
+    }
+
+  }
+
+</style>
 
 {% endblock %}

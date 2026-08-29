@@ -1027,13 +1027,17 @@ def song_view(song_id):
         "kannada"
     )
 
+    from_listed = request.args.get(
+        "from_listed",
+        "0"
+    ) == "1"
+
     return render_template(
         "song_view.html",
         song=song,
-        lang=lang
+        lang=lang,
+        from_listed=from_listed
     )
-
-
 # ============================================================
 # SONG SEARCH API
 # ============================================================

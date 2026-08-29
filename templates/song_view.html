@@ -6,90 +6,163 @@
 
 <div class="song-view-screen">
 
+  <!-- =====================================================
+       SONG HEADER
+  ====================================================== -->
+
   <div class="song-view-header">
-    <div>
-      <p class="eyebrow">Song Lyrics</p>
-      <h2>{{ song.title }}</h2>
-    </div>
 
 
-<a class="btn btn-link" href="{{ url_for('song_list') }}">
-  &larr; Back to Search
-</a>
+<div>
+
+  <p class="eyebrow">
+    Song Lyrics
+  </p>
+
+  <h2>
+    {{ song.title }}
+  </h2>
+
+</div>
 
 
   </div>
 
-  <!-- Add to Listed Songs -->
+  <!-- =====================================================
+       ADD TO LISTED SONGS
+  ====================================================== -->
 
   <div class="listed-song-action">
-    <form method="POST" action="{{ url_for('add_to_list', song_id=song.id) }}">
-      <button type="submit" class="btn btn-primary">
-        Add to Listed Songs
-      </button>
-    </form>
+
+
+<form
+  method="POST"
+  action="{{ url_for('add_to_list', song_id=song.id) }}"
+>
+
+  <button
+    type="submit"
+    class="btn btn-primary"
+  >
+    Add to Listed Songs
+  </button>
+
+</form>
+
+
   </div>
 
-  <!-- Language and Zoom Controls -->
+  <!-- =====================================================
+       LANGUAGE + ZOOM CONTROLS
+  ====================================================== -->
 
   <div class="lang-toggle">
 
 
+<!-- Kannada -->
+
 <a
-  href="{{ url_for('song_view', song_id=song.id, lang='kannada') }}"
-  class="btn {{ 'btn-primary' if lang == 'kannada' else 'btn-secondary' }}">
+  href="{{ url_for(
+    'song_view',
+    song_id=song.id,
+    lang='kannada',
+    from_listed='1' if from_listed else '0'
+  ) }}"
+  class="btn {{ 'btn-primary' if lang == 'kannada' else 'btn-secondary' }}"
+>
   ಕನ್ನಡ
 </a>
 
+
+<!-- English -->
+
 <a
-  href="{{ url_for('song_view', song_id=song.id, lang='english') }}"
-  class="btn {{ 'btn-primary' if lang == 'english' else 'btn-secondary' }}">
+  href="{{ url_for(
+    'song_view',
+    song_id=song.id,
+    lang='english',
+    from_listed='1' if from_listed else '0'
+  ) }}"
+  class="btn {{ 'btn-primary' if lang == 'english' else 'btn-secondary' }}"
+>
   English
 </a>
 
+
+<!-- Both -->
+
 <a
-  href="{{ url_for('song_view', song_id=song.id, lang='both') }}"
-  class="btn {{ 'btn-primary' if lang == 'both' else 'btn-secondary' }}">
+  href="{{ url_for(
+    'song_view',
+    song_id=song.id,
+    lang='both',
+    from_listed='1' if from_listed else '0'
+  ) }}"
+  class="btn {{ 'btn-primary' if lang == 'both' else 'btn-secondary' }}"
+>
   Both
 </a>
 
-<button
-  type="button"
-  class="btn btn-secondary"
-  onclick="zoomOut()"
-  title="Zoom Out">
-  -
-</button>
+
+<!-- Zoom Out -->
 
 <button
   type="button"
-  class="btn btn-secondary"
+  class="btn btn-secondary zoom-button"
+  onclick="zoomOut()"
+  title="Zoom Out"
+>
+  −
+</button>
+
+
+<!-- Zoom In -->
+
+<button
+  type="button"
+  class="btn btn-secondary zoom-button"
   onclick="zoomIn()"
-  title="Zoom In">
+  title="Zoom In"
+>
   +
 </button>
 
 
   </div>
 
-  <!-- Lyrics -->
+  <!-- =====================================================
+       LYRICS
+  ====================================================== -->
 
-  <div class="lyrics-box" id="lyricsBox">
+  <div
+    class="lyrics-box"
+    id="lyricsBox"
+  >
 
 
 {% if lang == 'english' %}
 
   <!-- English Only -->
 
-  <pre class="lyrics-text">{{ song.english_text }}</pre>
+  <div class="single-lyrics-section">
+
+    <h3 class="lyrics-language-title">
+      English
+    </h3>
+
+    <pre class="lyrics-text">{{ song.english_text }}</pre>
+
+  </div>
+
 
 {% elif lang == 'both' %}
 
-  <!-- BOTH: Kannada Left + English Right -->
+  <!-- Kannada + English -->
 
   <div class="both-lyrics-container">
 
-    <!-- Kannada - LEFT -->
+
+    <!-- Kannada LEFT -->
 
     <div class="both-lyrics-column">
 
@@ -97,11 +170,14 @@
         ಕನ್ನಡ
       </h3>
 
-      <pre class="lyrics-text lyrics-kannada">{{ song.kannada_text }}</pre>
+      <pre
+        class="lyrics-text lyrics-kannada"
+      >{{ song.kannada_text }}</pre>
 
     </div>
 
-    <!-- English - RIGHT -->
+
+    <!-- English RIGHT -->
 
     <div class="both-lyrics-column">
 
@@ -109,26 +185,86 @@
         English
       </h3>
 
-      <pre class="lyrics-text">{{ song.english_text }}</pre>
+      <pre
+        class="lyrics-text"
+      >{{ song.english_text }}</pre>
 
     </div>
 
   </div>
 
+
 {% else %}
 
   <!-- Kannada Only -->
 
-  <pre class="lyrics-text lyrics-kannada">{{ song.kannada_text }}</pre>
+  <div class="single-lyrics-section">
+
+    <h3 class="lyrics-language-title">
+      ಕನ್ನಡ
+    </h3>
+
+    <pre
+      class="lyrics-text lyrics-kannada"
+    >{{ song.kannada_text }}</pre>
+
+  </div>
 
 {% endif %}
 
 
   </div>
 
+  <!-- =====================================================
+       BOTTOM NAVIGATION
+  ====================================================== -->
+
+  <div class="song-bottom-actions">
+
+
+<!-- LEFT: BACK -->
+
+<div class="song-bottom-left">
+
+  <a
+    href="{{ url_for('listed_songs') if from_listed else url_for('song_list') }}"
+    class="btn btn-secondary"
+  >
+    &larr; Back
+  </a>
+
 </div>
 
-<!-- Zoom JavaScript -->
+
+<!-- RIGHT: LISTED SONGS + LOGOUT -->
+
+<div class="song-bottom-right">
+
+  <a
+    href="{{ url_for('listed_songs') }}"
+    class="btn btn-primary"
+  >
+    Listed Songs
+  </a>
+
+
+  <a
+    href="{{ url_for('logout') }}"
+    class="btn btn-secondary"
+  >
+    Logout
+  </a>
+
+</div>
+
+
+  </div>
+
+</div>
+
+<!-- =====================================================
+     ZOOM JAVASCRIPT
+====================================================== -->
 
 <script>
 
@@ -138,17 +274,22 @@
   const MAX_ZOOM = 200;
   const ZOOM_STEP = 10;
 
+
   function updateZoom() {
 
-    const lyrics = document.querySelectorAll(".lyrics-text");
+    const lyrics = document.querySelectorAll(
+      ".lyrics-text"
+    );
 
     lyrics.forEach(function(element) {
 
-      element.style.fontSize = currentZoom + "%";
+      element.style.fontSize =
+        currentZoom + "%";
 
     });
 
   }
+
 
   function zoomIn() {
 
@@ -161,6 +302,7 @@
     }
 
   }
+
 
   function zoomOut() {
 
@@ -176,9 +318,15 @@
 
 </script>
 
-<!-- Both Lyrics Layout CSS -->
+<!-- =====================================================
+     BOTH LYRICS LAYOUT
+====================================================== -->
 
 <style>
+
+  /* =====================================================
+     BOTH LYRICS CONTAINER
+  ====================================================== */
 
   .both-lyrics-container {
 
@@ -186,14 +334,20 @@
 
     grid-template-columns: 1fr 1fr;
 
-    gap: 0;
-
     width: 100%;
+
+    gap: 0;
 
   }
 
 
+  /* =====================================================
+     LANGUAGE COLUMNS
+  ====================================================== */
+
   .both-lyrics-column {
+
+    min-width: 0;
 
     padding: 20px;
 
@@ -204,6 +358,10 @@
   }
 
 
+  /* =====================================================
+     VERTICAL LINE
+  ====================================================== */
+
   .both-lyrics-column:first-child {
 
     border-right: 2px solid #ddd;
@@ -211,9 +369,15 @@
   }
 
 
+  /* =====================================================
+     LANGUAGE TITLE
+  ====================================================== */
+
   .lyrics-language-title {
 
     text-align: center;
+
+    margin-top: 0;
 
     margin-bottom: 15px;
 
@@ -224,23 +388,106 @@
   }
 
 
+  /* =====================================================
+     LYRICS TEXT
+  ====================================================== */
+
   .both-lyrics-column .lyrics-text {
 
     width: 100%;
 
     box-sizing: border-box;
 
-  }
-
-
-  .lyrics-divider {
-
-    display: none;
+    margin: 0;
 
   }
 
 
-  /* Mobile */
+  .single-lyrics-section {
+
+    width: 100%;
+
+  }
+
+
+  /* =====================================================
+     BOTTOM NAVIGATION
+  ====================================================== */
+
+  .song-bottom-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-top: 30px;
+
+    margin-bottom: 30px;
+
+    width: 100%;
+
+  }
+
+
+  /* LEFT BACK BUTTON */
+
+  .song-bottom-left {
+
+    display: flex;
+
+    align-items: center;
+
+  }
+
+
+  /* RIGHT BUTTONS */
+
+  .song-bottom-right {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+  }
+
+
+  /* BUTTON SIZE */
+
+  .song-bottom-actions .btn {
+
+    min-width: 130px;
+
+    text-align: center;
+
+    text-decoration: none;
+
+  }
+
+
+  /* =====================================================
+     ZOOM BUTTONS
+  ====================================================== */
+
+  .zoom-button {
+
+    min-width: 45px !important;
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+  }
+
+
+  /* =====================================================
+     MOBILE
+  ====================================================== */
 
   @media (max-width: 768px) {
 
@@ -250,11 +497,53 @@
 
     }
 
+
+    .both-lyrics-column {
+
+      width: 100%;
+
+    }
+
+
     .both-lyrics-column:first-child {
 
       border-right: none;
 
       border-bottom: 2px solid #ddd;
+
+    }
+
+
+    .song-bottom-actions {
+
+      flex-direction: column;
+
+      align-items: stretch;
+
+      gap: 15px;
+
+    }
+
+
+    .song-bottom-left {
+
+      justify-content: flex-start;
+
+    }
+
+
+    .song-bottom-right {
+
+      justify-content: center;
+
+      gap: 12px;
+
+    }
+
+
+    .song-bottom-actions .btn {
+
+      min-width: 110px;
 
     }
 
