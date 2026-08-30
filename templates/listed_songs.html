@@ -1,197 +1,150 @@
-
-{% extends "base.html" %}
-
-{% block title %}Listed Songs - CAG Lyrics{% endblock %}
-
-{% block content %}
-
-<section class="songs-page">
-
-  <!-- PAGE TITLE -->
-
-  <div class="listed-page-heading">
-
-    <h1>Listed Songs</h1>
-
-    <p>Your personal saved songs</p>
-
-  </div>
-
-
-  <!-- BACK TO SONGS -->
-
-  <div class="listed-back-button">
-
-    <a
-      href="{{ url_for('song_list') }}"
-      class="btn btn-secondary"
-    >
-      &larr; Back to Songs
-    </a>
-
-  </div>
-
-
-  <!-- SONG LIST -->
-
-  {% if listed_songs %}
-
-    <div class="song-grid">
-
-      {% for item in listed_songs %}
-
-        <div class="song-card">
-
-          <div class="song-card-content">
-
-<a
-  href="{{ url_for('song_view', song_id=item.song.id, from_listed='1') }}"
-  class="listed-song-title"
->
-  {{ item.song.title }}
-</a>
-
-            <p class="song-added">
-              Added to your list
-            </p>
-
-          </div>
-
-
-          <div class="song-actions">
-
-            <!-- OPEN SONG -->
-
-            <a
-              href="{{ url_for('song_view', song_id=item.song.id, from_listed='1') }}"
-              class="btn btn-primary"
-            >
-              Open Song
-            </a>
-
-
-            <!-- REMOVE -->
-
-            <form
-              method="POST"
-              action="{{ url_for('delete_listed_song', listed_id=item.id) }}"
-              onsubmit="return confirm('Remove this song from your list?');"
-            >
-
-              <button
-                type="submit"
-                class="btn btn-danger"
-              >
-                Remove
-              </button>
-
-            </form>
-
-          </div>
-
-        </div>
-
-      {% endfor %}
-
-    </div>
-
-
-  {% else %}
-
-    <!-- EMPTY LIST -->
-
-    <div class="empty-state">
-
-      <h2>No Listed Songs Yet</h2>
-
-      <p>
-        You haven't added any songs to your list.
-      </p>
-
-      <a
-        href="{{ url_for('song_list') }}"
-        class="btn btn-primary"
-      >
-        Find Songs
-      </a>
-
-    </div>
-
-  {% endif %}
-
-</section>
-
-
-<!-- LISTED SONGS PAGE STYLE -->
-
 <style>
 
+  /* ================================
+     LISTED SONGS PAGE
+     ================================ */
+
   .listed-page-heading {
-
     text-align: center;
-
     margin-bottom: 10px;
-
   }
-
 
   .listed-page-heading h1 {
-
     font-size: 34px;
-
     margin-top: 10px;
-
     margin-bottom: 8px;
-
   }
-
 
   .listed-page-heading p {
-
     font-size: 20px;
-
     margin-top: 0;
-
     margin-bottom: 25px;
-
   }
 
-
+  /* Back button */
   .listed-back-button {
-
     display: flex;
-
     justify-content: flex-start;
-
     margin-bottom: 25px;
-
   }
-
 
   .listed-back-button .btn {
-
     text-decoration: none;
+  }
+
+  /* ================================
+     FIX SONG GRID
+     ================================ */
+
+  .songs-page .song-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 20px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+  }
+
+  /* ================================
+     FIX SONG CARDS
+     ================================ */
+
+  .songs-page .song-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+  }
+
+  .songs-page .song-card-content {
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+  }
+
+  /* Song title */
+  .songs-page .listed-song-title {
+    display: block;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  /* ================================
+     BUTTONS
+     ================================ */
+
+  .songs-page .song-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .songs-page .song-actions form {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .songs-page .song-actions .btn {
+    white-space: nowrap;
+  }
+
+  /* ================================
+     TABLET
+     ================================ */
+
+  @media (max-width: 1000px) {
+
+    .songs-page .song-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
 
   }
 
+  /* ================================
+     MOBILE
+     ================================ */
 
-  @media (max-width: 768px) {
+  @media (max-width: 700px) {
 
-    .listed-page-heading h1 {
-
-      font-size: 28px;
-
+    .songs-page .song-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     }
 
+  }
+
+  @media (max-width: 480px) {
+
+    .songs-page .song-grid {
+      grid-template-columns: 1fr !important;
+    }
+
+    .listed-page-heading h1 {
+      font-size: 28px;
+    }
 
     .listed-page-heading p {
-
       font-size: 18px;
+    }
 
+    .songs-page .song-actions {
+      flex-direction: column !important;
+    }
+
+    .songs-page .song-actions .btn {
+      width: 100%;
+      box-sizing: border-box;
+      text-align: center;
     }
 
   }
 
 </style>
-
-{% endblock %}
