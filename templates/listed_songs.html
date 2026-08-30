@@ -1,150 +1,87 @@
-<style>
+{% extends "base.html" %}
 
-  /* ================================
-     LISTED SONGS PAGE
-     ================================ */
+{% block title %}Listed Songs - CAG Lyrics{% endblock %}
 
-  .listed-page-heading {
-    text-align: center;
-    margin-bottom: 10px;
-  }
+{% block content %}
 
-  .listed-page-heading h1 {
-    font-size: 34px;
-    margin-top: 10px;
-    margin-bottom: 8px;
-  }
+<section class="songs-page">
 
-  .listed-page-heading p {
-    font-size: 20px;
-    margin-top: 0;
-    margin-bottom: 25px;
-  }
+  <div class="listed-page-heading">
+    <h1>Listed Songs</h1>
+    <p>Your personal saved songs</p>
+  </div>
 
-  /* Back button */
-  .listed-back-button {
-    display: flex;
-    justify-content: flex-start;
-    margin-bottom: 25px;
-  }
+  <div class="listed-back-button">
+    <a href="{{ url_for('songs') }}" class="btn btn-secondary">
+      &larr; Back to Songs
+    </a>
+  </div>
 
-  .listed-back-button .btn {
-    text-decoration: none;
-  }
+{% if listed_songs %}
 
-  /* ================================
-     FIX SONG GRID
-     ================================ */
 
-  .songs-page .song-grid {
-    display: grid !important;
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-    gap: 20px !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    box-sizing: border-box !important;
-    overflow: visible !important;
-  }
+<div class="songs-grid">
 
-  /* ================================
-     FIX SONG CARDS
-     ================================ */
+  {% for listed in listed_songs %}
 
-  .songs-page .song-card {
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: none !important;
-    box-sizing: border-box !important;
-    margin: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
-  }
+    <div class="song-card">
 
-  .songs-page .song-card-content {
-    min-width: 0 !important;
-    overflow-wrap: anywhere !important;
-    word-break: break-word !important;
-  }
+      <h3>{{ listed.song.title }}</h3>
 
-  /* Song title */
-  .songs-page .listed-song-title {
-    display: block;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-  }
+      <div class="song-card-actions">
 
-  /* ================================
-     BUTTONS
-     ================================ */
+        <a
+          href="{{ url_for('song_view', song_id=listed.song.id) }}"
+          class="btn btn-primary"
+        >
+          View Song
+        </a>
 
-  .songs-page .song-actions {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 10px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
+        <form
+          method="POST"
+          action="{{ url_for('delete_listed_song', listed_id=listed.id) }}"
+          style="display:inline;"
+        >
+          <button
+            type="submit"
+            class="btn btn-danger"
+          >
+            Remove
+          </button>
+        </form>
 
-  .songs-page .song-actions form {
-    margin: 0 !important;
-    padding: 0 !important;
-  }
+      </div>
 
-  .songs-page .song-actions .btn {
-    white-space: nowrap;
-  }
+    </div>
 
-  /* ================================
-     TABLET
-     ================================ */
+  {% endfor %}
 
-  @media (max-width: 1000px) {
+</div>
 
-    .songs-page .song-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    }
 
-  }
+{% else %}
 
-  /* ================================
-     MOBILE
-     ================================ */
 
-  @media (max-width: 700px) {
+<div class="empty-state">
 
-    .songs-page .song-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    }
+  <h2>No Listed Songs</h2>
 
-  }
+  <p>
+    You have not added any songs to your list yet.
+  </p>
 
-  @media (max-width: 480px) {
+  <a
+    href="{{ url_for('songs') }}"
+    class="btn btn-primary"
+  >
+    Browse Songs
+  </a>
 
-    .songs-page .song-grid {
-      grid-template-columns: 1fr !important;
-    }
+</div>
 
-    .listed-page-heading h1 {
-      font-size: 28px;
-    }
 
-    .listed-page-heading p {
-      font-size: 18px;
-    }
+{% endif %}
 
-    .songs-page .song-actions {
-      flex-direction: column !important;
-    }
+</section>
 
-    .songs-page .song-actions .btn {
-      width: 100%;
-      box-sizing: border-box;
-      text-align: center;
-    }
-
-  }
-
-</style>
+{% endblock %}
