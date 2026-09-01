@@ -1006,3 +1006,340 @@ min-width: 75px;
 }
 
 }
+
+
+/* ============================================================
+   CAG LYRICS PORTAL - DARK / LIGHT THEME
+   ============================================================ */
+
+/* Smooth theme transition */
+body,
+.page,
+.topbar,
+button,
+input,
+textarea,
+select,
+.song-card,
+.song-item,
+.card,
+.admin-card,
+.user-badge,
+.flash {
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+
+/* ============================================================
+   THEME TOGGLE BUTTON
+   ============================================================ */
+
+.theme-toggle {
+  border: none;
+  border-radius: 22px;
+  padding: 9px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #222;
+  color: #fff;
+  margin-left: auto;
+}
+
+.theme-toggle:hover {
+  opacity: 0.85;
+}
+
+
+/* ============================================================
+
+/* =========================================================
+   CAG LYRICS PORTAL
+   DARK THEME - FINAL
+   ========================================================= */
+
+body.dark-theme {
+  background: #121212 !important;
+  color: #f5f5f5 !important;
+}
+
+body.dark-theme .page {
+  background: #121212 !important;
+  color: #f5f5f5 !important;
+}
+
+/* HEADER */
+
+body.dark-theme .topbar {
+  background: #1b1b1b !important;
+  color: #ffffff !important;
+  border-color: #333333 !important;
+}
+
+body.dark-theme .brand {
+  color: #ffffff !important;
+}
+
+/* GENERAL TEXT */
+
+body.dark-theme h1,
+body.dark-theme h2,
+body.dark-theme h3,
+body.dark-theme h4,
+body.dark-theme h5,
+body.dark-theme h6,
+body.dark-theme p,
+body.dark-theme span,
+body.dark-theme label,
+body.dark-theme strong,
+body.dark-theme li {
+  color: #f5f5f5 !important;
+}
+
+/* AUTH */
+
+body.dark-theme .auth-screen {
+  background: #121212 !important;
+  color: #ffffff !important;
+}
+
+body.dark-theme .auth-card {
+  background: #1e1e1e !important;
+  color: #ffffff !important;
+  border-color: #333333 !important;
+}
+
+body.dark-theme .auth-card h1,
+body.dark-theme .auth-card h2,
+body.dark-theme .auth-card h3,
+body.dark-theme .auth-card p,
+body.dark-theme .auth-card label,
+body.dark-theme .auth-card span {
+  color: #ffffff !important;
+}
+
+body.dark-theme .auth-card .subtitle,
+body.dark-theme .auth-footer {
+  color: #cccccc !important;
+}
+
+body.dark-theme .auth-footer a {
+  color: #8ab4f8 !important;
+}
+
+/* INPUTS */
+
+body.dark-theme input,
+body.dark-theme textarea,
+body.dark-theme select {
+  background: #2a2a2a !important;
+  color: #ffffff !important;
+  border: 1px solid #555555 !important;
+}
+
+body.dark-theme input::placeholder,
+body.dark-theme textarea::placeholder {
+  color: #aaaaaa !important;
+}
+
+/* SEARCH */
+
+body.dark-theme .search-hero h1,
+body.dark-theme .search-hero p {
+  color: #ffffff !important;
+}
+
+/* SONG LIST */
+
+body.dark-theme .songs-page,
+body.dark-theme .songs-page h1,
+body.dark-theme .songs-page h2,
+body.dark-theme .songs-page h3,
+body.dark-theme .songs-page p,
+body.dark-theme .songs-page label {
+  color: #ffffff !important;
+}
+
+body.dark-theme .song-card,
+body.dark-theme .song-item,
+body.dark-theme .card,
+body.dark-theme .admin-card,
+body.dark-theme .form-card {
+  background: #1e1e1e !important;
+  color: #f5f5f5 !important;
+  border-color: #333333 !important;
+}
+
+/* SONG VIEW */
+
+body.dark-theme .song-view-screen,
+body.dark-theme .song-view,
+body.dark-theme .song-content,
+body.dark-theme .song-details {
+  background: #121212 !important;
+  color: #ffffff !important;
+}
+
+body.dark-theme .song-view-header,
+body.dark-theme .song-view-header h1,
+body.dark-theme .song-view-header h2,
+body.dark-theme .song-view-header h3,
+body.dark-theme .song-view-header p,
+body.dark-theme .song-view-header span {
+  color: #ffffff !important;
+}
+
+body.dark-theme .eyebrow {
+  color: #bbbbbb !important;
+}
+
+/* LYRICS */
+
+body.dark-theme .lyrics,
+body.dark-theme .lyrics-container,
+body.dark-theme .lyrics-content,
+body.dark-theme .kannada-lyrics,
+body.dark-theme .english-lyrics,
+body.dark-theme .song-lyrics,
+body.dark-theme .lyrics-text,
+body.dark-theme .lyrics-kannada {
+  background: #1e1e1e !important;
+  color: #ffffff !important;
+}
+
+body.dark-theme pre,
+body.dark-theme pre.lyrics-text {
+  background: #1e1e1e !important;
+  color: #ffffff !important;
+  border-color: #333333 !important;
+}
+
+body.dark-theme .lyrics-language-title {
+  color: #ffffff !important;
+}
+
+/* BOTH LYRICS */
+
+body.dark-theme .both-lyrics-container {
+  background: #121212 !important;
+}
+
+body.dark-theme .both-lyrics-column {
+  background: #121212 !important;
+  color: #ffffff !important;
+}
+
+body.dark-theme .both-lyrics-column:first-child {
+  border-right-color: #444444 !important;
+}
+
+/* SINGLE LYRICS */
+
+body.dark-theme .single-lyrics-section {
+  background: #121212 !important;
+  color: #ffffff !important;
+}
+
+/* LISTED SONGS */
+
+body.dark-theme .listed-page-heading,
+body.dark-theme .listed-page-heading h1,
+body.dark-theme .listed-page-heading p {
+  color: #ffffff !important;
+}
+
+/* USER BADGE */
+
+body.dark-theme .user-badge {
+  background: #2a2a2a !important;
+  color: #ffffff !important;
+  border-color: #444444 !important;
+}
+
+body.dark-theme .user-badge span,
+body.dark-theme .user-badge strong {
+  color: #ffffff !important;
+}
+
+/* FLASH */
+
+body.dark-theme .flash {
+  color: #ffffff !important;
+  background: #292929 !important;
+  border-color: #444444 !important;
+}
+
+/* LINKS */
+
+body.dark-theme a {
+  color: #8ab4f8 !important;
+}
+
+body.dark-theme a:hover {
+  color: #aecbfa !important;
+}
+
+/* BUTTONS */
+
+body.dark-theme button,
+body.dark-theme .btn,
+body.dark-theme .button {
+  color: #ffffff;
+}
+
+body.dark-theme .btn-secondary {
+  background: #333333 !important;
+  color: #ffffff !important;
+  border-color: #555555 !important;
+}
+
+body.dark-theme .btn-secondary:hover {
+  background: #444444 !important;
+}
+
+/* THEME BUTTON */
+
+body.dark-theme .theme-toggle {
+  background: #f5f5f5 !important;
+  color: #121212 !important;
+}
+
+/* TABLES */
+
+body.dark-theme table {
+  color: #ffffff !important;
+}
+
+body.dark-theme th,
+body.dark-theme td {
+  color: #ffffff !important;
+  border-color: #444444 !important;
+}
+
+/* SMALL TEXT */
+
+body.dark-theme small,
+body.dark-theme .small-text,
+body.dark-theme .subtitle,
+body.dark-theme .description {
+  color: #cccccc !important;
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+  body.dark-theme .auth-card {
+    background: #1e1e1e !important;
+  }
+
+  body.dark-theme pre.lyrics-text {
+    background: #1e1e1e !important;
+    color: #ffffff !important;
+  }
+
+}
+

@@ -1,3 +1,4 @@
+﻿
 <!DOCTYPE html>
 
 <html lang="en">
@@ -6,124 +7,114 @@
 
   <meta charset="UTF-8">
 
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
->
-<meta name="google-site-verification" content="_NhpfP3dnlfUk6Ebn3gcQ0pu84BEFoKzeETt9u8ELgU" />
+  <meta
+    name="google-site-verification"
+    content="_NhpfP3dnlfUk6Ebn3gcQ0pu84BEFoKzeETt9u8ELgU"
+  >
+
   <!-- =====================================================
        SEO INFORMATION
   ====================================================== -->
 
-<meta
-name="description"
-content="CAG Lyrics Portal is a Kannada Christian song lyrics website where you can find, read and sing Kannada Christian worship songs with Kannada and English lyrics."
+  <meta
+    name="description"
+    content="CAG Lyrics Portal is a Kannada Christian song lyrics website where you can find, read and sing Kannada Christian worship songs with Kannada and English lyrics."
+  >
 
->
+  <meta
+    name="keywords"
+    content="CAG Lyrics, CAG Lyrics Portal, Kannada Christian Songs, Kannada Christian Lyrics, Kannada Worship Songs, Christian Songs Kannada, CAG Songs, Kannada Gospel Songs, Kannada Praise and Worship"
+  >
 
-<meta
-name="keywords"
-content="CAG Lyrics, CAG Lyrics Portal, Kannada Christian Songs, Kannada Christian Lyrics, Kannada Worship Songs, Christian Songs Kannada, CAG Songs, Kannada Gospel Songs, Kannada Praise and Worship"
+  <meta
+    name="author"
+    content="CAG Lyrics Portal"
+  >
 
->
-
-<meta
-name="author"
-content="CAG Lyrics Portal"
-
->
-
-<meta
-name="robots"
-content="index, follow"
-
->
+  <meta
+    name="robots"
+    content="index, follow"
+  >
 
   <!-- =====================================================
        GOOGLE / SEARCH ENGINE INFORMATION
   ====================================================== -->
 
-<meta
-name="googlebot"
-content="index, follow"
-
->
+  <meta
+    name="googlebot"
+    content="index, follow"
+  >
 
   <!-- =====================================================
        CANONICAL URL
   ====================================================== -->
 
-{% if request.endpoint == 'welcome' %}
+  {% if request.endpoint == 'welcome' %}
 
-  <link
-    rel="canonical"
-    href="{{ request.url_root }}"
-  >
+    <link
+      rel="canonical"
+      href="{{ request.url_root }}"
+    >
 
-{% endif %}
+  {% endif %}
 
   <!-- =====================================================
        OPEN GRAPH / SOCIAL SHARING
   ====================================================== -->
 
-<meta
-property="og:title"
-content="CAG Lyrics Portal - Kannada Christian Lyrics"
+  <meta
+    property="og:title"
+    content="CAG Lyrics Portal - Kannada Christian Lyrics"
+  >
 
->
+  <meta
+    property="og:description"
+    content="Find and sing Kannada Christian worship songs with Kannada and English lyrics."
+  >
 
-<meta
-property="og:description"
-content="Find and sing Kannada Christian worship songs with Kannada and English lyrics."
+  <meta
+    property="og:type"
+    content="website"
+  >
 
->
+  <meta
+    property="og:url"
+    content="{{ request.url }}"
+  >
 
-<meta
-property="og:type"
-content="website"
-
->
-
-<meta
-property="og:url"
-content="{{ request.url }}"
-
->
-
-<meta
-property="og:image"
-content="{{ url_for('static', filename='cag-logo.png', _external=True) }}"
-
->
+  <meta
+    property="og:image"
+    content="{{ url_for('static', filename='cag-logo.png', _external=True) }}"
+  >
 
   <!-- =====================================================
        TWITTER / SOCIAL CARD
   ====================================================== -->
 
-<meta
-name="twitter:card"
-content="summary"
+  <meta
+    name="twitter:card"
+    content="summary"
+  >
 
->
+  <meta
+    name="twitter:title"
+    content="CAG Lyrics Portal - Kannada Christian Lyrics"
+  >
 
-<meta
-name="twitter:title"
-content="CAG Lyrics Portal - Kannada Christian Lyrics"
+  <meta
+    name="twitter:description"
+    content="Find and sing Kannada Christian worship songs with Kannada and English lyrics."
+  >
 
->
-
-<meta
-name="twitter:description"
-content="Find and sing Kannada Christian worship songs with Kannada and English lyrics."
-
->
-
-<meta
-name="twitter:image"
-content="{{ url_for('static', filename='cag-logo.png', _external=True) }}"
-
->
+  <meta
+    name="twitter:image"
+    content="{{ url_for('static', filename='cag-logo.png', _external=True) }}"
+  >
 
   <!-- =====================================================
        PAGE TITLE
@@ -156,105 +147,184 @@ content="{{ url_for('static', filename='cag-logo.png', _external=True) }}"
 
   <header class="topbar">
 
+    <!-- ===================================================
+         CAG BRAND
+    ==================================================== -->
 
-<!-- ===================================================
-     CAG BRAND
-==================================================== -->
+    <a
+      class="brand"
+      href="{{ url_for('welcome') }}"
+    >
 
-<a
-  class="brand"
-  href="{{ url_for('welcome') }}"
->
+      <img
+        src="{{ url_for('static', filename='cag-logo.png') }}"
+        alt="CAG Lyrics Portal Logo"
+      >
 
-  <img
-    src="{{ url_for('static', filename='cag-logo.png') }}"
-    alt="CAG Lyrics Portal Logo"
-  >
+      <span>
+        CAG Lyrics
+      </span>
 
-  <span>
-    CAG Lyrics
-  </span>
-
-</a>
-
-
-<!-- ===================================================
-     USER INFORMATION
-==================================================== -->
-
-{% if current_user %}
-
-  <div class="user-badge">
-
-    <span>
-
-      User ID:
-
-      <strong>
-        {{ current_user.id }}
-      </strong>
-
-    </span>
-
-    <span class="user-email">
-
-      {{ current_user.email }}
-
-    </span>
-
-  </div>
+    </a>
 
 
-{% elif is_admin %}
+    <!-- ===================================================
+         USER INFORMATION
+    ==================================================== -->
 
-  <div class="user-badge admin-badge">
+    {% if current_user %}
 
-    ADMIN
+      <div class="user-badge">
 
-  </div>
+        <span>
 
-{% endif %}
+          User ID:
+
+          <strong>
+            {{ current_user.id }}
+          </strong>
+
+        </span>
+
+        <span class="user-email">
+
+          {{ current_user.email }}
+
+        </span>
+
+      </div>
+
+
+    {% elif is_admin %}
+
+      <div class="user-badge admin-badge">
+
+        ADMIN
+
+      </div>
+
+    {% endif %}
+
+
+    <!-- ===================================================
+         THEME SWITCH
+    ==================================================== -->
+
+    <button
+      type="button"
+      id="theme-toggle"
+      class="theme-toggle"
+      aria-label="Switch theme"
+    >
+      Dark
+    </button>
 
 
   </header>
+
 
   <!-- =====================================================
        FLASH MESSAGES
   ====================================================== -->
 
-{% with messages = get_flashed_messages(with_categories=true) %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
 
+    {% if messages %}
 
-{% if messages %}
+      <div class="flash-wrap">
 
-  <div class="flash-wrap">
+        {% for category, message in messages %}
 
-    {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">
 
-      <div class="flash flash-{{ category }}">
+            {{ message }}
 
-        {{ message }}
+          </div>
+
+        {% endfor %}
 
       </div>
 
-    {% endfor %}
+    {% endif %}
 
-  </div>
+  {% endwith %}
 
-{% endif %}
-
-
-{% endwith %}
 
   <!-- =====================================================
        PAGE CONTENT
   ====================================================== -->
 
-{% block content %}
+  {% block content %}
 
-{% endblock %}
+  {% endblock %}
+
 
 </div>
+
+
+<!-- =====================================================
+     DARK / LIGHT THEME SCRIPT
+====================================================== -->
+
+<script>
+
+  const themeToggle =
+    document.getElementById("theme-toggle");
+
+  const savedTheme =
+    localStorage.getItem("cag-theme");
+
+  if (savedTheme === "dark") {
+
+    document.body.classList.add("dark-theme");
+
+    themeToggle.textContent = "Light";
+
+  } else {
+
+    themeToggle.textContent = "Dark";
+
+  }
+
+  themeToggle.addEventListener(
+    "click",
+    function () {
+
+      document.body.classList.toggle(
+        "dark-theme"
+      );
+
+      if (
+        document.body.classList.contains(
+          "dark-theme"
+        )
+      ) {
+
+        localStorage.setItem(
+          "cag-theme",
+          "dark"
+        );
+
+        themeToggle.textContent =
+          "Light";
+
+      } else {
+
+        localStorage.setItem(
+          "cag-theme",
+          "light"
+        );
+
+        themeToggle.textContent =
+          "Dark";
+
+      }
+
+    }
+  );
+
+</script>
+
 
 </body>
 
