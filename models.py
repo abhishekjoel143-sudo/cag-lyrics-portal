@@ -40,6 +40,9 @@ class Song(db.Model):
     original_filename = db.Column(db.String(255), nullable=True)
     uploaded_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    chords = db.Column(db.Text, nullable=True)
+    chord_key = db.Column(db.String(20), nullable=True)
+    chords_enabled = db.Column(db.Boolean, default=False, nullable=False)
 class ListedSong(db.Model):
     __tablename__ = "listed_songs"
 

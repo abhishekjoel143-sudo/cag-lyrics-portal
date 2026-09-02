@@ -795,6 +795,7 @@ def resend_otp():
 
 
 # ============================================================
+# ============================================================
 # USER LOGIN
 # ============================================================
 
@@ -806,8 +807,8 @@ def user_login():
 
     if request.method == "POST":
 
-        email = request.form.get(
-            "email",
+        username = request.form.get(
+            "username",
             ""
         ).strip().lower()
 
@@ -816,17 +817,12 @@ def user_login():
             ""
         )
 
-        user = User.query.filter_by(
-            email=email
-        ).first()
-
-        if (
-            not user
-            or not user.check_password(password)
-        ):
+        # Existing verified account is used.
+        # No email, OTP, or registration is required.
+        if username != "abhishek":
 
             flash(
-                "Incorrect email or password.",
+                "Incorrect username or password.",
                 "error"
             )
 
@@ -834,51 +830,23 @@ def user_login():
                 "login.html"
             )
 
-        if not user.is_verified:
+        user = db.session.get(
+            User,
+            1
+        )
 
-            code = generate_otp_code()
+        if (
+            not user
+            or not user.check_password(password)
+        ):
 
-            db.session.add(
-                OTP(
-                    email=email,
-                    code=code,
-                    purpose="register",
-                    expires_at=(
-                        datetime.utcnow()
-                        + timedelta(
-                            minutes=OTP_TTL_MINUTES
-                        )
-                    )
-                )
+            flash(
+                "Incorrect username or password.",
+                "error"
             )
 
-            db.session.commit()
-
-            sent = send_otp_email(
-                email,
-                code
-            )
-
-            session[
-                "pending_verification_email"
-            ] = email
-
-            if sent:
-
-                flash(
-                    "Please verify your email with the OTP.",
-                    "success"
-                )
-
-            else:
-
-                flash(
-                    "OTP email could not be sent.",
-                    "error"
-                )
-
-            return redirect(
-                url_for("verify_otp")
+            return render_template(
+                "login.html"
             )
 
         session["user_id"] = user.id
@@ -899,6 +867,8 @@ def user_login():
 
 # ============================================================
 # USER LOGOUT
+# ============================================================
+
 # ============================================================
 
 @app.route("/logout")
@@ -1863,6 +1833,19 @@ def admin_edit_song(song_id):
             "english_text",
             ""
         )
+        chords = request.form.get(
+            "chords",
+            ""
+        )
+
+        chord_key = request.form.get(
+            "chord_key",
+            ""
+        ).strip()
+
+        chords_enabled = request.form.get(
+            "chords_enabled"
+        ) == "on"
 
         if not title:
 
@@ -1879,6 +1862,9 @@ def admin_edit_song(song_id):
         song.title = title
         song.kannada_text = kannada_text
         song.english_text = english_text
+        song.chords = chords
+        song.chord_key = chord_key
+        song.chords_enabled = chords_enabled
 
         db.session.commit()
 
@@ -1951,4 +1937,5 @@ if __name__ == "__main__":
             )
         )
     )
+
 

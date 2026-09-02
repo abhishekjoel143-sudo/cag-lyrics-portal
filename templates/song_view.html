@@ -115,6 +115,61 @@
 
 
 <!-- =================================================
+     CHORDS CONTROL
+================================================== -->
+
+<div class="chords-controls">
+
+  <button
+    type="button"
+    id="toggleChordsButton"
+    class="btn btn-secondary"
+    onclick="toggleChords()"
+  >
+    🎸 Show Chords
+  </button>
+
+  <div
+    id="chordsControls"
+    class="transpose-controls"
+    style="display: none;"
+  >
+
+    <button
+      type="button"
+      class="btn btn-secondary"
+      onclick="transposeDown()"
+    >
+      −
+    </button>
+
+    <span id="transposeDisplay">
+      Key: {{ song.chord_key or 'Original' }}
+    </span>
+
+    <button
+      type="button"
+      class="btn btn-secondary"
+      onclick="transposeUp()"
+    >
+      +
+    </button>
+
+    <button
+      type="button"
+      class="btn btn-secondary"
+      onclick="resetTranspose()"
+    >
+      Reset
+    </button>
+
+  </div>
+
+</div>
+
+<div id="chordsData" style="display: none;">{{ song.chords or '' }}</div>
+
+<!-- =================================================
      ADD TO LISTED SONGS
 ================================================== -->
 
@@ -299,6 +354,278 @@
 
   }
 
+
+  // =====================================================
+  // CHORD DISPLAY + TRANSPOSE
+  // =====================================================
+
+  let chordsVisible = false;
+  let transposeSteps = 0;
+
+  const originalChords = {{ song.chords|tojson }};
+  const originalKey = {{ (song.chord_key or '')|tojson }};
+
+  const chordNames = [
+    "C", "C#", "D", "D#", "E", "F",
+    "F#", "G", "G#", "A", "A#", "B"
+  ];
+
+  function transposeChord(chord, steps) {
+
+    const match = chord.match(/^([A-G](?:#|b)?)(.*)$/);
+
+    if (!match) {
+      return chord;
+    }
+
+    const aliases = {
+      "Db": "C#",
+      "Eb": "D#",
+      "Gb": "F#",
+      "Ab": "G#",
+      "Bb": "A#"
+    };
+
+    const root = aliases[match[1]] || match[1];
+
+    const index = chordNames.indexOf(root);
+
+    if (index < 0) {
+      return chord;
+    }
+
+    const newIndex =
+      (index + steps % 12 + 12) % 12;
+
+    return chordNames[newIndex] + match[2];
+  }
+
+
+  function transposeText(text, steps) {
+
+    if (!text) {
+      return "";
+    }
+
+    return text.replace(
+      /\b[A-G](?:#|b)?(?:m|maj|min|dim|aug|sus|add)?[0-9]*(?:\/[A-G](?:#|b)?)?\b/g,
+      function(chord) {
+        return transposeChord(chord, steps);
+      }
+    );
+  }
+
+
+  function getTransposedChords() {
+
+    return transposeText(
+      originalChords,
+      transposeSteps
+    );
+  }
+
+
+  function updateTransposeDisplay() {
+
+    const display =
+      document.getElementById("transposeDisplay");
+
+    if (!display) {
+      return;
+    }
+
+    if (originalKey) {
+
+      display.textContent =
+        "Key: " +
+        transposeChord(
+          originalKey,
+          transposeSteps
+        );
+
+    } else {
+
+      display.textContent = "Key: Original";
+
+    }
+  }
+
+
+  function applyChordsToLyrics() {
+
+    const lyricsElements =
+      document.querySelectorAll(".lyrics-text");
+
+    const chordLines =
+      getTransposedChords().split(/\r?\n/);
+
+    lyricsElements.forEach(function(lyricsElement) {
+
+      const lyricsLines =
+        lyricsElement.textContent.split(/\r?\n/);
+
+      const wrapper =
+        document.createElement("div");
+
+      wrapper.className =
+        "lyrics-with-chords";
+
+      lyricsLines.forEach(function(line, index) {
+
+        const row =
+          document.createElement("div");
+
+        row.className =
+          "lyrics-chord-row";
+
+        const chord =
+          document.createElement("div");
+
+        chord.className =
+          "lyrics-chord-line";
+
+        chord.textContent =
+          chordLines[index] || "";
+
+        const lyric =
+          document.createElement("div");
+
+        lyric.className =
+          "lyrics-line";
+
+        lyric.textContent =
+          line;
+
+        row.appendChild(chord);
+        row.appendChild(lyric);
+
+        wrapper.appendChild(row);
+
+      });
+
+      lyricsElement.style.display = "none";
+
+      lyricsElement.parentNode.insertBefore(
+        wrapper,
+        lyricsElement
+      );
+
+    });
+
+  }
+
+
+  function removeChordsFromLyrics() {
+
+    document
+      .querySelectorAll(".lyrics-with-chords")
+      .forEach(function(element) {
+
+        element.remove();
+
+      });
+
+    document
+      .querySelectorAll(".lyrics-text")
+      .forEach(function(element) {
+
+        element.style.display = "";
+
+      });
+
+  }
+
+
+  function refreshChordDisplay() {
+
+    if (chordsVisible) {
+
+      removeChordsFromLyrics();
+
+      applyChordsToLyrics();
+
+    }
+
+    updateTransposeDisplay();
+
+  }
+
+
+  function toggleChords() {
+
+    chordsVisible =
+      !chordsVisible;
+
+    const button =
+      document.getElementById(
+        "toggleChordsButton"
+      );
+
+    const controls =
+      document.getElementById(
+        "chordsControls"
+      );
+
+    if (chordsVisible) {
+
+      applyChordsToLyrics();
+
+      if (button) {
+        button.textContent =
+          "🎸 Hide Chords";
+      }
+
+      if (controls) {
+        controls.style.display =
+          "flex";
+      }
+
+    } else {
+
+      removeChordsFromLyrics();
+
+      if (button) {
+        button.textContent =
+          "🎸 Show Chords";
+      }
+
+      if (controls) {
+        controls.style.display =
+          "none";
+      }
+
+    }
+
+  }
+
+
+  function transposeUp() {
+
+    transposeSteps++;
+
+    refreshChordDisplay();
+
+  }
+
+
+  function transposeDown() {
+
+    transposeSteps--;
+
+    refreshChordDisplay();
+
+  }
+
+
+  function resetTranspose() {
+
+    transposeSteps = 0;
+
+    refreshChordDisplay();
+
+  }
+
+
 </script>
 
 <!-- =====================================================
@@ -306,6 +633,55 @@
 ====================================================== -->
 
 <style>
+
+  /* =====================================================
+     CHORD DISPLAY
+  ====================================================== */
+
+  .chords-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    width: 100%;
+    margin: 10px 0 20px 0;
+    flex-wrap: wrap;
+  }
+
+  .transpose-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  #transposeDisplay {
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .lyrics-with-chords {
+    width: 100%;
+  }
+
+  .lyrics-chord-row {
+    width: 100%;
+    margin-bottom: 12px;
+  }
+
+  .lyrics-chord-line {
+    min-height: 22px;
+    font-weight: 700;
+    white-space: pre-wrap;
+    font-family: inherit;
+    line-height: 1.2;
+  }
+
+  .lyrics-line {
+    white-space: pre-wrap;
+    line-height: 1.7;
+  }
+
 
   /* =====================================================
      TOP CONTROLS
