@@ -1,20 +1,69 @@
 ﻿{% extends "base.html" %}
-{% block title %}Verify Email{% endblock %}
-{% block content %}
-<div class="auth-screen">
-  <div class="auth-card">
-    <img src="{{ url_for('static', filename='cag-logo.png') }}" alt="CAG Logo" class="auth-logo">
-    <h2>Verify Your Email</h2>
-    <p class="subtitle">Enter the 6-digit OTP sent to <strong>{{ email }}</strong>.</p>
-    <form method="POST">
-      <label for="code">OTP</label>
-      <input type="text" id="code" name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required autofocus>
-      <button type="submit" class="btn btn-primary btn-block">Verify OTP</button>
-    </form>
-    <form method="POST" action="{{ url_for('resend_otp') }}">
-      <button type="submit" class="btn btn-link">Resend OTP</button>
-    </form>
-  </div>
-</div>
-{% endblock %}
 
+{% block title %}Verify Mobile{% endblock %}
+
+{% block content %}
+
+<div class="auth-screen">
+
+  <div class="auth-card">
+
+    <img
+      src="{{ url_for('static', filename='cag-logo.png') }}"
+      alt="CAG Logo"
+      class="auth-logo"
+    >
+
+    <h2>Verify Your Mobile Number</h2>
+
+    <p class="subtitle">
+      Enter the 4-digit OTP sent to
+      <strong>{{ mobile }}</strong>.
+    </p>
+
+    <form method="POST">
+
+      <label for="code">OTP</label>
+
+      <input
+        type="text"
+        id="code"
+        name="code"
+        inputmode="numeric"
+        pattern="[0-9]{4}"
+        maxlength="4"
+        minlength="4"
+        placeholder="Enter 4-digit OTP"
+        required
+        autofocus
+        autocomplete="one-time-code"
+      >
+
+      <button
+        type="submit"
+        class="btn btn-primary btn-block"
+      >
+        Verify OTP
+      </button>
+
+    </form>
+
+    <form
+      method="POST"
+      action="{{ url_for('resend_otp') }}"
+    >
+
+      <button
+        type="submit"
+        class="btn btn-link"
+      >
+        Resend OTP
+      </button>
+
+    </form>
+
+  </div>
+
+</div>
+
+{% endblock %}

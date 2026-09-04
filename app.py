@@ -1,10 +1,7 @@
-
 import os
-import random
-import smtplib
+import secrets
 
-from email.message import EmailMessage
-from datetime import datetime, timedelta
+from datetime import datetime
 from functools import wraps
 from difflib import SequenceMatcher
 
@@ -27,7 +24,6 @@ from werkzeug.utils import secure_filename
 from models import (
     db,
     User,
-    OTP,
     Song,
     ListedSong,
     Visitor,
@@ -47,7 +43,9 @@ load_dotenv()
 # DIRECTORIES
 # ============================================================
 
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+BASE_DIR = os.path.abspath(
+    os.path.dirname(__file__)
+)
 
 UPLOAD_DIR = os.path.join(
     BASE_DIR,
@@ -59,8 +57,15 @@ INSTANCE_DIR = os.path.join(
     "instance"
 )
 
-os.makedirs(UPLOAD_DIR, exist_ok=True)
-os.makedirs(INSTANCE_DIR, exist_ok=True)
+os.makedirs(
+    UPLOAD_DIR,
+    exist_ok=True
+)
+
+os.makedirs(
+    INSTANCE_DIR,
+    exist_ok=True
+)
 
 
 # ============================================================
@@ -119,55 +124,6 @@ ADMIN_PASSWORD = os.environ.get(
 
 
 # ============================================================
-# EMAIL SETTINGS
-# ============================================================
-
-MAIL_SERVER = os.environ.get(
-    "MAIL_SERVER",
-    "smtp.gmail.com"
-)
-
-MAIL_PORT = int(
-    os.environ.get(
-        "MAIL_PORT",
-        "587"
-    )
-)
-
-MAIL_USERNAME = os.environ.get(
-    "MAIL_USERNAME",
-    ""
-)
-
-MAIL_PASSWORD = os.environ.get(
-    "MAIL_PASSWORD",
-    ""
-)
-
-MAIL_FROM = os.environ.get(
-    "MAIL_FROM",
-    MAIL_USERNAME or "no-reply@example.com"
-)
-
-OTP_TTL_MINUTES = 10
-
-
-print("=== EMAIL CONFIG CHECK ===")
-print("MAIL_SERVER:", MAIL_SERVER)
-print("MAIL_PORT:", MAIL_PORT)
-print(
-    "MAIL_USERNAME configured:",
-    bool(MAIL_USERNAME)
-)
-print(
-    "MAIL_PASSWORD configured:",
-    bool(MAIL_PASSWORD)
-)
-print("MAIL_FROM:", MAIL_FROM)
-print("==========================")
-
-
-# ============================================================
 # ALLOWED FILE TYPES
 # ============================================================
 
@@ -180,7 +136,10 @@ def allowed_file(filename):
 
     return (
         "." in filename
-        and filename.rsplit(".", 1)[1].lower()
+        and filename.rsplit(
+            ".",
+            1
+        )[1].lower()
         in ALLOWED_EXTENSIONS
     )
 
@@ -210,22 +169,7 @@ def track_visitor():
 
     try:
 
-        visitor_email = None
-
-        user_id = session.get("user_id")
-
-        if user_id:
-
-            user = db.session.get(
-                User,
-                user_id
-            )
-
-            if user:
-                visitor_email = user.email
-
         visitor = Visitor(
-            email=visitor_email,
             ip_address=request.remote_addr,
             user_agent=request.headers.get(
                 "User-Agent"
@@ -234,7 +178,10 @@ def track_visitor():
             visited_at=datetime.utcnow()
         )
 
-        db.session.add(visitor)
+        db.session.add(
+            visitor
+        )
+
         db.session.commit()
 
     except Exception as exc:
@@ -245,124 +192,6 @@ def track_visitor():
             "[VISITOR TRACKING ERROR]",
             exc
         )
-
-
-# ============================================================
-# GENERATE OTP
-# ============================================================
-
-def generate_otp_code():
-
-    return str(
-        random.randint(
-            100000,
-            999999
-        )
-    )
-
-
-# ============================================================
-# SEND OTP EMAIL USING GMAIL SMTP
-# ============================================================
-
-def send_otp_email(
-    to_email: str,
-    code: str
-):
-
-    try:
-
-        mail_server = os.environ.get(
-            "MAIL_SERVER",
-            "smtp.gmail.com"
-        ).strip()
-
-        mail_port = int(
-            os.environ.get(
-                "MAIL_PORT",
-                "587"
-            )
-        )
-
-        mail_username = os.environ.get(
-            "MAIL_USERNAME",
-            ""
-        ).strip()
-
-        mail_password = os.environ.get(
-            "MAIL_PASSWORD",
-            ""
-        ).strip()
-
-        mail_from = os.environ.get(
-            "MAIL_FROM",
-            mail_username
-        ).strip()
-
-        if not mail_username or not mail_password:
-
-            print(
-                "[EMAIL ERROR] "
-                "Gmail email settings are not configured."
-            )
-
-            return False
-
-        msg = EmailMessage()
-
-        msg["Subject"] = (
-            "CAG Lyrics Portal - Email Verification OTP"
-        )
-
-        msg["From"] = mail_from
-
-        msg["To"] = to_email
-
-        msg.set_content(
-            f"""
-CAG Lyrics Portal
-
-Your email verification OTP is:
-
-{code}
-
-This OTP expires in {OTP_TTL_MINUTES} minutes.
-
-Please do not share this OTP with anyone.
-
-CAG Lyrics Portal
-"""
-        )
-
-        with smtplib.SMTP(
-            mail_server,
-            mail_port,
-            timeout=20
-        ) as server:
-
-            server.starttls()
-
-            server.login(
-                mail_username,
-                mail_password
-            )
-
-            server.send_message(msg)
-
-        print(
-            f"[EMAIL SUCCESS] OTP sent to {to_email}"
-        )
-
-        return True
-
-    except Exception as exc:
-
-        print(
-            f"[EMAIL ERROR] Could not send OTP to "
-            f"{to_email}: {exc}"
-        )
-
-        return False
 
 
 # ============================================================
@@ -469,13 +298,18 @@ def welcome():
 
 @app.route("/robots.txt")
 def robots_txt():
+
     return (
         "User-agent: *\n"
         "Allow: /\n\n"
-        "Sitemap: https://cag-lyrics-portal.onrender.com/sitemap.xml\n"
+        "Sitemap: "
+        "https://cag-lyrics-portal.onrender.com/"
+        "sitemap.xml\n"
     ), 200, {
-        "Content-Type": "text/plain; charset=utf-8"
+        "Content-Type":
+        "text/plain; charset=utf-8"
     }
+
 
 # ============================================================
 # SITEMAP.XML
@@ -494,6 +328,17 @@ def sitemap():
 # ============================================================
 # USER REGISTRATION
 # ============================================================
+#
+# Username
+# Password
+# Confirm Password
+#
+# Mobile number and OTP are NOT required.
+#
+# The old mobile database column is kept internally so the
+# existing database structure is not damaged.
+#
+# ============================================================
 
 @app.route(
     "/register",
@@ -503,10 +348,12 @@ def register():
 
     if request.method == "POST":
 
-        email = request.form.get(
-            "email",
-            ""
-        ).strip().lower()
+        username = " ".join(
+            request.form.get(
+                "username",
+                ""
+            ).strip().split()
+        )
 
         password = request.form.get(
             "password",
@@ -518,16 +365,57 @@ def register():
             ""
         )
 
-        if not email or not password:
+        # ----------------------------------------------------
+        # REQUIRED FIELDS
+        # ----------------------------------------------------
+
+        if (
+            not username
+            or not password
+            or not confirm
+        ):
 
             flash(
-                "Email and password are required.",
+                "Username and password are required.",
                 "error"
             )
 
             return render_template(
                 "register.html"
             )
+
+        # ----------------------------------------------------
+        # USERNAME VALIDATION
+        # ----------------------------------------------------
+
+        if not username.replace(
+            " ",
+            ""
+        ).isalpha():
+
+            flash(
+                "Name can contain letters and spaces only.",
+                "error"
+            )
+
+            return render_template(
+                "register.html"
+            )
+
+        if len(username) < 3:
+
+            flash(
+                "Name must be at least 3 characters.",
+                "error"
+            )
+
+            return render_template(
+                "register.html"
+            )
+
+        # ----------------------------------------------------
+        # PASSWORD VALIDATION
+        # ----------------------------------------------------
 
         if password != confirm:
 
@@ -551,14 +439,18 @@ def register():
                 "register.html"
             )
 
-        existing = User.query.filter_by(
-            email=email
+        # ----------------------------------------------------
+        # CHECK USERNAME
+        # ----------------------------------------------------
+
+        existing_username = User.query.filter_by(
+            username=username
         ).first()
 
-        if existing and existing.is_verified:
+        if existing_username:
 
             flash(
-                "An account with this email already exists. "
+                "An account with this username already exists. "
                 "Please log in.",
                 "error"
             )
@@ -567,63 +459,66 @@ def register():
                 url_for("user_login")
             )
 
-        if not existing:
+        # ----------------------------------------------------
+        # INTERNAL LEGACY MOBILE VALUE
+        # ----------------------------------------------------
 
-            existing = User(
-                email=email
-            )
-
-            db.session.add(existing)
-
-        existing.set_password(password)
-        existing.is_verified = False
-
-        db.session.commit()
-
-        code = generate_otp_code()
-
-        otp = OTP(
-            email=email,
-            code=code,
-            purpose="register",
-            expires_at=(
-                datetime.utcnow()
-                + timedelta(
-                    minutes=OTP_TTL_MINUTES
-                )
-            )
+        internal_mobile = (
+            "u"
+            + secrets.token_hex(9)
         )
 
-        db.session.add(otp)
-        db.session.commit()
+        # ----------------------------------------------------
+        # CREATE USER
+        # ----------------------------------------------------
 
-        sent = send_otp_email(
-            email,
-            code
+        user = User(
+            username=username,
+            mobile=internal_mobile,
+            is_verified=True
         )
 
-        session[
-            "pending_verification_email"
-        ] = email
+        user.set_password(
+            password
+        )
 
-        if sent:
+        # ----------------------------------------------------
+        # SAVE USER
+        # ----------------------------------------------------
 
-            flash(
-                "OTP sent to your email. "
-                "Please check your inbox.",
-                "success"
+        try:
+
+            db.session.add(
+                user
             )
 
-        else:
+            db.session.commit()
+
+        except Exception as exc:
+
+            db.session.rollback()
+
+            print(
+                "[REGISTRATION ERROR]",
+                exc
+            )
 
             flash(
-                "OTP could not be emailed. "
-                "Check the terminal for the development OTP.",
+                "Could not create the account. Please try again.",
                 "error"
             )
 
+            return render_template(
+                "register.html"
+            )
+
+        flash(
+            "Account created successfully. You can now log in.",
+            "success"
+        )
+
         return redirect(
-            url_for("verify_otp")
+            url_for("user_login")
         )
 
     return render_template(
@@ -631,170 +526,6 @@ def register():
     )
 
 
-# ============================================================
-# VERIFY OTP
-# ============================================================
-
-@app.route(
-    "/verify-otp",
-    methods=["GET", "POST"]
-)
-def verify_otp():
-
-    email = session.get(
-        "pending_verification_email"
-    )
-
-    if not email:
-
-        flash(
-            "Please register or log in first.",
-            "error"
-        )
-
-        return redirect(
-            url_for("register")
-        )
-
-    if request.method == "POST":
-
-        code = request.form.get(
-            "code",
-            ""
-        ).strip()
-
-        otp = (
-            OTP.query
-            .filter_by(
-                email=email,
-                code=code,
-                consumed=False
-            )
-            .order_by(
-                OTP.created_at.desc()
-            )
-            .first()
-        )
-
-        if (
-            not otp
-            or otp.expires_at < datetime.utcnow()
-        ):
-
-            flash(
-                "Invalid or expired OTP.",
-                "error"
-            )
-
-            return render_template(
-                "verify_otp.html",
-                email=email
-            )
-
-        otp.consumed = True
-
-        user = User.query.filter_by(
-            email=email
-        ).first()
-
-        if not user:
-
-            flash(
-                "User account was not found.",
-                "error"
-            )
-
-            return redirect(
-                url_for("register")
-            )
-
-        user.is_verified = True
-
-        db.session.commit()
-
-        session.pop(
-            "pending_verification_email",
-            None
-        )
-
-        session["user_id"] = user.id
-
-        flash(
-            "Email verified. Welcome!",
-            "success"
-        )
-
-        return redirect(
-            url_for("song_list")
-        )
-
-    return render_template(
-        "verify_otp.html",
-        email=email
-    )
-
-
-# ============================================================
-# RESEND OTP
-# ============================================================
-
-@app.route(
-    "/resend-otp",
-    methods=["POST"]
-)
-def resend_otp():
-
-    email = session.get(
-        "pending_verification_email"
-    )
-
-    if not email:
-
-        return redirect(
-            url_for("register")
-        )
-
-    code = generate_otp_code()
-
-    otp = OTP(
-        email=email,
-        code=code,
-        purpose="register",
-        expires_at=(
-            datetime.utcnow()
-            + timedelta(
-                minutes=OTP_TTL_MINUTES
-            )
-        )
-    )
-
-    db.session.add(otp)
-    db.session.commit()
-
-    if send_otp_email(
-        email,
-        code
-    ):
-
-        flash(
-            "A new OTP has been sent to your email.",
-            "success"
-        )
-
-    else:
-
-        flash(
-            "OTP email failed. "
-            "Check the terminal in development mode.",
-            "error"
-        )
-
-    return redirect(
-        url_for("verify_otp")
-    )
-
-
-# ============================================================
 # ============================================================
 # USER LOGIN
 # ============================================================
@@ -807,22 +538,22 @@ def user_login():
 
     if request.method == "POST":
 
-        username = request.form.get(
-            "username",
-            ""
-        ).strip().lower()
+        username = " ".join(
+            request.form.get(
+                "username",
+                ""
+            ).strip().split()
+        )
 
         password = request.form.get(
             "password",
             ""
         )
 
-        # Existing verified account is used.
-        # No email, OTP, or registration is required.
-        if username != "abhishek":
+        if not username or not password:
 
             flash(
-                "Incorrect username or password.",
+                "Username and password are required.",
                 "error"
             )
 
@@ -830,14 +561,15 @@ def user_login():
                 "login.html"
             )
 
-        user = db.session.get(
-            User,
-            1
-        )
+        user = User.query.filter_by(
+            username=username
+        ).first()
 
         if (
             not user
-            or not user.check_password(password)
+            or not user.check_password(
+                password
+            )
         ):
 
             flash(
@@ -867,8 +599,6 @@ def user_login():
 
 # ============================================================
 # USER LOGOUT
-# ============================================================
-
 # ============================================================
 
 @app.route("/logout")
@@ -1078,6 +808,101 @@ def api_song_search():
 
 
 # ============================================================
+# USER EDIT SONG
+# ============================================================
+
+@app.route(
+    "/songs/<int:song_id>/edit",
+    methods=["GET", "POST"]
+)
+@login_required
+def user_edit_song(song_id):
+
+    song = Song.query.get_or_404(
+        song_id
+    )
+
+    if request.method == "POST":
+
+        title = request.form.get(
+            "title",
+            ""
+        ).strip()
+
+        kannada_text = request.form.get(
+            "kannada_text",
+            ""
+        )
+
+        english_text = request.form.get(
+            "english_text",
+            ""
+        )
+
+        if not title:
+
+            flash(
+                "Song title cannot be empty.",
+                "error"
+            )
+
+            return render_template(
+                "user_edit_chords.html",
+                song=song
+            )
+
+        song.title = title
+
+        song.kannada_text = (
+            kannada_text
+        )
+
+        song.english_text = (
+            english_text
+        )
+
+        try:
+
+            db.session.commit()
+
+        except Exception as exc:
+
+            db.session.rollback()
+
+            print(
+                "[USER SONG EDIT ERROR]",
+                exc
+            )
+
+            flash(
+                "Could not save the song. Please try again.",
+                "error"
+            )
+
+            return render_template(
+                "user_edit_chords.html",
+                song=song
+            )
+
+        flash(
+            "Song lyrics and chords updated successfully.",
+            "success"
+        )
+
+        return redirect(
+            url_for(
+                "song_view",
+                song_id=song.id
+            )
+        )
+
+    return render_template(
+        "user_edit_chords.html",
+        song=song
+    )
+
+
+# ============================================================
 # ADD SONG TO LIST
 # ============================================================
 
@@ -1117,7 +942,10 @@ def add_to_list(song_id):
             song_id=song.id
         )
 
-        db.session.add(listed_song)
+        db.session.add(
+            listed_song
+        )
+
         db.session.commit()
 
         flash(
@@ -1186,7 +1014,10 @@ def delete_listed_song(listed_id):
             url_for("listed_songs")
         )
 
-    db.session.delete(listed)
+    db.session.delete(
+        listed
+    )
+
     db.session.commit()
 
     flash(
@@ -1368,7 +1199,10 @@ def delete_visitor(visitor_id):
 
     try:
 
-        db.session.delete(visitor)
+        db.session.delete(
+            visitor
+        )
+
         db.session.commit()
 
         flash(
@@ -1525,7 +1359,9 @@ def admin_upload():
 
             counter = 1
 
-            while os.path.exists(save_path):
+            while os.path.exists(
+                save_path
+            ):
 
                 filename = (
                     f"{base}_{counter}{ext}"
@@ -1540,7 +1376,9 @@ def admin_upload():
 
         try:
 
-            file.save(save_path)
+            file.save(
+                save_path
+            )
 
             kannada_text, english_text = (
                 convert_pptx_to_lyrics(
@@ -1583,7 +1421,10 @@ def admin_upload():
             original_filename=filename
         )
 
-        db.session.add(song)
+        db.session.add(
+            song
+        )
+
         db.session.commit()
 
         flash(
@@ -1667,7 +1508,9 @@ def admin_bulk_upload():
                 filename
             )
 
-            if os.path.exists(save_path):
+            if os.path.exists(
+                save_path
+            ):
 
                 base, ext = os.path.splitext(
                     filename
@@ -1675,7 +1518,9 @@ def admin_bulk_upload():
 
                 counter = 1
 
-                while os.path.exists(save_path):
+                while os.path.exists(
+                    save_path
+                ):
 
                     filename = (
                         f"{base}_{counter}{ext}"
@@ -1690,7 +1535,9 @@ def admin_bulk_upload():
 
             try:
 
-                file.save(save_path)
+                file.save(
+                    save_path
+                )
 
                 kannada_text, english_text = (
                     convert_pptx_to_lyrics(
@@ -1744,7 +1591,9 @@ def admin_bulk_upload():
                     original_filename=filename
                 )
 
-                db.session.add(song)
+                db.session.add(
+                    song
+                )
 
                 processed += 1
 
@@ -1805,6 +1654,39 @@ def admin_bulk_upload():
 # ============================================================
 # ADMIN EDIT SONG
 # ============================================================
+#
+# IMPORTANT CHORD SYSTEM
+#
+# Original Kannada and English lyrics are stored separately
+# and remain unchanged.
+#
+# Chords are stored separately in song.chords.
+#
+# There is ONE shared chord arrangement for the complete song.
+#
+# The same chord arrangement is used for:
+#
+#     Kannada lyrics
+#     English pronunciation
+#
+# Song Key is stored separately in:
+#
+#     song.chord_key
+#
+# Example:
+#
+#     Dm
+#     Am
+#     F#
+#     C#
+#
+# The exact key selected by the Admin is saved and sent to
+# song_view.html.
+#
+# The old chords_enabled database field is maintained only
+# for backward compatibility.
+#
+# ============================================================
 
 @app.route(
     "/admin/songs/<int:song_id>/edit",
@@ -1817,35 +1699,76 @@ def admin_edit_song(song_id):
         song_id
     )
 
+    # ========================================================
+    # POST REQUEST
+    # ========================================================
+
     if request.method == "POST":
+
+        # ----------------------------------------------------
+        # SONG TITLE
+        # ----------------------------------------------------
 
         title = request.form.get(
             "title",
             ""
         ).strip()
 
+        # ----------------------------------------------------
+        # ORIGINAL KANNADA LYRICS
+        # ----------------------------------------------------
+
         kannada_text = request.form.get(
             "kannada_text",
             ""
         )
 
+        # ----------------------------------------------------
+        # ORIGINAL ENGLISH PRONUNCIATION
+        # ----------------------------------------------------
+
         english_text = request.form.get(
             "english_text",
             ""
         )
-        chords = request.form.get(
-            "chords",
-            ""
-        )
+
+        # ----------------------------------------------------
+        # SONG KEY
+        # ----------------------------------------------------
+        #
+        # This is the IMPORTANT new part.
+        #
+        # The Admin selects the original song key.
+        #
+        # Examples:
+        #
+        # C
+        # C#
+        # Dm
+        # Am
+        # F#
+        #
+        # The exact value is saved.
+        #
+        # ----------------------------------------------------
 
         chord_key = request.form.get(
             "chord_key",
             ""
         ).strip()
 
-        chords_enabled = request.form.get(
-            "chords_enabled"
-        ) == "on"
+        # ----------------------------------------------------
+        # CHORD DATA
+        # ----------------------------------------------------
+
+        chord_data = request.form.get(
+            "chord_data",
+            ""
+        ).strip()
+
+        # ====================================================
+        # VALIDATE TITLE
+        # ====================================================
 
         if not title:
 
@@ -1859,24 +1782,152 @@ def admin_edit_song(song_id):
                 song=song
             )
 
+        # ====================================================
+        # SAVE ORIGINAL SONG DATA
+        # ====================================================
+        #
+        # IMPORTANT:
+        #
+        # Do NOT add chord spacing to these fields.
+        #
+        # Original lyrics remain unchanged.
+        #
+        # ====================================================
+
         song.title = title
-        song.kannada_text = kannada_text
-        song.english_text = english_text
-        song.chords = chords
-        song.chord_key = chord_key
-        song.chords_enabled = chords_enabled
 
-        db.session.commit()
-
-        flash(
-            "Song title and complete lyrics "
-            "were updated.",
-            "success"
+        song.kannada_text = (
+            kannada_text
         )
+
+        song.english_text = (
+            english_text
+        )
+
+        # ====================================================
+        # SAVE SONG KEY
+        # ====================================================
+        #
+        # The exact key selected by Admin is stored.
+        #
+        # Example:
+        #
+        # Admin selects Dm
+        #
+        # Database:
+        #
+        # song.chord_key = "Dm"
+        #
+        # User side:
+        #
+        # Dm
+        #
+        # ====================================================
+
+        if chord_key:
+
+            song.chord_key = chord_key
+
+        else:
+
+            song.chord_key = None
+
+        # ====================================================
+        # SAVE SHARED CHORD ARRANGEMENT
+        # ====================================================
+        #
+        # ONE chord arrangement for BOTH languages.
+        #
+        # ====================================================
+
+        if chord_data:
+
+            song.chords = chord_data
+
+            # Keep old database field synchronized.
+            #
+            # This field is NOT shown as a checkbox.
+
+            song.chords_enabled = True
+
+        else:
+
+            song.chords = None
+
+            song.chords_enabled = False
+
+        # ====================================================
+        # DATABASE SAVE
+        # ====================================================
+
+        try:
+
+            db.session.commit()
+
+        except Exception as exc:
+
+            db.session.rollback()
+
+            print(
+                "[ADMIN SONG EDIT ERROR]",
+                exc
+            )
+
+            flash(
+                "Could not save the song. Please try again.",
+                "error"
+            )
+
+            return render_template(
+                "admin_edit_song.html",
+                song=song
+            )
+
+        # ====================================================
+        # SUCCESS MESSAGE
+        # ====================================================
+
+        if chord_data and chord_key:
+
+            flash(
+                f"Song saved successfully. "
+                f"Song Key: {chord_key}. "
+                f"The same chords are saved for both languages.",
+                "success"
+            )
+
+        elif chord_key:
+
+            flash(
+                f"Song saved successfully. "
+                f"Song Key: {chord_key}.",
+                "success"
+            )
+
+        elif chord_data:
+
+            flash(
+                "Song saved successfully. "
+                "The same chords are saved for both languages.",
+                "success"
+            )
+
+        else:
+
+            flash(
+                "Song saved successfully.",
+                "success"
+            )
 
         return redirect(
-            url_for("admin_dashboard")
+            url_for(
+                "admin_dashboard"
+            )
         )
+
+    # ========================================================
+    # GET REQUEST
+    # ========================================================
 
     return render_template(
         "admin_edit_song.html",
@@ -1899,7 +1950,10 @@ def admin_delete_song(song_id):
         song_id
     )
 
-    db.session.delete(song)
+    db.session.delete(
+        song
+    )
+
     db.session.commit()
 
     flash(
@@ -1937,5 +1991,3 @@ if __name__ == "__main__":
             )
         )
     )
-
-

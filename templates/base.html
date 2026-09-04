@@ -177,23 +177,13 @@
       <div class="user-badge">
 
         <span>
-
-          User ID:
-
+          👋 Welcome,
           <strong>
-            {{ current_user.id }}
+            {{ current_user.username }}
           </strong>
-
-        </span>
-
-        <span class="user-email">
-
-          {{ current_user.email }}
-
         </span>
 
       </div>
-
 
     {% elif is_admin %}
 
@@ -329,3 +319,4 @@
 </body>
 
 </html>
+
