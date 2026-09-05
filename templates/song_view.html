@@ -773,84 +773,58 @@
   }
 
 
-  function createLyricsDisplay(
-    lyricsElement,
-    lyrics
-  ) {
+ function createLyricsDisplay(
+  lyricsElement,
+  lyrics
+) {
 
-    if (!lyricsElement) {
+  if (!lyricsElement) {
+    return;
+  }
 
-      return;
+  lyricsElement.innerHTML = "";
 
+  const lines = lyrics.split(/\r?\n/);
+
+  lines.forEach(function(line, index) {
+
+    const row = document.createElement("div");
+    row.className = "song-line";
+
+    /*
+     * CHORD + LYRIC
+     * Keep chord spacing exactly aligned with the lyric.
+     */
+
+    if (chordMap[String(index)]) {
+
+      const chordElement = document.createElement("div");
+
+      chordElement.className = "song-chord";
+
+      chordElement.textContent =
+        transposeChordLine(
+          chordMap[String(index)]
+        );
+
+      row.appendChild(chordElement);
     }
 
-    lyricsElement.innerHTML =
-      "";
+    const lyricElement =
+      document.createElement("div");
 
-    const lines =
-      lyrics.split(/\r?\n/);
+    lyricElement.className = "song-lyric";
 
+    lyricElement.textContent =
+      line || "\u00A0";
 
-    lines.forEach(
-      function(line, index) {
+    row.appendChild(lyricElement);
 
-        const row =
-          document.createElement(
-            "div"
-          );
+    lyricsElement.appendChild(row);
 
-        row.className =
-          "song-line";
+  });
 
-
-        if (
-          chordMap[String(index)]
-        ) {
-
-          const chordElement =
-            document.createElement(
-              "div"
-            );
-
-          chordElement.className =
-            "song-chord";
-
-          chordElement.textContent =
-            transposeChordLine(
-              chordMap[String(index)]
-            );
-
-          row.appendChild(
-            chordElement
-          );
-
-        }
-
-
-        const lyricElement =
-          document.createElement(
-            "div"
-          );
-
-        lyricElement.className =
-          "song-lyric";
-
-        lyricElement.textContent =
-          line || "\u00A0";
-
-        row.appendChild(
-          lyricElement
-        );
-
-
-        lyricsElement.appendChild(
-          row
-        );
-
-      }
-    );
-
-  }
+}
 
 
   function refreshChordDisplay() {
