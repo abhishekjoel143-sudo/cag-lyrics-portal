@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Song - {{ song.title }}{% endblock %}
+
+{% block content %}
+
+<div class="edit-screen">
+
+  <div class="dashboard-header">
+
+    <div>
+      <p class="eyebrow">Song Editor</p>
+      <h2>Edit Song</h2>
+      <p>{{ song.title }}</p>
+    </div>
+
+    <a
+      class="btn btn-link"
+      href="{{ url_for('song_view', song_id=song.id) }}"
+    >
+      &larr; Back to Song
+    </a>
+
+  </div>
+
+
+  <form method="POST" class="edit-card">
+
+
+    <!-- SONG TITLE -->
+
+    <label for="title">
+      Song Title
+    </label>
+
+    <input
+      type="text"
+      id="title"
+      name="title"
+      value="{{ song.title }}"
+      required
+    >
+
+
+    <!-- KANNADA LYRICS + CHORDS -->
+
+    <label for="kannada_text">
+      Kannada Lyrics + Chords
+    </label>
+
+    <p style="margin-top: -6px; margin-bottom: 8px;">
+      Edit the lyrics and chords together.
+      You can place chords directly above the lyric line.
+    </p>
+
+    <textarea
+      id="kannada_text"
+      name="kannada_text"
+      rows="25"
+      placeholder="Example:
+
+C        G        Am
+ನಿನ್ನ ಪ್ರೀತಿ ನನಗೆ ಬೇಕು
+
+F        C        G
+ಯೇಸுவே ನಿನ್ನ பெயர் போதும்
+
+C        G        Am
+ನಿನ್ನ ಕೃಪೆ ನನಗೆ ಸಾಕು"
+    >{{ song.kannada_text or '' }}</textarea>
+
+
+    <!-- ENGLISH PRONUNCIATION + CHORDS -->
+
+    <label for="english_text">
+      English Pronunciation + Chords
+    </label>
+
+    <p style="margin-top: -6px; margin-bottom: 8px;">
+      Edit the pronunciation lyrics and chords together.
+    </p>
+
+    <textarea
+      id="english_text"
+      name="english_text"
+      rows="25"
+      placeholder="Example:
+
+C        G        Am
+Ninna preethi nanage beku
+
+F        C        G
+Yesuve ninna hesaru saaku
+
+C        G        Am
+Ninna krupe nanage saaku"
+    >{{ song.english_text or '' }}</textarea>
+
+
+    <!-- SAVE / CANCEL -->
+
+    <div class="form-actions">
+
+      <button
+        type="submit"
+        class="btn btn-primary"
+      >
+        Save Song
+      </button>
+
+      <a
+        href="{{ url_for('song_view', song_id=song.id) }}"
+        class="btn btn-secondary"
+      >
+        Cancel
+      </a>
+
+    </div>
+
+  </form>
+
+</div>
+
+{% endblock %}

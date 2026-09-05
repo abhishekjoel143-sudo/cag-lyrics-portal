@@ -1,0 +1,1532 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ song.title }}
+{% endblock %}
+
+{% block content %}
+
+<div class="song-view-screen">
+
+  <!-- =====================================================
+       SONG HEADER
+  ====================================================== -->
+
+  <div class="song-header">
+
+```
+<div>
+
+  <p class="eyebrow">
+    {{ church_name if church_name is defined else "CAG Lyrics" }}
+  </p>
+
+  <h2>
+    {{ song.title }}
+  </h2>
+
+</div>
+```
+
+  </div>
+
+  <!-- =====================================================
+       SONG CONTROLS
+  ====================================================== -->
+
+  <div class="song-controls">
+
+```
+<!-- LANGUAGE -->
+
+<div class="language-controls">
+
+  <a
+    href="{{ url_for('song_view', song_id=song.id, lang='kannada', from_listed=from_listed) }}"
+    class="btn {% if lang == 'kannada' %}btn-primary{% else %}btn-secondary{% endif %}"
+  >
+    ಕನ್ನಡ
+  </a>
+
+  <a
+    href="{{ url_for('song_view', song_id=song.id, lang='english', from_listed=from_listed) }}"
+    class="btn {% if lang == 'english' %}btn-primary{% else %}btn-secondary{% endif %}"
+  >
+    English
+  </a>
+
+  <a
+    href="{{ url_for('song_view', song_id=song.id, lang='both', from_listed=from_listed) }}"
+    class="btn {% if lang == 'both' %}btn-primary{% else %}btn-secondary{% endif %}"
+  >
+    Both
+  </a>
+
+</div>
+
+
+<!-- ZOOM -->
+
+<div class="zoom-controls">
+
+  <button
+    type="button"
+    id="zoomOut"
+    class="btn btn-secondary"
+  >
+    −
+  </button>
+
+  <span id="zoomValue">
+    100%
+  </span>
+
+  <button
+    type="button"
+    id="zoomIn"
+    class="btn btn-secondary"
+  >
+    +
+  </button>
+
+</div>
+
+
+<!-- CHORDS -->
+
+{% if song.chords %}
+
+  <button
+    type="button"
+    id="toggleChords"
+    class="btn btn-secondary"
+  >
+    🎸 Show Chords
+  </button>
+
+{% endif %}
+
+
+<!-- EDIT CHORDS -->
+
+{% if session.get("is_admin") %}
+
+  <a
+    href="{{ url_for('admin_edit_song', song_id=song.id) }}"
+    class="btn btn-secondary"
+  >
+    🎸 Edit Chords
+  </a>
+
+{% endif %}
+
+
+<!-- LISTED SONG -->
+
+{% if not from_listed %}
+
+  {% if session.get("user_id") %}
+
+    <form
+      method="POST"
+      action="{{ url_for('add_to_list', song_id=song.id) }}"
+      style="display:inline;"
+    >
+
+      <button
+        type="submit"
+        class="btn btn-secondary"
+      >
+        ❤️ Add to Listed Songs
+      </button>
+
+    </form>
+
+  {% endif %}
+
+{% endif %}
+
+
+<!-- BACK -->
+
+{% if from_listed %}
+
+  <a
+    href="{{ url_for('listed_songs') }}"
+    class="btn btn-secondary"
+  >
+    &larr; Listed Songs
+  </a>
+
+{% else %}
+
+  <a
+    href="{{ url_for('song_list') }}"
+    class="btn btn-secondary"
+  >
+    &larr; Songs
+  </a>
+
+{% endif %}
+```
+
+  </div>
+
+  <!-- =====================================================
+       SONG KEY SELECTOR
+  ====================================================== -->
+
+{% if song.chord_key %}
+
+```
+<div class="song-key-display">
+
+  <span class="song-key-label">
+    Key
+  </span>
+
+  <select
+    id="songKeySelector"
+    class="song-key-selector"
+  >
+
+    <optgroup label="Major">
+
+      <option value="C">C</option>
+      <option value="C#">C#</option>
+      <option value="D">D</option>
+      <option value="D#">D#</option>
+      <option value="E">E</option>
+      <option value="F">F</option>
+      <option value="F#">F#</option>
+      <option value="G">G</option>
+      <option value="G#">G#</option>
+      <option value="A">A</option>
+      <option value="A#">A#</option>
+      <option value="B">B</option>
+
+    </optgroup>
+
+
+    <optgroup label="Minor">
+
+      <option value="Cm">Cm</option>
+      <option value="C#m">C#m</option>
+      <option value="Dm">Dm</option>
+      <option value="D#m">D#m</option>
+      <option value="Em">Em</option>
+      <option value="Fm">Fm</option>
+      <option value="F#m">F#m</option>
+      <option value="Gm">Gm</option>
+      <option value="G#m">G#m</option>
+      <option value="Am">Am</option>
+      <option value="A#m">A#m</option>
+      <option value="Bm">Bm</option>
+
+    </optgroup>
+
+  </select>
+
+</div>
+```
+
+{% endif %}
+
+  <!-- =====================================================
+       TRANSPOSE CONTROLS
+  ====================================================== -->
+
+{% if song.chords %}
+
+```
+<div
+  class="transpose-controls"
+  id="transposeControls"
+>
+
+  <span class="transpose-label">
+    Transpose
+  </span>
+
+  <button
+    type="button"
+    id="transposeDown"
+    class="btn btn-secondary"
+  >
+    −
+  </button>
+
+  <span id="transposeValue">
+    0
+  </span>
+
+  <button
+    type="button"
+    id="transposeUp"
+    class="btn btn-secondary"
+  >
+    +
+  </button>
+
+  <button
+    type="button"
+    id="transposeReset"
+    class="btn btn-secondary"
+  >
+    Reset
+  </button>
+
+</div>
+```
+
+{% endif %}
+
+  <!-- =====================================================
+       SONG CONTENT
+  ====================================================== -->
+
+  <div
+    id="songContent"
+    class="song-content"
+  >
+
+```
+{% if lang == "kannada" %}
+
+  <div
+    class="lyrics-section"
+    data-language="kannada"
+  >
+
+    <h3>
+      ಕನ್ನಡ
+    </h3>
+
+    <div
+      id="kannadaLyrics"
+      class="lyrics-display"
+    ></div>
+
+  </div>
+
+
+{% elif lang == "english" %}
+
+  <div
+    class="lyrics-section"
+    data-language="english"
+  >
+
+    <h3>
+      English Pronunciation
+    </h3>
+
+    <div
+      id="englishLyrics"
+      class="lyrics-display"
+    ></div>
+
+  </div>
+
+
+{% else %}
+
+  <div
+    class="lyrics-section"
+    data-language="kannada"
+  >
+
+    <h3>
+      ಕನ್ನಡ
+    </h3>
+
+    <div
+      id="kannadaLyrics"
+      class="lyrics-display"
+    ></div>
+
+  </div>
+
+
+  <div
+    class="lyrics-section"
+    data-language="english"
+  >
+
+    <h3>
+      English Pronunciation
+    </h3>
+
+    <div
+      id="englishLyrics"
+      class="lyrics-display"
+    ></div>
+
+  </div>
+
+{% endif %}
+```
+
+  </div>
+
+</div>
+
+<!-- =====================================================
+     JAVASCRIPT
+====================================================== -->
+
+<script>
+
+  const kannadaLyrics =
+    {{ (song.kannada_text or '')|tojson }};
+
+  const englishLyrics =
+    {{ (song.english_text or '')|tojson }};
+
+  const savedChordData =
+    {{ (song.chords or '')|tojson }};
+
+  const originalSongKey =
+    {{ (song.chord_key or '')|tojson }};
+
+
+  let chordMap = {};
+
+
+  if (savedChordData) {
+
+    try {
+
+      const parsed =
+        JSON.parse(savedChordData);
+
+      if (
+        parsed &&
+        typeof parsed === "object" &&
+        !Array.isArray(parsed)
+      ) {
+
+        chordMap = parsed;
+
+      }
+
+    } catch (error) {
+
+      console.warn(
+        "Could not load chord data:",
+        error
+      );
+
+      chordMap = {};
+
+    }
+
+  }
+
+
+  let selectedSongKey =
+    originalSongKey;
+
+  let transposeSteps =
+    0;
+
+
+  const sharpNotes = [
+
+    "C",
+    "C#",
+    "D",
+    "D#",
+    "E",
+    "F",
+    "F#",
+    "G",
+    "G#",
+    "A",
+    "A#",
+    "B"
+
+  ];
+
+
+  const flatToSharp = {
+
+    "Db": "C#",
+    "Eb": "D#",
+    "Gb": "F#",
+    "Ab": "G#",
+    "Bb": "A#"
+
+  };
+
+
+  function getRootIndex(root) {
+
+    if (flatToSharp[root]) {
+
+      root =
+        flatToSharp[root];
+
+    }
+
+    return sharpNotes.indexOf(root);
+
+  }
+
+
+  function getKeyRoot(key) {
+
+    if (!key) {
+
+      return "";
+
+    }
+
+    const match =
+      key.match(/^([A-G](?:#|b)?)/);
+
+    if (!match) {
+
+      return "";
+
+    }
+
+    let root =
+      match[1];
+
+    if (flatToSharp[root]) {
+
+      root =
+        flatToSharp[root];
+
+    }
+
+    return root;
+
+  }
+
+
+  function getKeySuffix(key) {
+
+    if (!key) {
+
+      return "";
+
+    }
+
+    const match =
+      key.match(/^([A-G](?:#|b)?)(.*)$/);
+
+    if (!match) {
+
+      return "";
+
+    }
+
+    return match[2];
+
+  }
+
+
+  function getKeyDistance(
+    fromKey,
+    toKey
+  ) {
+
+    const fromRoot =
+      getKeyRoot(fromKey);
+
+    const toRoot =
+      getKeyRoot(toKey);
+
+    const fromIndex =
+      getRootIndex(fromRoot);
+
+    const toIndex =
+      getRootIndex(toRoot);
+
+    if (
+      fromIndex === -1 ||
+      toIndex === -1
+    ) {
+
+      return 0;
+
+    }
+
+    let distance =
+      toIndex - fromIndex;
+
+    if (distance > 6) {
+
+      distance -= 12;
+
+    }
+
+    if (distance < -6) {
+
+      distance += 12;
+
+    }
+
+    return distance;
+
+  }
+
+
+  function transposeChord(
+    chord,
+    steps
+  ) {
+
+    if (!chord) {
+
+      return chord;
+
+    }
+
+    chord =
+      chord.trim();
+
+    const match =
+      chord.match(
+        /^([A-G](?:#|b)?)(.*)$/
+      );
+
+    if (!match) {
+
+      return chord;
+
+    }
+
+    let root =
+      match[1];
+
+    const suffix =
+      match[2];
+
+    if (flatToSharp[root]) {
+
+      root =
+        flatToSharp[root];
+
+    }
+
+    const index =
+      getRootIndex(root);
+
+    if (index === -1) {
+
+      return chord;
+
+    }
+
+    let newIndex =
+      (index + steps) %
+      sharpNotes.length;
+
+    if (newIndex < 0) {
+
+      newIndex +=
+        sharpNotes.length;
+
+    }
+
+    const newRoot =
+      sharpNotes[newIndex];
+
+    let newSuffix =
+      suffix;
+
+    const slashMatch =
+      suffix.match(
+        /^([^/]*)(?:\/([A-G](?:#|b)?))$/
+      );
+
+    if (slashMatch) {
+
+      const beforeSlash =
+        slashMatch[1];
+
+      let bass =
+        slashMatch[2];
+
+      if (flatToSharp[bass]) {
+
+        bass =
+          flatToSharp[bass];
+
+      }
+
+      const bassIndex =
+        getRootIndex(bass);
+
+      if (bassIndex !== -1) {
+
+        let newBassIndex =
+          (bassIndex + steps) %
+          sharpNotes.length;
+
+        if (newBassIndex < 0) {
+
+          newBassIndex +=
+            sharpNotes.length;
+
+        }
+
+        const newBass =
+          sharpNotes[newBassIndex];
+
+        newSuffix =
+          beforeSlash +
+          "/" +
+          newBass;
+
+      }
+
+    }
+
+    return (
+      newRoot +
+      newSuffix
+    );
+
+  }
+
+
+  function getTotalTransposeSteps() {
+
+    const keySteps =
+      getKeyDistance(
+        originalSongKey,
+        selectedSongKey
+      );
+
+    return (
+      keySteps +
+      transposeSteps
+    );
+
+  }
+
+
+  function transposeChordLine(
+    chordLine
+  ) {
+
+    if (!chordLine) {
+
+      return "";
+
+    }
+
+    const totalSteps =
+      getTotalTransposeSteps();
+
+    return chordLine.replace(
+
+      /[A-G](?:#|b)?(?:m|maj|min|dim|aug|sus|add)?[0-9]*(?:\/[A-G](?:#|b)?)?/g,
+
+      function(chord) {
+
+        return transposeChord(
+          chord,
+          totalSteps
+        );
+
+      }
+
+    );
+
+  }
+
+
+  function getTransposedSongKey() {
+
+    if (!selectedSongKey) {
+
+      return "";
+
+    }
+
+    return transposeChord(
+      selectedSongKey,
+      transposeSteps
+    );
+
+  }
+
+
+  function updateSongKey() {
+
+    const keySelector =
+      document.getElementById(
+        "songKeySelector"
+      );
+
+    if (keySelector) {
+
+      keySelector.value =
+        selectedSongKey;
+
+    }
+
+  }
+
+
+  function createLyricsDisplay(
+    lyricsElement,
+    lyrics
+  ) {
+
+    if (!lyricsElement) {
+
+      return;
+
+    }
+
+    lyricsElement.innerHTML =
+      "";
+
+    const lines =
+      lyrics.split(/\r?\n/);
+
+    lines.forEach(
+      function(line, index) {
+
+        const row =
+          document.createElement(
+            "div"
+          );
+
+        row.className =
+          "song-line";
+
+
+        if (
+          chordMap[String(index)]
+        ) {
+
+          const chordElement =
+            document.createElement(
+              "div"
+            );
+
+          chordElement.className =
+            "song-chord";
+
+          chordElement.textContent =
+            transposeChordLine(
+              chordMap[String(index)]
+            );
+
+          row.appendChild(
+            chordElement
+          );
+
+        }
+
+
+        const lyricElement =
+          document.createElement(
+            "div"
+          );
+
+        lyricElement.className =
+          "song-lyric";
+
+        lyricElement.textContent =
+          line || "\u00A0";
+
+        row.appendChild(
+          lyricElement
+        );
+
+        lyricsElement.appendChild(
+          row
+        );
+
+      }
+    );
+
+  }
+
+
+  function refreshChordDisplay() {
+
+    const kannadaElement =
+      document.getElementById(
+        "kannadaLyrics"
+      );
+
+    const englishElement =
+      document.getElementById(
+        "englishLyrics"
+      );
+
+    if (kannadaElement) {
+
+      createLyricsDisplay(
+        kannadaElement,
+        kannadaLyrics
+      );
+
+    }
+
+    if (englishElement) {
+
+      createLyricsDisplay(
+        englishElement,
+        englishLyrics
+      );
+
+    }
+
+    updateSongKey();
+
+
+    const transposeValue =
+      document.getElementById(
+        "transposeValue"
+      );
+
+    if (transposeValue) {
+
+      if (transposeSteps > 0) {
+
+        transposeValue.textContent =
+          "+" + transposeSteps;
+
+      } else {
+
+        transposeValue.textContent =
+          String(transposeSteps);
+
+      }
+
+    }
+
+    updateChordVisibility();
+
+  }
+
+
+  let chordsVisible =
+    false;
+
+
+  function updateChordVisibility() {
+
+    const chordElements =
+      document.querySelectorAll(
+        ".song-chord"
+      );
+
+    chordElements.forEach(
+      function(element) {
+
+        element.style.display =
+          chordsVisible
+            ? "block"
+            : "none";
+
+      }
+    );
+
+
+    const toggleButton =
+      document.getElementById(
+        "toggleChords"
+      );
+
+    if (toggleButton) {
+
+      toggleButton.textContent =
+        chordsVisible
+          ? "🎸 Hide Chords"
+          : "🎸 Show Chords";
+
+    }
+
+  }
+
+
+  const toggleChords =
+    document.getElementById(
+      "toggleChords"
+    );
+
+  if (toggleChords) {
+
+    toggleChords.addEventListener(
+      "click",
+      function() {
+
+        chordsVisible =
+          !chordsVisible;
+
+        updateChordVisibility();
+
+      }
+    );
+
+  }
+
+
+  const songKeySelector =
+    document.getElementById(
+      "songKeySelector"
+    );
+
+  if (songKeySelector) {
+
+    songKeySelector.value =
+      originalSongKey;
+
+    songKeySelector.addEventListener(
+      "change",
+      function() {
+
+        selectedSongKey =
+          this.value;
+
+        transposeSteps =
+          0;
+
+        refreshChordDisplay();
+
+      }
+    );
+
+  }
+
+
+  const transposeUp =
+    document.getElementById(
+      "transposeUp"
+    );
+
+  if (transposeUp) {
+
+    transposeUp.addEventListener(
+      "click",
+      function() {
+
+        transposeSteps++;
+
+        refreshChordDisplay();
+
+      }
+    );
+
+  }
+
+
+  const transposeDown =
+    document.getElementById(
+      "transposeDown"
+    );
+
+  if (transposeDown) {
+
+    transposeDown.addEventListener(
+      "click",
+      function() {
+
+        transposeSteps--;
+
+        refreshChordDisplay();
+
+      }
+    );
+
+  }
+
+
+  const transposeReset =
+    document.getElementById(
+      "transposeReset"
+    );
+
+  if (transposeReset) {
+
+    transposeReset.addEventListener(
+      "click",
+      function() {
+
+        selectedSongKey =
+          originalSongKey;
+
+        transposeSteps =
+          0;
+
+        refreshChordDisplay();
+
+      }
+    );
+
+  }
+
+
+  let zoomLevel =
+    100;
+
+
+  function updateZoom() {
+
+    const content =
+      document.getElementById(
+        "songContent"
+      );
+
+    const zoomValue =
+      document.getElementById(
+        "zoomValue"
+      );
+
+    if (content) {
+
+      content.style.fontSize =
+        zoomLevel + "%";
+
+    }
+
+    if (zoomValue) {
+
+      zoomValue.textContent =
+        zoomLevel + "%";
+
+    }
+
+  }
+
+
+  const zoomIn =
+    document.getElementById(
+      "zoomIn"
+    );
+
+  if (zoomIn) {
+
+    zoomIn.addEventListener(
+      "click",
+      function() {
+
+        zoomLevel +=
+          10;
+
+        if (
+          zoomLevel > 180
+        ) {
+
+          zoomLevel =
+            180;
+
+        }
+
+        updateZoom();
+
+      }
+    );
+
+  }
+
+
+  const zoomOut =
+    document.getElementById(
+      "zoomOut"
+    );
+
+  if (zoomOut) {
+
+    zoomOut.addEventListener(
+      "click",
+      function() {
+
+        zoomLevel -=
+          10;
+
+        if (
+          zoomLevel < 70
+        ) {
+
+          zoomLevel =
+            70;
+
+        }
+
+        updateZoom();
+
+      }
+    );
+
+  }
+
+
+  /* =====================================================
+     INITIAL DISPLAY
+  ====================================================== */
+
+  refreshChordDisplay();
+
+  updateZoom();
+
+  updateChordVisibility();
+
+</script>
+
+<!-- =====================================================
+     STYLES
+====================================================== -->
+
+<style>
+
+  .song-view-screen {
+
+    max-width: 1100px;
+
+    margin: 0 auto;
+
+    padding: 20px;
+
+  }
+
+
+  .song-header {
+
+    margin-bottom: 18px;
+
+  }
+
+
+  .song-header h2 {
+
+    margin: 0;
+
+  }
+
+
+  .song-controls {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-bottom: 15px;
+
+  }
+
+
+  .language-controls {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 6px;
+
+  }
+
+
+  .zoom-controls {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+  }
+
+
+  #zoomValue {
+
+    min-width: 55px;
+
+    text-align: center;
+
+    font-weight: 600;
+
+  }
+
+
+  /* =====================================================
+     SONG KEY
+  ====================================================== */
+
+  .song-key-display {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin: 8px 0 14px;
+
+    padding: 8px 14px;
+
+    border: 1px solid #ddd;
+
+    border-radius: 9px;
+
+  }
+
+
+  .song-key-label {
+
+    opacity: 0.7;
+
+    font-size: 14px;
+
+  }
+
+
+  .song-key-selector {
+
+    min-width: 100px;
+
+    padding: 7px 10px;
+
+    border: 1px solid #ccc;
+
+    border-radius: 7px;
+
+    background: inherit;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+  }
+
+
+  /* =====================================================
+     TRANSPOSE
+  ====================================================== */
+
+  .transpose-controls {
+
+    display: flex;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 7px;
+
+    margin-bottom: 20px;
+
+  }
+
+
+  .transpose-label {
+
+    font-weight: 700;
+
+    margin-right: 4px;
+
+  }
+
+
+  #transposeValue {
+
+    min-width: 30px;
+
+    text-align: center;
+
+    font-weight: 700;
+
+  }
+
+
+  /* =====================================================
+     SONG CONTENT
+  ====================================================== */
+
+  .song-content {
+
+    width: 100%;
+
+  }
+
+
+  .lyrics-section {
+
+    margin-bottom: 35px;
+
+  }
+
+
+  .lyrics-section h3 {
+
+    margin-bottom: 15px;
+
+  }
+
+
+  /* =====================================================
+     WHITE LYRICS PAPER
+  ====================================================== */
+
+  .lyrics-display {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    background: #ffffff;
+
+    padding: 28px 32px;
+
+    border-radius: 6px;
+
+    box-shadow:
+      0 3px 12px rgba(0, 0, 0, 0.12);
+
+    font-family:
+      "Noto Sans",
+      "Noto Sans Kannada",
+      "Nirmala UI",
+      monospace;
+
+    line-height: 1.45;
+
+    white-space: pre-wrap;
+
+    overflow-x: auto;
+
+    color: #111111;
+
+  }
+
+
+  /* =====================================================
+     SONG LINE
+  ====================================================== */
+
+  .song-line {
+
+    margin: 0;
+
+    padding: 0;
+
+  }
+
+
+  /* =====================================================
+     CHORD
+  ====================================================== */
+
+  .song-chord {
+
+    display: none;
+
+    font-family:
+      "Noto Sans",
+      "Noto Sans Kannada",
+      "Nirmala UI",
+      monospace;
+
+    font-weight: 700;
+
+    line-height: 1.2;
+
+    min-height: 1.2em;
+
+    white-space: pre;
+
+    margin: 0 0 6px 0;
+
+    padding: 0;
+
+  }
+
+
+  /* =====================================================
+     LYRIC
+  ====================================================== */
+
+  .song-lyric {
+
+    line-height: 1.35;
+
+    min-height: 1.35em;
+
+    white-space: pre-wrap;
+
+    margin: 0;
+
+    padding: 0;
+
+  }
+
+
+  /* =====================================================
+     MOBILE
+  ====================================================== */
+
+  @media (max-width: 768px) {
+
+    .song-view-screen {
+
+      padding: 12px;
+
+    }
+
+
+    .song-controls {
+
+      align-items: stretch;
+
+    }
+
+
+    .song-controls .btn {
+
+      font-size: 14px;
+
+    }
+
+
+    .lyrics-display {
+
+      font-size: 15px;
+
+      padding: 20px 16px;
+
+      border-radius: 5px;
+
+      box-sizing: border-box;
+
+      width: 100%;
+
+    }
+
+
+    .song-chord {
+
+      font-size: 14px;
+
+    }
+
+
+    .song-key-selector {
+
+      min-width: 85px;
+
+      font-size: 15px;
+
+    }
+
+  }
+
+</style>
+
+{% endblock %}

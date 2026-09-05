@@ -1,0 +1,655 @@
+{% extends "base.html" %}
+
+{% block title %}{{ song.title }}{% endblock %}
+
+{% block content %}
+
+<div class="song-view-screen">
+
+  <!-- =====================================================
+       SONG HEADER
+  ====================================================== -->
+
+  <div class="song-view-header">
+
+
+<div>
+
+  <p class="eyebrow">
+    Song Lyrics
+  </p>
+
+  <h2>
+    {{ song.title }}
+  </h2>
+
+</div>
+
+
+  </div>
+
+  <!-- =====================================================
+       LANGUAGE + ZOOM + LISTED SONG + BACK CONTROLS
+  ====================================================== -->
+
+  <div class="lyrics-controls">
+
+
+<!-- =================================================
+     KANNADA
+================================================== -->
+
+<a
+  href="{{ url_for(
+    'song_view',
+    song_id=song.id,
+    lang='kannada',
+    from_listed='1' if from_listed else '0'
+  ) }}"
+  class="btn {{ 'btn-primary' if lang == 'kannada' else 'btn-secondary' }}"
+>
+  ಕನ್ನಡ
+</a>
+
+
+<!-- =================================================
+     ENGLISH
+================================================== -->
+
+<a
+  href="{{ url_for(
+    'song_view',
+    song_id=song.id,
+    lang='english',
+    from_listed='1' if from_listed else '0'
+  ) }}"
+  class="btn {{ 'btn-primary' if lang == 'english' else 'btn-secondary' }}"
+>
+  English
+</a>
+
+
+<!-- =================================================
+     BOTH
+================================================== -->
+
+<a
+  href="{{ url_for(
+    'song_view',
+    song_id=song.id,
+    lang='both',
+    from_listed='1' if from_listed else '0'
+  ) }}"
+  class="btn {{ 'btn-primary' if lang == 'both' else 'btn-secondary' }}"
+>
+  Both
+</a>
+
+
+<!-- =================================================
+     ZOOM OUT
+================================================== -->
+
+<button
+  type="button"
+  class="btn btn-secondary zoom-button"
+  onclick="zoomOut()"
+  title="Zoom Out"
+>
+  −
+</button>
+
+
+<!-- =================================================
+     ZOOM IN
+================================================== -->
+
+<button
+  type="button"
+  class="btn btn-secondary zoom-button"
+  onclick="zoomIn()"
+  title="Zoom In"
+>
+  +
+</button>
+
+
+<!-- =================================================
+     CHORDS + TRANSPOSE
+================================================== -->
+
+<div class="chords-panel">
+
+  <div class="chords-header">
+
+    <div>
+      <h3>Chords</h3>
+
+      {% if song.chord_key %}
+      <p>
+        Original Key:
+        <strong id="originalChordKey">{{ song.chord_key }}</strong>
+      </p>
+      {% endif %}
+    </div>
+
+    <div class="transpose-controls">
+      <button type="button" class="btn btn-secondary transpose-button" onclick="transposeDown()">-</button>
+      <span id="transposeDisplay">Key: {{ song.chord_key or 'Original' }}</span>
+      <button type="button" class="btn btn-secondary transpose-button" onclick="transposeUp()">+</button>
+      <button type="button" class="btn btn-secondary transpose-button" onclick="resetTranspose()">Reset</button>
+    </div>
+
+  </div>
+
+  <pre id="chordsText" class="chords-text">{{ song.chords or 'No chords added for this song.' }}</pre>
+
+</div>
+
+
+<!-- =================================================
+     ADD TO LISTED SONGS
+================================================== -->
+
+<form
+  method="POST"
+  action="{{ url_for('add_to_list', song_id=song.id) }}"
+  class="listed-song-form"
+>
+
+  <button
+    type="submit"
+    class="btn btn-primary listed-song-button"
+  >
+    Add to Listed Songs
+  </button>
+
+</form>
+
+
+<!-- =================================================
+     BACK BUTTON
+     This is now on the TOP RIGHT
+================================================== -->
+
+<a
+  href="{{ url_for('listed_songs') if from_listed else url_for('song_list') }}"
+  class="btn btn-secondary back-button"
+>
+  ← Back
+</a>
+
+
+  </div>
+
+  <!-- =====================================================
+       LYRICS
+  ====================================================== -->
+
+  <div
+    class="lyrics-box"
+    id="lyricsBox"
+  >
+
+
+{% if lang == 'english' %}
+
+  <!-- ===============================================
+       ENGLISH ONLY
+  ================================================ -->
+
+  <div class="single-lyrics-section">
+
+    <h3 class="lyrics-language-title">
+      English
+    </h3>
+
+    <pre class="lyrics-text">{{ song.english_text }}</pre>
+
+  </div>
+
+
+{% elif lang == 'both' %}
+
+  <!-- ===============================================
+       KANNADA + ENGLISH
+  ================================================ -->
+
+  <div class="both-lyrics-container">
+
+    <!-- =============================================
+         KANNADA LEFT
+    ============================================== -->
+
+    <div class="both-lyrics-column">
+
+      <h3 class="lyrics-language-title">
+        ಕನ್ನಡ
+      </h3>
+
+      <pre
+        class="lyrics-text lyrics-kannada"
+      >{{ song.kannada_text }}</pre>
+
+    </div>
+
+
+    <!-- =============================================
+         ENGLISH RIGHT
+    ============================================== -->
+
+    <div class="both-lyrics-column">
+
+      <h3 class="lyrics-language-title">
+        English
+      </h3>
+
+      <pre
+        class="lyrics-text"
+      >{{ song.english_text }}</pre>
+
+    </div>
+
+  </div>
+
+
+{% else %}
+
+  <!-- ===============================================
+       KANNADA ONLY
+  ================================================ -->
+
+  <div class="single-lyrics-section">
+
+    <h3 class="lyrics-language-title">
+      ಕನ್ನಡ
+    </h3>
+
+    <pre
+      class="lyrics-text lyrics-kannada"
+    >{{ song.kannada_text }}</pre>
+
+  </div>
+
+{% endif %}
+
+
+  </div>
+
+</div>
+
+<!-- =====================================================
+     ZOOM JAVASCRIPT
+====================================================== -->
+
+<script>
+
+  let currentZoom = 100;
+
+  const MIN_ZOOM = 70;
+  const MAX_ZOOM = 200;
+  const ZOOM_STEP = 10;
+
+
+  function updateZoom() {
+
+    const lyrics = document.querySelectorAll(
+      ".lyrics-text"
+    );
+
+    lyrics.forEach(function(element) {
+
+      element.style.fontSize =
+        currentZoom + "%";
+
+    });
+
+  }
+
+
+  function zoomIn() {
+
+    if (currentZoom < MAX_ZOOM) {
+
+      currentZoom += ZOOM_STEP;
+
+      updateZoom();
+
+    }
+
+  }
+
+
+  function zoomOut() {
+
+    if (currentZoom > MIN_ZOOM) {
+
+      currentZoom -= ZOOM_STEP;
+
+      updateZoom();
+
+    }
+
+  }
+
+
+  // =====================================================
+  // CHORD TRANSPOSE
+  // =====================================================
+
+  const chordNames = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  const originalChords = {{ song.chords|tojson }};
+  const originalKey = {{ (song.chord_key or '')|tojson }};
+  let transposeSteps = 0;
+
+  function transposeChord(chord, steps) {
+    const match = chord.match(/^([A-G](?:#|b)?)(.*)$/);
+    if (!match) return chord;
+
+    const aliases = {
+      'Db': 'C#',
+      'Eb': 'D#',
+      'Gb': 'F#',
+      'Ab': 'G#',
+      'Bb': 'A#'
+    };
+
+    const root = aliases[match[1]] || match[1];
+    const index = chordNames.indexOf(root);
+
+    if (index < 0) return chord;
+
+    const newIndex = (index + steps % 12 + 12) % 12;
+    return chordNames[newIndex] + match[2];
+  }
+
+  function transposeText(text, steps) {
+    if (!text) return '';
+
+    return text.replace(
+      /\b[A-G](?:#|b)?(?:m|maj|min|dim|aug|sus|add)?[0-9]*(?:\/[A-G](?:#|b)?)?\b/g,
+      function(chord) {
+        return transposeChord(chord, steps);
+      }
+    );
+  }
+
+  function updateTranspose() {
+    const chordsElement = document.getElementById('chordsText');
+    const displayElement = document.getElementById('transposeDisplay');
+
+    if (chordsElement) {
+      chordsElement.textContent = transposeText(originalChords, transposeSteps);
+    }
+
+    if (displayElement) {
+      displayElement.textContent = 'Key: ' + (
+        originalKey
+          ? transposeChord(originalKey, transposeSteps)
+          : 'Original'
+      );
+    }
+  }
+
+  function transposeUp() {
+    transposeSteps++;
+    updateTranspose();
+  }
+
+  function transposeDown() {
+    transposeSteps--;
+    updateTranspose();
+  }
+
+  function resetTranspose() {
+    transposeSteps = 0;
+    updateTranspose();
+  }
+</script>
+
+<!-- =====================================================
+     STYLES
+====================================================== -->
+
+<style>
+
+  /* =====================================================
+     TOP CONTROLS
+  ====================================================== */
+
+  .lyrics-controls {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    width: 100%;
+
+    margin-top: 20px;
+
+    margin-bottom: 20px;
+
+    flex-wrap: wrap;
+
+  }
+
+
+  /* =====================================================
+     LISTED SONG FORM
+  ====================================================== */
+
+  .listed-song-form {
+
+    margin: 0;
+
+    padding: 0;
+
+    display: flex;
+
+    align-items: center;
+
+  }
+
+
+  /* =====================================================
+     LISTED SONG BUTTON
+  ====================================================== */
+
+  .listed-song-button {
+
+    white-space: nowrap;
+
+  }
+
+
+  /* =====================================================
+     BACK BUTTON
+  ====================================================== */
+
+  .back-button {
+
+    white-space: nowrap;
+
+  }
+
+
+  /* =====================================================
+     ZOOM BUTTONS
+  ====================================================== */
+
+  .zoom-button {
+
+    min-width: 45px !important;
+
+    width: 45px;
+
+    height: 45px;
+
+    padding: 0;
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+  }
+
+
+  /* =====================================================
+     BOTH LYRICS CONTAINER
+  ====================================================== */
+
+  .both-lyrics-container {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    width: 100%;
+
+    gap: 0;
+
+  }
+
+
+  /* =====================================================
+     LANGUAGE COLUMNS
+  ====================================================== */
+
+  .both-lyrics-column {
+
+    min-width: 0;
+
+    padding: 20px;
+
+    box-sizing: border-box;
+
+    overflow-x: auto;
+
+  }
+
+
+  /* =====================================================
+     VERTICAL LINE
+  ====================================================== */
+
+  .both-lyrics-column:first-child {
+
+    border-right: 2px solid #ddd;
+
+  }
+
+
+  /* =====================================================
+     LANGUAGE TITLE
+  ====================================================== */
+
+  .lyrics-language-title {
+
+    text-align: center;
+
+    margin-top: 0;
+
+    margin-bottom: 15px;
+
+    font-size: 22px;
+
+    font-weight: 700;
+
+  }
+
+
+  /* =====================================================
+     LYRICS TEXT
+  ====================================================== */
+
+  .both-lyrics-column .lyrics-text {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    margin: 0;
+
+  }
+
+
+  .single-lyrics-section {
+
+    width: 100%;
+
+  }
+
+
+  /* =====================================================
+     MOBILE
+  ====================================================== */
+
+  @media (max-width: 768px) {
+
+    .lyrics-controls {
+
+      justify-content: center;
+
+      gap: 8px;
+
+    }
+
+
+    .lyrics-controls .btn {
+
+      min-width: auto;
+
+    }
+
+
+    .listed-song-button {
+
+      width: auto;
+
+    }
+
+
+    .back-button {
+
+      width: auto;
+
+    }
+
+
+    .both-lyrics-container {
+
+      grid-template-columns: 1fr;
+
+    }
+
+
+    .both-lyrics-column {
+
+      width: 100%;
+
+    }
+
+
+    .both-lyrics-column:first-child {
+
+      border-right: none;
+
+      border-bottom: 2px solid #ddd;
+
+    }
+
+  }
+
+</style>
+
+{% endblock %}
