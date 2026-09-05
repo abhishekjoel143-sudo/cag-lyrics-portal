@@ -325,7 +325,7 @@
       </div>
 
 
-    {% else %}
+    {% elif lang == "both" %}
 
       <div
         class="lyrics-section"
@@ -358,6 +358,19 @@
           class="lyrics-display"
         ></div>
 
+      </div>
+
+    {% else %}
+
+      <div
+        class="lyrics-section"
+        data-language="kannada"
+      >
+        <h3>ಕನ್ನಡ</h3>
+        <div
+          id="kannadaLyrics"
+          class="lyrics-display"
+        ></div>
       </div>
 
     {% endif %}

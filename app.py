@@ -1418,7 +1418,10 @@ def admin_upload():
             title=title,
             kannada_text=kannada_text,
             english_text=english_text,
-            original_filename=filename
+            original_filename=filename,
+            chords="",
+            chord_key="",
+            chords_enabled=False
         )
 
         db.session.add(
@@ -1588,7 +1591,10 @@ def admin_bulk_upload():
                     title=title,
                     kannada_text=kannada_text,
                     english_text=english_text,
-                    original_filename=filename
+                    original_filename=filename,
+                    chords="",
+                    chord_key="",
+                    chords_enabled=False
                 )
 
                 db.session.add(
@@ -1830,7 +1836,7 @@ def admin_edit_song(song_id):
 
         else:
 
-            song.chord_key = None
+            song.chord_key = ""
 
         # ====================================================
         # SAVE SHARED CHORD ARRANGEMENT
@@ -1852,7 +1858,7 @@ def admin_edit_song(song_id):
 
         else:
 
-            song.chords = None
+            song.chords = ""
 
             song.chords_enabled = False
 
