@@ -14,21 +14,20 @@
 
   <div class="song-header">
 
+    <div>
 
-<div>
+      <p class="eyebrow">
+        {{ church_name if church_name is defined else "CAG Lyrics" }}
+      </p>
 
-  <p class="eyebrow">
-    {{ church_name if church_name is defined else "CAG Lyrics" }}
-  </p>
+      <h2>
+        {{ song.title }}
+      </h2>
 
-  <h2>
-    {{ song.title }}
-  </h2>
-
-</div>
-
+    </div>
 
   </div>
+
 
   <!-- =====================================================
        SONG CONTROLS
@@ -37,248 +36,247 @@
   <div class="song-controls">
 
 
-<!-- LANGUAGE -->
+    <!-- LANGUAGE -->
 
-<div class="language-controls">
+    <div class="language-controls">
 
-  <a
-    href="{{ url_for('song_view', song_id=song.id, lang='kannada', from_listed=from_listed) }}"
-    class="btn {% if lang == 'kannada' %}btn-primary{% else %}btn-secondary{% endif %}"
-  >
-    ಕನ್ನಡ
-  </a>
+      <a
+        href="{{ url_for('song_view', song_id=song.id, lang='kannada', from_listed=from_listed) }}"
+        class="btn {% if lang == 'kannada' %}btn-primary{% else %}btn-secondary{% endif %}"
+      >
+        ಕನ್ನಡ
+      </a>
 
-  <a
-    href="{{ url_for('song_view', song_id=song.id, lang='english', from_listed=from_listed) }}"
-    class="btn {% if lang == 'english' %}btn-primary{% else %}btn-secondary{% endif %}"
-  >
-    English
-  </a>
+      <a
+        href="{{ url_for('song_view', song_id=song.id, lang='english', from_listed=from_listed) }}"
+        class="btn {% if lang == 'english' %}btn-primary{% else %}btn-secondary{% endif %}"
+      >
+        English
+      </a>
 
-  <a
-    href="{{ url_for('song_view', song_id=song.id, lang='both', from_listed=from_listed) }}"
-    class="btn {% if lang == 'both' %}btn-primary{% else %}btn-secondary{% endif %}"
-  >
-    Both
-  </a>
+      <a
+        href="{{ url_for('song_view', song_id=song.id, lang='both', from_listed=from_listed) }}"
+        class="btn {% if lang == 'both' %}btn-primary{% else %}btn-secondary{% endif %}"
+      >
+        Both
+      </a>
 
-</div>
-
-
-<!-- ZOOM -->
-
-<div class="zoom-controls">
-
-  <button
-    type="button"
-    id="zoomOut"
-    class="btn btn-secondary"
-  >
-    −
-  </button>
-
-  <span id="zoomValue">
-    100%
-  </span>
-
-  <button
-    type="button"
-    id="zoomIn"
-    class="btn btn-secondary"
-  >
-    +
-  </button>
-
-</div>
+    </div>
 
 
-<!-- CHORDS -->
+    <!-- ZOOM -->
 
-{% if song.chords %}
-
-  <button
-    type="button"
-    id="toggleChords"
-    class="btn btn-secondary"
-  >
-    🎸 Show Chords
-  </button>
-
-{% endif %}
-
-
-<!-- EDIT CHORDS -->
-
-{% if session.get("is_admin") %}
-
-  <a
-    href="{{ url_for('admin_edit_song', song_id=song.id) }}"
-    class="btn btn-secondary"
-  >
-    🎸 Edit Chords
-  </a>
-
-{% endif %}
-
-
-<!-- LISTED SONG -->
-
-{% if not from_listed %}
-
-  {% if session.get("user_id") %}
-
-    <form
-      method="POST"
-      action="{{ url_for('add_to_list', song_id=song.id) }}"
-      style="display:inline;"
-    >
+    <div class="zoom-controls">
 
       <button
-        type="submit"
+        type="button"
+        id="zoomOut"
         class="btn btn-secondary"
       >
-        ❤️ Add to Listed Songs
+        −
       </button>
 
-    </form>
+      <span id="zoomValue">
+        100%
+      </span>
 
-  {% endif %}
+      <button
+        type="button"
+        id="zoomIn"
+        class="btn btn-secondary"
+      >
+        +
+      </button>
 
-{% endif %}
+    </div>
 
 
-<!-- BACK -->
+    <!-- CHORDS -->
 
-{% if from_listed %}
+    {% if song.chords %}
 
-  <a
-    href="{{ url_for('listed_songs') }}"
-    class="btn btn-secondary"
-  >
-    &larr; Listed Songs
-  </a>
+      <button
+        type="button"
+        id="toggleChords"
+        class="btn btn-secondary"
+      >
+        🎸 Show Chords
+      </button>
 
-{% else %}
+    {% endif %}
 
-  <a
-    href="{{ url_for('song_list') }}"
-    class="btn btn-secondary"
-  >
-    &larr; Songs
-  </a>
 
-{% endif %}
+    <!-- EDIT CHORDS -->
+
+    {% if session.get("is_admin") %}
+
+      <a
+        href="{{ url_for('admin_edit_song', song_id=song.id) }}"
+        class="btn btn-secondary"
+      >
+        🎸 Edit Chords
+      </a>
+
+    {% endif %}
+
+
+    <!-- LISTED SONG -->
+
+    {% if not from_listed %}
+
+      {% if session.get("user_id") %}
+
+        <form
+          method="POST"
+          action="{{ url_for('add_to_list', song_id=song.id) }}"
+          style="display:inline;"
+        >
+
+          <button
+            type="submit"
+            class="btn btn-secondary"
+          >
+            ❤️ Add to Listed Songs
+          </button>
+
+        </form>
+
+      {% endif %}
+
+    {% endif %}
+
+
+    <!-- BACK -->
+
+    {% if from_listed %}
+
+      <a
+        href="{{ url_for('listed_songs') }}"
+        class="btn btn-secondary"
+      >
+        &larr; Listed Songs
+      </a>
+
+    {% else %}
+
+      <a
+        href="{{ url_for('song_list') }}"
+        class="btn btn-secondary"
+      >
+        &larr; Songs
+      </a>
+
+    {% endif %}
 
   </div>
+
 
   <!-- =====================================================
        SONG KEY SELECTOR
   ====================================================== -->
 
-{% if song.chord_key %}
+  {% if song.chord_key %}
+
+    <div class="song-key-display">
+
+      <span class="song-key-label">
+        Key
+      </span>
+
+      <select
+        id="songKeySelector"
+        class="song-key-selector"
+      >
+
+        <optgroup label="Major">
+
+          <option value="C">C</option>
+          <option value="C#">C#</option>
+          <option value="D">D</option>
+          <option value="D#">D#</option>
+          <option value="E">E</option>
+          <option value="F">F</option>
+          <option value="F#">F#</option>
+          <option value="G">G</option>
+          <option value="G#">G#</option>
+          <option value="A">A</option>
+          <option value="A#">A#</option>
+          <option value="B">B</option>
+
+        </optgroup>
 
 
-<div class="song-key-display">
+        <optgroup label="Minor">
 
-  <span class="song-key-label">
-    Key
-  </span>
+          <option value="Cm">Cm</option>
+          <option value="C#m">C#m</option>
+          <option value="Dm">Dm</option>
+          <option value="D#m">D#m</option>
+          <option value="Em">Em</option>
+          <option value="Fm">Fm</option>
+          <option value="F#m">F#m</option>
+          <option value="Gm">Gm</option>
+          <option value="G#m">G#m</option>
+          <option value="Am">Am</option>
+          <option value="A#m">A#m</option>
+          <option value="Bm">Bm</option>
 
-  <select
-    id="songKeySelector"
-    class="song-key-selector"
-  >
+        </optgroup>
 
-    <optgroup label="Major">
+      </select>
 
-      <option value="C">C</option>
-      <option value="C#">C#</option>
-      <option value="D">D</option>
-      <option value="D#">D#</option>
-      <option value="E">E</option>
-      <option value="F">F</option>
-      <option value="F#">F#</option>
-      <option value="G">G</option>
-      <option value="G#">G#</option>
-      <option value="A">A</option>
-      <option value="A#">A#</option>
-      <option value="B">B</option>
+    </div>
 
-    </optgroup>
+  {% endif %}
 
-
-    <optgroup label="Minor">
-
-      <option value="Cm">Cm</option>
-      <option value="C#m">C#m</option>
-      <option value="Dm">Dm</option>
-      <option value="D#m">D#m</option>
-      <option value="Em">Em</option>
-      <option value="Fm">Fm</option>
-      <option value="F#m">F#m</option>
-      <option value="Gm">Gm</option>
-      <option value="G#m">G#m</option>
-      <option value="Am">Am</option>
-      <option value="A#m">A#m</option>
-      <option value="Bm">Bm</option>
-
-    </optgroup>
-
-  </select>
-
-</div>
-
-
-{% endif %}
 
   <!-- =====================================================
        TRANSPOSE CONTROLS
   ====================================================== -->
 
-{% if song.chords %}
+  {% if song.chords %}
 
+    <div
+      class="transpose-controls"
+      id="transposeControls"
+    >
 
-<div
-  class="transpose-controls"
-  id="transposeControls"
->
+      <span class="transpose-label">
+        Transpose
+      </span>
 
-  <span class="transpose-label">
-    Transpose
-  </span>
+      <button
+        type="button"
+        id="transposeDown"
+        class="btn btn-secondary"
+      >
+        −
+      </button>
 
-  <button
-    type="button"
-    id="transposeDown"
-    class="btn btn-secondary"
-  >
-    −
-  </button>
+      <span id="transposeValue">
+        0
+      </span>
 
-  <span id="transposeValue">
-    0
-  </span>
+      <button
+        type="button"
+        id="transposeUp"
+        class="btn btn-secondary"
+      >
+        +
+      </button>
 
-  <button
-    type="button"
-    id="transposeUp"
-    class="btn btn-secondary"
-  >
-    +
-  </button>
+      <button
+        type="button"
+        id="transposeReset"
+        class="btn btn-secondary"
+      >
+        Reset
+      </button>
 
-  <button
-    type="button"
-    id="transposeReset"
-    class="btn btn-secondary"
-  >
-    Reset
-  </button>
+    </div>
 
-</div>
+  {% endif %}
 
-
-{% endif %}
 
   <!-- =====================================================
        SONG CONTENT
@@ -289,86 +287,85 @@
     class="song-content"
   >
 
+    {% if lang == "kannada" %}
 
-{% if lang == "kannada" %}
+      <div
+        class="lyrics-section"
+        data-language="kannada"
+      >
 
-  <div
-    class="lyrics-section"
-    data-language="kannada"
-  >
+        <h3>
+          ಕನ್ನಡ
+        </h3>
 
-    <h3>
-      ಕನ್ನಡ
-    </h3>
+        <div
+          id="kannadaLyrics"
+          class="lyrics-display"
+        ></div>
 
-    <div
-      id="kannadaLyrics"
-      class="lyrics-display"
-    ></div>
-
-  </div>
-
-
-{% elif lang == "english" %}
-
-  <div
-    class="lyrics-section"
-    data-language="english"
-  >
-
-    <h3>
-      English Pronunciation
-    </h3>
-
-    <div
-      id="englishLyrics"
-      class="lyrics-display"
-    ></div>
-
-  </div>
+      </div>
 
 
-{% else %}
+    {% elif lang == "english" %}
 
-  <div
-    class="lyrics-section"
-    data-language="kannada"
-  >
+      <div
+        class="lyrics-section"
+        data-language="english"
+      >
 
-    <h3>
-      ಕನ್ನಡ
-    </h3>
+        <h3>
+          English Pronunciation
+        </h3>
 
-    <div
-      id="kannadaLyrics"
-      class="lyrics-display"
-    ></div>
+        <div
+          id="englishLyrics"
+          class="lyrics-display"
+        ></div>
 
-  </div>
+      </div>
 
 
-  <div
-    class="lyrics-section"
-    data-language="english"
-  >
+    {% else %}
 
-    <h3>
-      English Pronunciation
-    </h3>
+      <div
+        class="lyrics-section"
+        data-language="kannada"
+      >
 
-    <div
-      id="englishLyrics"
-      class="lyrics-display"
-    ></div>
+        <h3>
+          ಕನ್ನಡ
+        </h3>
 
-  </div>
+        <div
+          id="kannadaLyrics"
+          class="lyrics-display"
+        ></div>
 
-{% endif %}
+      </div>
 
+
+      <div
+        class="lyrics-section"
+        data-language="english"
+      >
+
+        <h3>
+          English Pronunciation
+        </h3>
+
+        <div
+          id="englishLyrics"
+          class="lyrics-display"
+        ></div>
+
+      </div>
+
+    {% endif %}
 
   </div>
 
 </div>
+
 
 <!-- =====================================================
      JAVASCRIPT
@@ -637,10 +634,12 @@
     let newSuffix =
       suffix;
 
+
     const slashMatch =
       suffix.match(
         /^([^/]*)(?:\/([A-G](?:#|b)?))$/
       );
+
 
     if (slashMatch) {
 
@@ -684,6 +683,7 @@
       }
 
     }
+
 
     return (
       newRoot +
@@ -790,6 +790,7 @@
     const lines =
       lyrics.split(/\r?\n/);
 
+
     lines.forEach(
       function(line, index) {
 
@@ -841,6 +842,7 @@
           lyricElement
         );
 
+
         lyricsElement.appendChild(
           row
         );
@@ -863,6 +865,7 @@
         "englishLyrics"
       );
 
+
     if (kannadaElement) {
 
       createLyricsDisplay(
@@ -871,6 +874,7 @@
       );
 
     }
+
 
     if (englishElement) {
 
@@ -881,6 +885,7 @@
 
     }
 
+
     updateSongKey();
 
 
@@ -888,6 +893,7 @@
       document.getElementById(
         "transposeValue"
       );
+
 
     if (transposeValue) {
 
@@ -905,6 +911,7 @@
 
     }
 
+
     updateChordVisibility();
 
   }
@@ -920,6 +927,7 @@
       document.querySelectorAll(
         ".song-chord"
       );
+
 
     chordElements.forEach(
       function(element) {
@@ -938,6 +946,7 @@
         "toggleChords"
       );
 
+
     if (toggleButton) {
 
       toggleButton.textContent =
@@ -954,6 +963,7 @@
     document.getElementById(
       "toggleChords"
     );
+
 
   if (toggleChords) {
 
@@ -977,10 +987,12 @@
       "songKeySelector"
     );
 
+
   if (songKeySelector) {
 
     songKeySelector.value =
       originalSongKey;
+
 
     songKeySelector.addEventListener(
       "change",
@@ -1005,6 +1017,7 @@
       "transposeUp"
     );
 
+
   if (transposeUp) {
 
     transposeUp.addEventListener(
@@ -1025,6 +1038,7 @@
     document.getElementById(
       "transposeDown"
     );
+
 
   if (transposeDown) {
 
@@ -1047,6 +1061,7 @@
       "transposeReset"
     );
 
+
   if (transposeReset) {
 
     transposeReset.addEventListener(
@@ -1067,8 +1082,11 @@
   }
 
 
-  let zoomLevel =
-    100;
+  /* =====================================================
+     ZOOM CONTROLS
+  ====================================================== */
+
+  let zoomLevel = 100;
 
 
   function updateZoom() {
@@ -1083,12 +1101,23 @@
         "zoomValue"
       );
 
+
     if (content) {
 
-      content.style.fontSize =
-        zoomLevel + "%";
+      content.style.transform =
+        "scale(" +
+        (zoomLevel / 100) +
+        ")";
+
+      content.style.transformOrigin =
+        "top left";
+
+      content.style.width =
+        (100 / (zoomLevel / 100)) +
+        "%";
 
     }
+
 
     if (zoomValue) {
 
@@ -1105,21 +1134,18 @@
       "zoomIn"
     );
 
+
   if (zoomIn) {
 
     zoomIn.addEventListener(
       "click",
       function() {
 
-        zoomLevel +=
-          10;
+        zoomLevel += 10;
 
-        if (
-          zoomLevel > 180
-        ) {
+        if (zoomLevel > 180) {
 
-          zoomLevel =
-            180;
+          zoomLevel = 180;
 
         }
 
@@ -1136,21 +1162,18 @@
       "zoomOut"
     );
 
+
   if (zoomOut) {
 
     zoomOut.addEventListener(
       "click",
       function() {
 
-        zoomLevel -=
-          10;
+        zoomLevel -= 10;
 
-        if (
-          zoomLevel < 70
-        ) {
+        if (zoomLevel < 70) {
 
-          zoomLevel =
-            70;
+          zoomLevel = 70;
 
         }
 
@@ -1163,16 +1186,13 @@
 
 
   /* =====================================================
-     INITIAL DISPLAY
+     INITIAL SONG DISPLAY
   ====================================================== */
 
   refreshChordDisplay();
 
-  updateZoom();
-
-  updateChordVisibility();
-
 </script>
+
 
 <!-- =====================================================
      STYLES
@@ -1452,13 +1472,19 @@
      LYRIC
   ====================================================== */
 
- .song-lyric {
-  line-height: 1.45;
-  min-height: 1.45em;
-  white-space: pre-wrap;
-  margin: 0 0 3px 0;
-  padding: 0;
-}
+  .song-lyric {
+
+    line-height: 1.45;
+
+    min-height: 1.45em;
+
+    white-space: pre-wrap;
+
+    margin: 0 0 3px 0;
+
+    padding: 0;
+
+  }
 
 
   /* =====================================================
@@ -1504,11 +1530,16 @@
 
 
     .song-chord {
-  font-size: 14px;
-  line-height: 1.05;
-  margin-bottom: 2px;
-  min-height: 1.05em;
-}
+
+      font-size: inherit;
+
+      line-height: 1.2;
+
+      margin-bottom: 2px;
+
+      min-height: 1.2em;
+
+    }
 
 
     .song-key-selector {
