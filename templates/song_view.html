@@ -1526,8 +1526,17 @@
 
       width: 100%;
 
+      overflow-x: auto;
+
     }
 
+
+    /* =================================================
+       MOBILE CHORD FIX
+
+       Keep all spaces between chords exactly as saved.
+       Prevent the chord line from being squeezed.
+    ================================================== */
 
     .song-chord {
 
@@ -1538,6 +1547,12 @@
       margin-bottom: 2px;
 
       min-height: 1.2em;
+
+      white-space: pre;
+
+      display: block;
+
+      width: max-content;
 
     }
 
