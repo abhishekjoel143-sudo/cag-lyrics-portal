@@ -35,7 +35,6 @@
 
   <div class="song-controls">
 
-
     <!-- LANGUAGE -->
 
     <div class="language-controls">
@@ -284,7 +283,7 @@
 
   <div
     id="songContent"
-    class="song-content"
+    class="song-content {% if lang == 'both' %}both-language-view{% endif %}"
   >
 
     {% if lang == "kannada" %}
@@ -327,8 +326,13 @@
 
     {% elif lang == "both" %}
 
+      <!-- =================================================
+           BOTH VIEW
+           KANNADA LEFT | ENGLISH RIGHT
+      ================================================== -->
+
       <div
-        class="lyrics-section"
+        class="lyrics-section both-language-section"
         data-language="kannada"
       >
 
@@ -345,7 +349,7 @@
 
 
       <div
-        class="lyrics-section"
+        class="lyrics-section both-language-section"
         data-language="english"
       >
 
@@ -360,17 +364,23 @@
 
       </div>
 
+
     {% else %}
 
       <div
         class="lyrics-section"
         data-language="kannada"
       >
-        <h3>ಕನ್ನಡ</h3>
+
+        <h3>
+          ಕನ್ನಡ
+        </h3>
+
         <div
           id="kannadaLyrics"
           class="lyrics-display"
         ></div>
+
       </div>
 
     {% endif %}
@@ -786,58 +796,79 @@
   }
 
 
- function createLyricsDisplay(
-  lyricsElement,
-  lyrics
-) {
+  function createLyricsDisplay(
+    lyricsElement,
+    lyrics
+  ) {
 
-  if (!lyricsElement) {
-    return;
-  }
+    if (!lyricsElement) {
 
-  lyricsElement.innerHTML = "";
+      return;
 
-  const lines = lyrics.split(/\r?\n/);
-
-  lines.forEach(function(line, index) {
-
-    const row = document.createElement("div");
-    row.className = "song-line";
-
-    /*
-     * CHORD + LYRIC
-     * Keep chord spacing exactly aligned with the lyric.
-     */
-
-    if (chordMap[String(index)]) {
-
-      const chordElement = document.createElement("div");
-
-      chordElement.className = "song-chord";
-
-      chordElement.textContent =
-        transposeChordLine(
-          chordMap[String(index)]
-        );
-
-      row.appendChild(chordElement);
     }
 
-    const lyricElement =
-      document.createElement("div");
+    lyricsElement.innerHTML = "";
 
-    lyricElement.className = "song-lyric";
+    const lines =
+      lyrics.split(/\r?\n/);
 
-    lyricElement.textContent =
-      line || "\u00A0";
+    lines.forEach(
+      function(line, index) {
 
-    row.appendChild(lyricElement);
+        const row =
+          document.createElement("div");
 
-    lyricsElement.appendChild(row);
+        row.className =
+          "song-line";
 
-  });
 
-}
+        /*
+         * CHORD + LYRIC
+         * Keep chord spacing exactly aligned
+         * with the lyric.
+         */
+
+        if (chordMap[String(index)]) {
+
+          const chordElement =
+            document.createElement("div");
+
+          chordElement.className =
+            "song-chord";
+
+          chordElement.textContent =
+            transposeChordLine(
+              chordMap[String(index)]
+            );
+
+          row.appendChild(
+            chordElement
+          );
+
+        }
+
+
+        const lyricElement =
+          document.createElement("div");
+
+        lyricElement.className =
+          "song-lyric";
+
+        lyricElement.textContent =
+          line || "\u00A0";
+
+        row.appendChild(
+          lyricElement
+        );
+
+        lyricsElement.appendChild(
+          row
+        );
+
+      }
+    );
+
+  }
 
 
   function refreshChordDisplay() {
@@ -881,7 +912,6 @@
         "transposeValue"
       );
 
-
     if (transposeValue) {
 
       if (transposeSteps > 0) {
@@ -915,7 +945,6 @@
         ".song-chord"
       );
 
-
     chordElements.forEach(
       function(element) {
 
@@ -932,7 +961,6 @@
       document.getElementById(
         "toggleChords"
       );
-
 
     if (toggleButton) {
 
@@ -1073,7 +1101,8 @@
      ZOOM CONTROLS
   ====================================================== */
 
-  let zoomLevel = 100;
+  let zoomLevel =
+    100;
 
 
   function updateZoom() {
@@ -1128,11 +1157,13 @@
       "click",
       function() {
 
-        zoomLevel += 10;
+        zoomLevel +=
+          10;
 
         if (zoomLevel > 180) {
 
-          zoomLevel = 180;
+          zoomLevel =
+            180;
 
         }
 
@@ -1156,11 +1187,13 @@
       "click",
       function() {
 
-        zoomLevel -= 10;
+        zoomLevel -=
+          10;
 
         if (zoomLevel < 70) {
 
-          zoomLevel = 70;
+          zoomLevel =
+            70;
 
         }
 
@@ -1378,6 +1411,46 @@
 
 
   /* =====================================================
+     BOTH LANGUAGE VIEW
+     KANNADA LEFT | ENGLISH RIGHT
+  ====================================================== */
+
+  .song-content.both-language-view {
+
+    display: grid;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(0, 1fr);
+
+    gap: 20px;
+
+    align-items: start;
+
+  }
+
+
+  .song-content.both-language-view
+  .lyrics-section {
+
+    min-width: 0;
+
+    margin-bottom: 0;
+
+  }
+
+
+  .song-content.both-language-view
+  .lyrics-display {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+  }
+
+
+  /* =====================================================
      WHITE LYRICS PAPER
   ====================================================== */
 
@@ -1510,6 +1583,58 @@
       border-radius: 5px;
 
       box-sizing: border-box;
+
+      width: 100%;
+
+      overflow-x: auto;
+
+    }
+
+
+    /* =================================================
+       MOBILE BOTH VIEW
+       Kannada LEFT | English RIGHT
+    ================================================== */
+
+    .song-content.both-language-view {
+
+      grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr);
+
+      gap: 8px;
+
+      align-items: start;
+
+    }
+
+
+    .song-content.both-language-view
+    .lyrics-section {
+
+      min-width: 0;
+
+      width: 100%;
+
+    }
+
+
+    .song-content.both-language-view
+    .lyrics-section h3 {
+
+      font-size: 15px;
+
+      margin-bottom: 10px;
+
+    }
+
+
+    .song-content.both-language-view
+    .lyrics-display {
+
+      padding: 16px 10px;
+
+      font-size: 14px;
 
       width: 100%;
 
