@@ -72,11 +72,10 @@
        CANONICAL URL
   ====================================================== -->
 
-  <link
-    rel="canonical"
-    href="{{ request.url }}"
-  >
-
+ <link
+  rel="canonical"
+  href="{% if song is defined %}{{ url_for('song_view', song_id=song.id, _external=True) }}{% else %}{{ request.url.split('?')[0] }}{% endif %}"
+>
 
   <!-- =====================================================
        OPEN GRAPH / FACEBOOK / WHATSAPP
