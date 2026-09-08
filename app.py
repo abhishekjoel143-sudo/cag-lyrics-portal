@@ -314,18 +314,41 @@ def robots_txt():
 @app.route("/sitemap.xml")
 def sitemap():
 
-    homepage_url = url_for(
-        "welcome",
-        _external=True
+    base_url = "https://cag-lyrics-portal.onrender.com"
+
+    songs = (
+        Song.query
+        .order_by(Song.id.asc())
+        .all()
     )
 
-    sitemap_xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+    sitemap_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
     <url>
-        <loc>{homepage_url}</loc>
+        <loc>https://cag-lyrics-portal.onrender.com/</loc>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
     </url>
+"""
 
+    for song in songs:
+
+        song_url = url_for(
+            "song_view",
+            song_id=song.id,
+            _external=True
+        )
+
+        sitemap_xml += f"""
+    <url>
+        <loc>{song_url}</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+"""
+
+    sitemap_xml += """
 </urlset>
 """
 
@@ -713,7 +736,6 @@ def song_list():
 @app.route(
     "/songs/<int:song_id>"
 )
-@login_required
 def song_view(song_id):
 
     song = Song.query.get_or_404(
