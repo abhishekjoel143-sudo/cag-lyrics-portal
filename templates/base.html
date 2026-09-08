@@ -1,5 +1,4 @@
-﻿
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en">
 
@@ -12,74 +11,101 @@
     content="width=device-width, initial-scale=1.0"
   >
 
+  <!-- =====================================================
+       GOOGLE SITE VERIFICATION
+  ====================================================== -->
+
   <meta
     name="google-site-verification"
     content="_NhpfP3dnlfUk6Ebn3gcQ0pu84BEFoKzeETt9u8ELgU"
   >
 
+
   <!-- =====================================================
-       SEO INFORMATION
+       SEO TITLE
+  ====================================================== -->
+
+  <title>
+    {% block title %}
+      CAG Lyrics Portal - Kannada Christian Lyrics
+    {% endblock %}
+  </title>
+
+
+  <!-- =====================================================
+       SEO DESCRIPTION
   ====================================================== -->
 
   <meta
     name="description"
-    content="CAG Lyrics Portal is a Kannada Christian song lyrics website where you can find, read and sing Kannada Christian worship songs with Kannada and English lyrics."
+    content="{% block meta_description %}CAG Lyrics Portal is a Kannada Christian song lyrics website where you can find, read and sing Kannada Christian worship songs with Kannada and English lyrics.{% endblock %}"
   >
+
+
+  <!-- =====================================================
+       SEO KEYWORDS
+  ====================================================== -->
 
   <meta
     name="keywords"
     content="CAG Lyrics, CAG Lyrics Portal, Kannada Christian Songs, Kannada Christian Lyrics, Kannada Worship Songs, Christian Songs Kannada, CAG Songs, Kannada Gospel Songs, Kannada Praise and Worship"
   >
 
+
+  <!-- =====================================================
+       AUTHOR
+  ====================================================== -->
+
   <meta
     name="author"
     content="CAG Lyrics Portal"
   >
+
+
+  <!-- =====================================================
+       SEARCH ENGINE INDEXING
+  ====================================================== -->
 
   <meta
     name="robots"
     content="index, follow"
   >
 
-  <!-- =====================================================
-       GOOGLE / SEARCH ENGINE INFORMATION
-  ====================================================== -->
-
   <meta
     name="googlebot"
     content="index, follow"
   >
 
+
   <!-- =====================================================
        CANONICAL URL
+
+       Every public page gets its own canonical URL.
   ====================================================== -->
 
-  {% if request.endpoint == 'welcome' %}
+  <link
+    rel="canonical"
+    href="{{ request.url }}"
+  >
 
-    <link
-      rel="canonical"
-      href="{{ request.url_root }}"
-    >
-
-  {% endif %}
 
   <!-- =====================================================
-       OPEN GRAPH / SOCIAL SHARING
+       OPEN GRAPH / FACEBOOK / WHATSAPP
   ====================================================== -->
 
   <meta
     property="og:title"
-    content="CAG Lyrics Portal - Kannada Christian Lyrics"
+    content="{% block og_title %}CAG Lyrics Portal - Kannada Christian Lyrics{% endblock %}"
   >
 
   <meta
     property="og:description"
-    content="Find and sing Kannada Christian worship songs with Kannada and English lyrics."
+    content="{% block og_description %}Find and sing Kannada Christian worship songs with Kannada and English lyrics.{% endblock %}"
   >
 
   <meta
     property="og:type"
-    content="website"
+    content="{% block og_type %}website{% endblock %}"
   >
 
   <meta
@@ -88,12 +114,28 @@
   >
 
   <meta
+    property="og:site_name"
+    content="CAG Lyrics Portal"
+  >
+
+  <meta
+    property="og:locale"
+    content="en_IN"
+  >
+
+  <meta
     property="og:image"
     content="{{ url_for('static', filename='cag-logo.png', _external=True) }}"
   >
 
+  <meta
+    property="og:image:alt"
+    content="CAG Lyrics Portal - Kannada Christian Lyrics"
+  >
+
+
   <!-- =====================================================
-       TWITTER / SOCIAL CARD
+       TWITTER / X CARD
   ====================================================== -->
 
   <meta
@@ -103,12 +145,12 @@
 
   <meta
     name="twitter:title"
-    content="CAG Lyrics Portal - Kannada Christian Lyrics"
+    content="{% block twitter_title %}CAG Lyrics Portal - Kannada Christian Lyrics{% endblock %}"
   >
 
   <meta
     name="twitter:description"
-    content="Find and sing Kannada Christian worship songs with Kannada and English lyrics."
+    content="{% block twitter_description %}Find and sing Kannada Christian worship songs with Kannada and English lyrics.{% endblock %}"
   >
 
   <meta
@@ -116,15 +158,11 @@
     content="{{ url_for('static', filename='cag-logo.png', _external=True) }}"
   >
 
-  <!-- =====================================================
-       PAGE TITLE
-  ====================================================== -->
+  <meta
+    name="twitter:image:alt"
+    content="CAG Lyrics Portal - Kannada Christian Lyrics"
+  >
 
-  <title>
-    {% block title %}
-      CAG Lyrics Portal - Kannada Christian Lyrics
-    {% endblock %}
-  </title>
 
   <!-- =====================================================
        CSS
@@ -137,15 +175,19 @@
 
 </head>
 
+
 <body>
 
+
 <div class="page">
+
 
   <!-- =====================================================
        TOP BAR
   ====================================================== -->
 
   <header class="topbar">
+
 
     <!-- ===================================================
          CAG BRAND
@@ -154,6 +196,7 @@
     <a
       class="brand"
       href="{{ url_for('welcome') }}"
+      aria-label="CAG Lyrics Portal Home"
     >
 
       <img
@@ -177,10 +220,13 @@
       <div class="user-badge">
 
         <span>
+
           👋 Welcome,
+
           <strong>
             {{ current_user.username }}
           </strong>
+
         </span>
 
       </div>
@@ -264,54 +310,65 @@
   const savedTheme =
     localStorage.getItem("cag-theme");
 
+
   if (savedTheme === "dark") {
 
     document.body.classList.add("dark-theme");
 
-    themeToggle.textContent = "Light";
+    if (themeToggle) {
+      themeToggle.textContent = "Light";
+    }
 
   } else {
 
-    themeToggle.textContent = "Dark";
+    if (themeToggle) {
+      themeToggle.textContent = "Dark";
+    }
 
   }
 
-  themeToggle.addEventListener(
-    "click",
-    function () {
 
-      document.body.classList.toggle(
-        "dark-theme"
-      );
+  if (themeToggle) {
 
-      if (
-        document.body.classList.contains(
+    themeToggle.addEventListener(
+      "click",
+      function () {
+
+        document.body.classList.toggle(
           "dark-theme"
-        )
-      ) {
-
-        localStorage.setItem(
-          "cag-theme",
-          "dark"
         );
 
-        themeToggle.textContent =
-          "Light";
 
-      } else {
+        if (
+          document.body.classList.contains(
+            "dark-theme"
+          )
+        ) {
 
-        localStorage.setItem(
-          "cag-theme",
-          "light"
-        );
+          localStorage.setItem(
+            "cag-theme",
+            "dark"
+          );
 
-        themeToggle.textContent =
-          "Dark";
+          themeToggle.textContent =
+            "Light";
+
+        } else {
+
+          localStorage.setItem(
+            "cag-theme",
+            "light"
+          );
+
+          themeToggle.textContent =
+            "Dark";
+
+        }
 
       }
+    );
 
-    }
-  );
+  }
 
 </script>
 
@@ -319,4 +376,3 @@
 </body>
 
 </html>
-

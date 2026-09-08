@@ -291,7 +291,6 @@ def welcome():
         "welcome.html"
     )
 
-
 # ============================================================
 # ROBOTS.TXT
 # ============================================================
@@ -302,12 +301,9 @@ def robots_txt():
     return (
         "User-agent: *\n"
         "Allow: /\n\n"
-        "Sitemap: "
-        "https://cag-lyrics-portal.onrender.com/"
-        "sitemap.xml\n"
+        "Sitemap: https://cag-lyrics-portal.onrender.com/sitemap.xml\n"
     ), 200, {
-        "Content-Type":
-        "text/plain; charset=utf-8"
+        "Content-Type": "text/plain; charset=utf-8"
     }
 
 
@@ -318,13 +314,24 @@ def robots_txt():
 @app.route("/sitemap.xml")
 def sitemap():
 
-    return send_from_directory(
-        app.static_folder,
-        "sitemap.xml",
-        mimetype="application/xml"
+    homepage_url = url_for(
+        "welcome",
+        _external=True
     )
 
+    sitemap_xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
+    <url>
+        <loc>{homepage_url}</loc>
+    </url>
+
+</urlset>
+"""
+
+    return sitemap_xml, 200, {
+        "Content-Type": "application/xml; charset=utf-8"
+    }
 # ============================================================
 # USER REGISTRATION
 # ============================================================
@@ -1986,12 +1993,6 @@ with app.app_context():
 # ============================================================
 
 if __name__ == "__main__":
-
-    # ============================================================
-# START APPLICATION
-# ============================================================
-
- if __name__ == "__main__":
 
     app.run(
         host="0.0.0.0",
