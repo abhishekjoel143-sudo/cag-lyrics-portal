@@ -1,18 +1,84 @@
-﻿{% extends "base.html" %}
-{% block title %}Welcome{% endblock %}
+﻿
+{% extends "base.html" %}
+
+{% block title %}
+CAG Lyrics Portal | Christian Songs & Kannada Lyrics
+{% endblock %}
+
 {% block content %}
+
 <div class="welcome-screen">
+
   <div class="welcome-card">
-    <img src="{{ url_for('static', filename='cag-logo.png') }}" alt="CAG Logo" class="church-logo">
-    <h1>{{ church_name }}</h1>
-    <p class="tagline">Lyrics &amp; Song Portal</p>
+
+    <img
+      src="{{ url_for('static', filename='cag-logo.png') }}"
+      alt="Calvary Assembly of God Church CAG Lyrics Portal logo"
+      class="church-logo"
+    >
+
+    <h1>
+      {{ church_name }}
+    </h1>
+
+    <p class="tagline">
+      Christian Songs, Lyrics &amp; Song Portal
+    </p>
+
+    <p class="welcome-description">
+      Welcome to the CAG Lyrics Portal — a Christian song lyrics
+      portal for Kannada Christian songs, worship songs, and
+      church lyrics.
+    </p>
 
     <div class="welcome-buttons">
-      <a class="btn btn-primary" href="{{ url_for('user_login') }}">User Login</a>
-      <a class="btn btn-secondary" href="{{ url_for('register') }}">New User? Register</a>
-      <a class="btn btn-admin" href="{{ url_for('admin_login') }}">Admin Login</a>
+
+      <a
+        class="btn btn-primary"
+        href="{{ url_for('user_login') }}"
+      >
+        User Login
+      </a>
+
+      <a
+        class="btn btn-secondary"
+        href="{{ url_for('register') }}"
+      >
+        New User? Register
+      </a>
+
+      <a
+        class="btn btn-admin"
+        href="{{ url_for('admin_login') }}"
+      >
+        Admin Login
+      </a>
+
     </div>
+
   </div>
+
 </div>
+
+
+<!-- ============================================================
+     WEBSITE STRUCTURED DATA
+     Helps search engines understand the website.
+     ============================================================ -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "CAG Lyrics Portal",
+  "alternateName": [
+    "CAG Lyrics",
+    "CAG Christian Lyrics",
+    "Kannada Christian Songs Lyrics"
+  ],
+  "url": "{{ request.url_root }}"
+}
+</script>
+
 {% endblock %}
 
