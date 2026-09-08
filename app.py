@@ -151,7 +151,7 @@ def allowed_file(filename):
 @app.before_request
 def track_visitor():
 
-    # Only track GET requests
+    # Track only GET requests
     if request.method != "GET":
         return
 
@@ -169,18 +169,44 @@ def track_visitor():
 
     try:
 
+        # =====================================================
+        # GET LOGGED-IN USERNAME
+        # =====================================================
+
+        username = None
+
+        user_id = session.get("user_id")
+
+        if user_id:
+
+            user = User.query.get(user_id)
+
+            if user:
+                username = user.username
+
+        # =====================================================
+        # SAVE VISITOR
+        # =====================================================
+
         visitor = Visitor(
+
+            username=username,
+
+            email=None,
+
             ip_address=request.remote_addr,
+
             user_agent=request.headers.get(
                 "User-Agent"
             ),
+
             page=request.path,
+
             visited_at=datetime.utcnow()
+
         )
 
-        db.session.add(
-            visitor
-        )
+        db.session.add(visitor)
 
         db.session.commit()
 
@@ -192,7 +218,6 @@ def track_visitor():
             "[VISITOR TRACKING ERROR]",
             exc
         )
-
 
 # ============================================================
 # ADMIN REQUIRED
@@ -286,7 +311,12 @@ def inject_user():
 
 @app.route("/")
 def welcome():
-    return render_template("welcome.html")
+
+    return render_template(
+        "welcome.html"
+    )
+
+
 # ============================================================
 # ROBOTS.TXT
 # ============================================================
@@ -310,11 +340,15 @@ def robots_txt():
 @app.route("/sitemap.xml")
 def sitemap():
 
-    base_url = "https://cag-lyrics-portal.onrender.com"
+    base_url = (
+        "https://cag-lyrics-portal.onrender.com"
+    )
 
     songs = (
         Song.query
-        .order_by(Song.id.asc())
+        .order_by(
+            Song.id.asc()
+        )
         .all()
     )
 
@@ -351,6 +385,8 @@ def sitemap():
     return sitemap_xml, 200, {
         "Content-Type": "application/xml; charset=utf-8"
     }
+
+
 # ============================================================
 # USER REGISTRATION
 # ============================================================
@@ -469,9 +505,13 @@ def register():
         # CHECK USERNAME
         # ----------------------------------------------------
 
-        existing_username = User.query.filter_by(
-            username=username
-        ).first()
+        existing_username = (
+            User.query
+            .filter_by(
+                username=username
+            )
+            .first()
+        )
 
         if existing_username:
 
@@ -587,9 +627,13 @@ def user_login():
                 "login.html"
             )
 
-        user = User.query.filter_by(
-            username=username
-        ).first()
+        user = (
+            User.query
+            .filter_by(
+                username=username
+            )
+            .first()
+        )
 
         if (
             not user
@@ -658,9 +702,11 @@ def similarity_score(
     t = title.lower().strip()
 
     if not q:
+
         return 0
 
     if q in t:
+
         return 1.0
 
     return SequenceMatcher(
@@ -1198,7 +1244,9 @@ def admin_visitors():
         .all()
     )
 
-    total_visitors = Visitor.query.count()
+    total_visitors = (
+        Visitor.query.count()
+    )
 
     return render_template(
         "admin_visitors.html",
@@ -1704,16 +1752,6 @@ def admin_bulk_upload():
 #
 #     song.chord_key
 #
-# Example:
-#
-#     Dm
-#     Am
-#     F#
-#     C#
-#
-# The exact key selected by the Admin is saved and sent to
-# song_view.html.
-#
 # The old chords_enabled database field is maintained only
 # for backward compatibility.
 #
@@ -1766,22 +1804,6 @@ def admin_edit_song(song_id):
         # ----------------------------------------------------
         # SONG KEY
         # ----------------------------------------------------
-        #
-        # This is the IMPORTANT new part.
-        #
-        # The Admin selects the original song key.
-        #
-        # Examples:
-        #
-        # C
-        # C#
-        # Dm
-        # Am
-        # F#
-        #
-        # The exact value is saved.
-        #
-        # ----------------------------------------------------
 
         chord_key = request.form.get(
             "chord_key",
@@ -1816,14 +1838,6 @@ def admin_edit_song(song_id):
         # ====================================================
         # SAVE ORIGINAL SONG DATA
         # ====================================================
-        #
-        # IMPORTANT:
-        #
-        # Do NOT add chord spacing to these fields.
-        #
-        # Original lyrics remain unchanged.
-        #
-        # ====================================================
 
         song.title = title
 
@@ -1838,22 +1852,6 @@ def admin_edit_song(song_id):
         # ====================================================
         # SAVE SONG KEY
         # ====================================================
-        #
-        # The exact key selected by Admin is stored.
-        #
-        # Example:
-        #
-        # Admin selects Dm
-        #
-        # Database:
-        #
-        # song.chord_key = "Dm"
-        #
-        # User side:
-        #
-        # Dm
-        #
-        # ====================================================
 
         if chord_key:
 
@@ -1866,18 +1864,12 @@ def admin_edit_song(song_id):
         # ====================================================
         # SAVE SHARED CHORD ARRANGEMENT
         # ====================================================
-        #
-        # ONE chord arrangement for BOTH languages.
-        #
-        # ====================================================
 
         if chord_data:
 
             song.chords = chord_data
 
             # Keep old database field synchronized.
-            #
-            # This field is NOT shown as a checkbox.
 
             song.chords_enabled = True
 

@@ -6,8 +6,13 @@ from werkzeug.security import (
     check_password_hash
 )
 
+
 db = SQLAlchemy()
 
+
+# =========================================================
+# USER
+# =========================================================
 
 class User(db.Model):
     __tablename__ = "users"
@@ -48,16 +53,22 @@ class User(db.Model):
     )
 
     def set_password(self, raw_password: str):
+
         self.password_hash = generate_password_hash(
             raw_password
         )
 
     def check_password(self, raw_password: str) -> bool:
+
         return check_password_hash(
             self.password_hash,
             raw_password
         )
 
+
+# =========================================================
+# OTP
+# =========================================================
 
 class OTP(db.Model):
     __tablename__ = "otps"
@@ -101,6 +112,10 @@ class OTP(db.Model):
     )
 
 
+# =========================================================
+# SONG
+# =========================================================
+
 class Song(db.Model):
     __tablename__ = "songs"
 
@@ -136,6 +151,10 @@ class Song(db.Model):
         default=datetime.utcnow
     )
 
+    # =====================================================
+    # CHORDS
+    # =====================================================
+
     chords = db.Column(
         db.Text,
         nullable=True
@@ -152,6 +171,10 @@ class Song(db.Model):
         nullable=False
     )
 
+
+# =========================================================
+# LISTED SONG
+# =========================================================
 
 class ListedSong(db.Model):
     __tablename__ = "listed_songs"
@@ -195,6 +218,10 @@ class ListedSong(db.Model):
     )
 
 
+# =========================================================
+# VISITOR
+# =========================================================
+
 class Visitor(db.Model):
     __tablename__ = "visitors"
 
@@ -203,25 +230,55 @@ class Visitor(db.Model):
         primary_key=True
     )
 
+    # =====================================================
+    # LOGGED-IN USERNAME
+    # =====================================================
+
+    username = db.Column(
+        db.String(50),
+        nullable=True,
+        index=True
+    )
+
+    # =====================================================
+    # EMAIL
+    # =====================================================
+
     email = db.Column(
         db.String(255),
         nullable=True
     )
+
+    # =====================================================
+    # IP ADDRESS
+    # =====================================================
 
     ip_address = db.Column(
         db.String(100),
         nullable=True
     )
 
+    # =====================================================
+    # BROWSER / DEVICE
+    # =====================================================
+
     user_agent = db.Column(
         db.Text,
         nullable=True
     )
 
+    # =====================================================
+    # PAGE VISITED
+    # =====================================================
+
     page = db.Column(
         db.String(255),
         nullable=True
     )
+
+    # =====================================================
+    # VISIT TIME
+    # =====================================================
 
     visited_at = db.Column(
         db.DateTime,
