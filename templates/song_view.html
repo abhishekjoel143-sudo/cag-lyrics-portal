@@ -1,11 +1,63 @@
-
 {% extends "base.html" %}
 
 {% block title %}
-{{ song.title }}
+{{ song.title }} | Kannada Christian Song Lyrics | CAG Lyrics Portal
+{% endblock %}
+
+{% block meta_description %}
+Read {{ song.title }} Kannada Christian song lyrics on CAG Lyrics Portal. Find Kannada worship lyrics, Christian song lyrics, and English pronunciation lyrics for worship and singing.
+{% endblock %}
+
+{% block og_title %}
+{{ song.title }} | Kannada Christian Song Lyrics | CAG Lyrics Portal
+{% endblock %}
+
+{% block og_description %}
+Read {{ song.title }} Kannada Christian song lyrics with English pronunciation on CAG Lyrics Portal.
+{% endblock %}
+
+{% block og_type %}
+article
+{% endblock %}
+
+{% block twitter_title %}
+{{ song.title }} | Kannada Christian Song Lyrics | CAG Lyrics Portal
+{% endblock %}
+
+{% block twitter_description %}
+Read {{ song.title }} Kannada Christian song lyrics with English pronunciation on CAG Lyrics Portal.
 {% endblock %}
 
 {% block content %}
+
+<!-- =====================================================
+     SEO STRUCTURED DATA
+====================================================== -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MusicComposition",
+  "name": {{ song.title|tojson }},
+  "url": {{ request.url|tojson }},
+  "inLanguage": [
+    "kn",
+    "en"
+  ],
+  "description": {{
+    (
+      "Kannada Christian song lyrics for "
+      ~ song.title
+      ~ " with English pronunciation on CAG Lyrics Portal."
+    )|tojson
+  }},
+  "publisher": {
+    "@type": "Organization",
+    "name": "CAG Lyrics Portal"
+  }
+}
+</script>
+
 
 <div class="song-view-screen">
 
@@ -2203,24 +2255,6 @@ refreshChordDisplay();
 
 /* =========================================================
    IMPORTANT CHORD VERTICAL SPACE
-=========================================================
-
-   When chords are visible, reserve a separate
-   area above the lyric.
-
-   This prevents:
-
-       CHORD
-       LYRIC
-
-   from becoming:
-
-       CHORD
-       LYRIC
-
-   on top of each other.
-
-   The horizontal position is NOT affected.
 ========================================================= */
 
 .song-line.has-chord.chords-active {
@@ -2295,14 +2329,6 @@ refreshChordDisplay();
 
   top: 0;
 
-  /*
-   * IMPORTANT:
-   *
-   * Do NOT use width:100%.
-   *
-   * The chord layer must follow the lyric
-   * row's actual width.
-   */
   width: max-content;
 
   max-width: none;
@@ -2494,14 +2520,6 @@ refreshChordDisplay();
   }
 
 
-  /*
-   * Mobile chord space.
-   *
-   * 1.45em at 15px = approximately 21.75px.
-   *
-   * This gives the chord a proper separate
-   * line without making the lyric spacing huge.
-   */
   .song-line.has-chord.chords-active {
 
     padding-top: 1.00em;
@@ -2793,4 +2811,3 @@ refreshChordDisplay();
 </style>
 
 {% endblock %}
-
