@@ -17,70 +17,70 @@
     </a>
   </div>
 
-{% if listed_songs %}
+  {% if listed_songs %}
 
+  <div class="songs-grid">
 
-<div class="songs-grid">
+    {% for listed in listed_songs %}
 
-  {% for listed in listed_songs %}
+      <div class="song-card">
 
-    <div class="song-card">
+        <h3>{{ listed.song.title }}</h3>
 
-      <h3>{{ listed.song.title }}</h3>
+        <div class="song-card-actions">
 
-      <div class="song-card-actions">
-
-        <a
-          href="{{ url_for('song_view', song_id=listed.song.id) }}"
-          class="btn btn-primary"
-        >
-          View Song
-        </a>
-
-        <form
-          method="POST"
-          action="{{ url_for('delete_listed_song', listed_id=listed.id) }}"
-          style="display:inline;"
-        >
-          <button
-            type="submit"
-            class="btn btn-danger"
+          <!-- IMPORTANT:
+               Tell song_view that this song was opened
+               from the Listed Songs page.
+          -->
+          <a
+            href="{{ url_for('song_view', song_id=listed.song.id, from_listed=1) }}"
+            class="btn btn-primary"
           >
-            Remove
-          </button>
-        </form>
+            View Song
+          </a>
+
+          <form
+            method="POST"
+            action="{{ url_for('delete_listed_song', listed_id=listed.id) }}"
+            style="display:inline;"
+          >
+            <button
+              type="submit"
+              class="btn btn-danger"
+            >
+              Remove
+            </button>
+          </form>
+
+        </div>
 
       </div>
 
-    </div>
+    {% endfor %}
 
-  {% endfor %}
+  </div>
 
-</div>
+  {% else %}
 
+  <div class="empty-state">
 
-{% else %}
+    <h2>No Listed Songs</h2>
 
+    <p>
+      You have not added any songs to your list yet.
+    </p>
 
-<div class="empty-state">
+    <a
+      href="{{ url_for('song_list') }}"
+      class="btn btn-primary"
+    >
+      Browse Songs
+    </a>
 
-  <h2>No Listed Songs</h2>
+  </div>
 
-  <p>
-    You have not added any songs to your list yet.
-  </p>
-
-  <a
-    href="{{ url_for('song_list') }}"
-    class="btn btn-primary"
-  >
-    Browse Songs
-  </a>
-
-</div>
-
-
-{% endif %}
+  {% endif %}
 
 </section>
 
