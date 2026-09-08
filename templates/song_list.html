@@ -1,19 +1,46 @@
 ﻿{% extends "base.html" %}
 
-{% block title %}Song Search{% endblock %}
+{% block title %}
+Kannada Christian Songs & Lyrics | CAG Lyrics Portal
+{% endblock %}
+
+{% block meta_description %}
+Search Kannada Christian songs, worship songs, church lyrics, and English pronunciation lyrics on CAG Lyrics Portal. Find Christian song lyrics by song name.
+{% endblock %}
+
+{% block og_title %}
+Kannada Christian Songs & Lyrics | CAG Lyrics Portal
+{% endblock %}
+
+{% block og_description %}
+Search Kannada Christian songs, worship songs, church lyrics, and English pronunciation lyrics on CAG Lyrics Portal.
+{% endblock %}
 
 {% block content %}
 
 <div class="dashboard-screen">
 
+  <!-- =====================================================
+       SEO INTRO
+  ====================================================== -->
+
   <div class="search-hero">
 
+```
+<h1>
+  Kannada Christian Songs & Lyrics
+</h1>
 
-<h1>Find Your Song Lyrics</h1>
+<p>
+  Search Kannada Christian songs, worship songs,
+  church lyrics, and English pronunciation lyrics.
+</p>
 
-<p>Search by song name. Similar song titles will also appear.</p>
-
-<form class="main-search" method="GET" action="{{ url_for('song_list') }}">
+<form
+  class="main-search"
+  method="GET"
+  action="{{ url_for('song_list') }}"
+>
 
   <input
     id="songSearch"
@@ -23,29 +50,51 @@
     placeholder="Search song lyrics..."
     autocomplete="off"
     autofocus
+    aria-label="Search Kannada Christian songs"
   >
 
-  <button class="btn btn-primary" type="submit">
+  <button
+    class="btn btn-primary"
+    type="submit"
+  >
     Search
   </button>
 
 </form>
 
-<div id="liveResults" class="live-results"></div>
-
+<div
+  id="liveResults"
+  class="live-results"
+></div>
+```
 
   </div>
 
+  <!-- =====================================================
+       SONG SECTION
+  ====================================================== -->
+
   <div class="section-heading">
 
+```
+<div>
 
-<h2>
-  {% if query %}
-    Search Results
-  {% else %}
-    All Songs
-  {% endif %}
-</h2>
+  <h2>
+
+    {% if query %}
+
+      Search Results for "{{ query }}"
+
+    {% else %}
+
+      All Kannada Christian Songs
+
+    {% endif %}
+
+  </h2>
+
+</div>
+
 
 <div class="song-list-actions">
 
@@ -64,12 +113,17 @@
   </a>
 
 </div>
+```
 
   </div>
 
+  <!-- =====================================================
+       SONG LIST
+  ====================================================== -->
+
 {% if songs %}
 
-
+```
 <div class="song-grid">
 
   {% for song in songs %}
@@ -77,6 +131,7 @@
     <a
       class="song-card"
       href="{{ url_for('song_view', song_id=song.id) }}"
+      aria-label="Open lyrics for {{ song.title }}"
     >
 
       <span class="song-title">
@@ -92,84 +147,183 @@
   {% endfor %}
 
 </div>
-
+```
 
 {% else %}
 
-
+```
 <div class="empty-state">
 
-  <h3>No matching song found</h3>
+  <h3>
+    No matching song found
+  </h3>
 
   <p>
-    Try another spelling or a shorter part of the song title.
+    Try another spelling or a shorter part
+    of the song title.
   </p>
 
 </div>
-
+```
 
 {% endif %}
 
 </div>
 
+<!-- =====================================================
+     SEO STRUCTURED DATA
+====================================================== -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Kannada Christian Songs & Lyrics | CAG Lyrics Portal",
+  "description": "Search Kannada Christian songs, worship songs, church lyrics, and English pronunciation lyrics on CAG Lyrics Portal.",
+  "url": {{ request.url|tojson }}
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Kannada Christian Songs",
+  "description": "Kannada Christian songs and worship lyrics available on CAG Lyrics Portal.",
+  "itemListElement": [
+
+    {% for song in songs %}
+
+    {
+      "@type": "ListItem",
+      "position": {{ loop.index }},
+      "name": {{ song.title|tojson }},
+      "url": {{ url_for('song_view', song_id=song.id, _external=True)|tojson }}
+    }{% if not loop.last %},{% endif %}
+
+    {% endfor %}
+
+  ]
+}
+</script>
+
 <script>
 
-const input = document.getElementById("songSearch");
-const results = document.getElementById("liveResults");
+/* =========================================================
+   LIVE SONG SEARCH
+========================================================= */
+
+const input =
+  document.getElementById(
+    "songSearch"
+  );
+
+const results =
+  document.getElementById(
+    "liveResults"
+  );
 
 let timer;
 
-input.addEventListener("input", () => {
 
-  clearTimeout(timer);
+/* =========================================================
+   SEARCH INPUT
+========================================================= */
 
-  const q = input.value.trim();
+if (input && results) {
 
-  if (!q) {
-    results.innerHTML = "";
-    return;
-  }
+  input.addEventListener(
+    "input",
+    () => {
 
-  timer = setTimeout(async () => {
+      clearTimeout(timer);
 
-    try {
+      const q =
+        input.value.trim();
 
-      const response = await fetch(
-        "{{ url_for('api_song_search') }}?q=" +
-        encodeURIComponent(q)
-      );
 
-      const songs = await response.json();
+      if (!q) {
 
-      results.innerHTML = songs.length
-        ? songs.map(
-            s =>
-              `<a href="/songs/${s.id}">${escapeHtml(s.title)}</a>`
-          ).join("")
-        : "<span>No similar songs found</span>";
+        results.innerHTML =
+          "";
 
-    } catch (e) {
+        return;
 
-      results.innerHTML = "";
+      }
+
+
+      timer =
+        setTimeout(
+          async () => {
+
+            try {
+
+              const response =
+                await fetch(
+                  "{{ url_for('api_song_search') }}?q=" +
+                  encodeURIComponent(q)
+                );
+
+
+              if (!response.ok) {
+
+                results.innerHTML =
+                  "";
+
+                return;
+
+              }
+
+
+              const songs =
+                await response.json();
+
+
+              results.innerHTML =
+                songs.length
+
+                  ? songs.map(
+                      s =>
+                        `<a href="/songs/${s.id}" aria-label="Open lyrics for ${escapeHtml(s.title)}">${escapeHtml(s.title)}</a>`
+                    ).join("")
+
+                  : "<span>No similar songs found</span>";
+
+
+            } catch (e) {
+
+              results.innerHTML =
+                "";
+
+            }
+
+          },
+          180
+        );
 
     }
 
-  }, 180);
+  );
 
-});
+}
 
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
 
 function escapeHtml(value) {
 
-  return value.replace(
+  return String(value).replace(
     /[&<>"']/g,
-    ch => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#039;"
-    }[ch])
+    ch =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[ch])
   );
 
 }
