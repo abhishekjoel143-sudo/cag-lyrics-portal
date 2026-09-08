@@ -286,11 +286,7 @@ def inject_user():
 
 @app.route("/")
 def welcome():
-
-    return render_template(
-        "welcome.html"
-    )
-
+    return render_template("welcome.html")
 # ============================================================
 # ROBOTS.TXT
 # ============================================================

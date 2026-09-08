@@ -49,17 +49,35 @@ CAG Lyrics Portal is a Kannada Christian songs and worship lyrics website. Searc
      ============================================================ -->
 
 <p class="welcome-description">
-  Welcome to the CAG Lyrics Portal, a Christian song lyrics
-  website featuring Kannada Christian songs, worship songs,
-  church songs, and English pronunciation lyrics for worship.
+      Welcome to the Calvary AG  Mandya.
+  CAG Lyrics Portal, a Christian song lyrics
+  website featuring Kannada Christian songs for worship songs,
+  To Glorify the Living Almighty God. 
 </p>
-
 
 <!-- ============================================================
      PUBLIC SONG COLLECTION
-     Helps users and Google discover the song pages.
+     Helps users and Google discover individual song pages.
      ============================================================ -->
 
+<section class="public-song-collection">
+
+  <div class="song-links">
+
+    {% for song in songs %}
+
+      <a
+        href="{{ url_for('song_view', song_id=song.id) }}"
+        class="song-link"
+      >
+        {{ song.title }}
+      </a>
+
+    {% endfor %}
+
+  </div>
+
+</section>
 
 
 
