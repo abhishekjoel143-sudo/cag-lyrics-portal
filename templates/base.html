@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 
 <html lang="en">
 
@@ -27,7 +28,7 @@
 
   <title>
     {% block title %}
-      CAG Lyrics Portal - Kannada Christian Lyrics
+      CAG Lyrics Portal | Kannada Christian Songs & Worship Lyrics
     {% endblock %}
   </title>
 
@@ -38,17 +39,7 @@
 
   <meta
     name="description"
-    content="{% block meta_description %}CAG Lyrics Portal is a Kannada Christian song lyrics website where you can find, read and sing Kannada Christian worship songs with Kannada and English lyrics.{% endblock %}"
-  >
-
-
-  <!-- =====================================================
-       SEO KEYWORDS
-  ====================================================== -->
-
-  <meta
-    name="keywords"
-    content="CAG Lyrics, CAG Lyrics Portal, Kannada Christian Songs, Kannada Christian Lyrics, Kannada Worship Songs, Christian Songs Kannada, CAG Songs, Kannada Gospel Songs, Kannada Praise and Worship"
+    content="{% block meta_description %}CAG Lyrics Portal provides Kannada Christian songs, worship songs, church lyrics, and English pronunciation lyrics for worship and singing.{% endblock %}"
   >
 
 
@@ -68,19 +59,17 @@
 
   <meta
     name="robots"
-    content="index, follow"
+    content="index, follow, max-image-preview:large"
   >
 
   <meta
     name="googlebot"
-    content="index, follow"
+    content="index, follow, max-image-preview:large"
   >
 
 
   <!-- =====================================================
        CANONICAL URL
-
-       Every public page gets its own canonical URL.
   ====================================================== -->
 
   <link
@@ -95,12 +84,12 @@
 
   <meta
     property="og:title"
-    content="{% block og_title %}CAG Lyrics Portal - Kannada Christian Lyrics{% endblock %}"
+    content="{% block og_title %}CAG Lyrics Portal | Kannada Christian Songs & Worship Lyrics{% endblock %}"
   >
 
   <meta
     property="og:description"
-    content="{% block og_description %}Find and sing Kannada Christian worship songs with Kannada and English lyrics.{% endblock %}"
+    content="{% block og_description %}Find Kannada Christian songs, worship songs, church lyrics, and English pronunciation lyrics on CAG Lyrics Portal.{% endblock %}"
   >
 
   <meta
@@ -130,7 +119,12 @@
 
   <meta
     property="og:image:alt"
-    content="CAG Lyrics Portal - Kannada Christian Lyrics"
+    content="CAG Lyrics Portal - Kannada Christian Songs and Lyrics"
+  >
+
+  <meta
+    property="og:image:type"
+    content="image/png"
   >
 
 
@@ -145,12 +139,12 @@
 
   <meta
     name="twitter:title"
-    content="{% block twitter_title %}CAG Lyrics Portal - Kannada Christian Lyrics{% endblock %}"
+    content="{% block twitter_title %}CAG Lyrics Portal | Kannada Christian Songs & Worship Lyrics{% endblock %}"
   >
 
   <meta
     name="twitter:description"
-    content="{% block twitter_description %}Find and sing Kannada Christian worship songs with Kannada and English lyrics.{% endblock %}"
+    content="{% block twitter_description %}Find Kannada Christian songs, worship songs, church lyrics, and English pronunciation lyrics.{% endblock %}"
   >
 
   <meta
@@ -160,7 +154,7 @@
 
   <meta
     name="twitter:image:alt"
-    content="CAG Lyrics Portal - Kannada Christian Lyrics"
+    content="CAG Lyrics Portal - Kannada Christian Songs and Lyrics"
   >
 
 
@@ -376,3 +370,4 @@
 </body>
 
 </html>
+

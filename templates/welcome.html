@@ -2,7 +2,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-CAG Lyrics Portal | Christian Songs & Kannada Lyrics
+CAG Lyrics Portal | Kannada Christian Songs & Worship Lyrics
 {% endblock %}
 
 {% block content %}
@@ -13,22 +13,22 @@ CAG Lyrics Portal | Christian Songs & Kannada Lyrics
 
     <img
       src="{{ url_for('static', filename='cag-logo.png') }}"
-      alt="Calvary Assembly of God Church CAG Lyrics Portal logo"
+      alt="CAG Lyrics Portal - Calvary Assembly of God Church"
       class="church-logo"
     >
 
-   <h1>
-  CAG Lyrics Portal
-</h1>
+    <h1>
+      CAG Lyrics Portal
+    </h1>
 
-<p class="tagline">
-  Calvary Assembly of God Church
-</p>
+    <p class="tagline">
+      Calvary Assembly of God Church
+    </p>
 
     <p class="welcome-description">
-      Welcome to the CAG Lyrics Portal — a Christian song lyrics
-      portal for Kannada Christian songs, worship songs, and
-      church lyrics.
+      Welcome to the CAG Lyrics Portal, a Christian song lyrics
+      website featuring Kannada Christian songs, worship songs,
+      church songs, and English pronunciation lyrics for worship.
     </p>
 
     <div class="welcome-buttons">
@@ -63,7 +63,7 @@ CAG Lyrics Portal | Christian Songs & Kannada Lyrics
 
 <!-- ============================================================
      WEBSITE STRUCTURED DATA
-     Helps search engines understand the website.
+     Helps Google understand the website.
      ============================================================ -->
 
 <script type="application/ld+json">
@@ -77,6 +77,21 @@ CAG Lyrics Portal | Christian Songs & Kannada Lyrics
     "Kannada Christian Songs Lyrics"
   ],
   "url": "{{ request.url_root }}"
+}
+</script>
+
+
+<!-- ============================================================
+     HOMEPAGE STRUCTURED DATA
+     ============================================================ -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "CAG Lyrics Portal | Kannada Christian Songs & Worship Lyrics",
+  "description": "CAG Lyrics Portal provides Kannada Christian songs, worship songs, church lyrics, and English pronunciation lyrics.",
+  "url": "{{ request.url }}"
 }
 </script>
 
