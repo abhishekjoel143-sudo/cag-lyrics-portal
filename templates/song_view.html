@@ -39,7 +39,7 @@ Read {{ song.title }} Kannada Christian song lyrics with English pronunciation o
   "@context": "https://schema.org",
   "@type": "MusicComposition",
   "name": {{ song.title|tojson }},
-  "url": {{ request.url|tojson }},
+  "url": {{ url_for('song_view', song_id=song.id, _external=True)|tojson }},
   "inLanguage": [
     "kn",
     "en"
@@ -58,7 +58,6 @@ Read {{ song.title }} Kannada Christian song lyrics with English pronunciation o
 }
 </script>
 
-
 <div class="song-view-screen">
 
   <!-- =====================================================
@@ -67,20 +66,21 @@ Read {{ song.title }} Kannada Christian song lyrics with English pronunciation o
 
   <div class="song-header">
 
-    <div>
+```
+<div>
 
-      <p class="eyebrow">
-        {{ church_name if church_name is defined else "CAG Lyrics" }}
-      </p>
+  <p class="eyebrow">
+    {{ church_name if church_name is defined else "CAG Lyrics" }}
+  </p>
 
-      <h2>
-        {{ song.title }}
-      </h2>
+  <h2>
+    {{ song.title }}
+  </h2>
 
-    </div>
+</div>
+```
 
   </div>
-
 
   <!-- =====================================================
        SONG CONTROLS
@@ -88,248 +88,251 @@ Read {{ song.title }} Kannada Christian song lyrics with English pronunciation o
 
   <div class="song-controls">
 
-    <!-- LANGUAGE -->
+```
+<!-- LANGUAGE -->
 
-    <div class="language-controls">
+<div class="language-controls">
 
-      <a
-        href="{{ url_for('song_view', song_id=song.id, lang='kannada', from_listed=from_listed) }}"
-        class="btn {% if lang == 'kannada' %}btn-primary{% else %}btn-secondary{% endif %}"
-      >
-        ಕನ್ನಡ
-      </a>
+  <a
+    href="{{ url_for('song_view', song_id=song.id, lang='kannada', from_listed=from_listed) }}"
+    class="btn {% if lang == 'kannada' %}btn-primary{% else %}btn-secondary{% endif %}"
+  >
+    ಕನ್ನಡ
+  </a>
 
-      <a
-        href="{{ url_for('song_view', song_id=song.id, lang='english', from_listed=from_listed) }}"
-        class="btn {% if lang == 'english' %}btn-primary{% else %}btn-secondary{% endif %}"
-      >
-        English
-      </a>
+  <a
+    href="{{ url_for('song_view', song_id=song.id, lang='english', from_listed=from_listed) }}"
+    class="btn {% if lang == 'english' %}btn-primary{% else %}btn-secondary{% endif %}"
+  >
+    English
+  </a>
 
-      <a
-        href="{{ url_for('song_view', song_id=song.id, lang='both', from_listed=from_listed) }}"
-        class="btn {% if lang == 'both' %}btn-primary{% else %}btn-secondary{% endif %}"
-      >
-        Both
-      </a>
+  <a
+    href="{{ url_for('song_view', song_id=song.id, lang='both', from_listed=from_listed) }}"
+    class="btn {% if lang == 'both' %}btn-primary{% else %}btn-secondary{% endif %}"
+  >
+    Both
+  </a>
 
-    </div>
+</div>
 
 
-    <!-- ZOOM -->
+<!-- ZOOM -->
 
-    <div class="zoom-controls">
+<div class="zoom-controls">
+
+  <button
+    type="button"
+    id="zoomOut"
+    class="btn btn-secondary"
+    aria-label="Zoom out"
+  >
+    −
+  </button>
+
+  <span id="zoomValue">
+    100%
+  </span>
+
+  <button
+    type="button"
+    id="zoomIn"
+    class="btn btn-secondary"
+    aria-label="Zoom in"
+  >
+    +
+  </button>
+
+</div>
+
+
+<!-- CHORDS -->
+
+{% if song.chords %}
+
+  <button
+    type="button"
+    id="toggleChords"
+    class="btn btn-secondary"
+  >
+    🎸 Show Chords
+  </button>
+
+{% endif %}
+
+
+<!-- EDIT CHORDS -->
+
+{% if session.get("is_admin") %}
+
+  <a
+    href="{{ url_for('admin_edit_song', song_id=song.id) }}"
+    class="btn btn-secondary"
+  >
+    🎸 Edit Chords
+  </a>
+
+{% endif %}
+
+
+<!-- ADD TO LIST -->
+
+{% if not from_listed %}
+
+  {% if session.get("user_id") %}
+
+    <form
+      method="POST"
+      action="{{ url_for('add_to_list', song_id=song.id) }}"
+      class="listed-song-form"
+    >
 
       <button
-        type="button"
-        id="zoomOut"
+        type="submit"
         class="btn btn-secondary"
-        aria-label="Zoom out"
       >
-        −
+        ❤️ Add to Listed Songs
       </button>
 
-      <span id="zoomValue">
-        100%
-      </span>
+    </form>
 
-      <button
-        type="button"
-        id="zoomIn"
-        class="btn btn-secondary"
-        aria-label="Zoom in"
-      >
-        +
-      </button>
+  {% endif %}
 
-    </div>
+{% endif %}
 
 
-    <!-- CHORDS -->
+<!-- BACK BUTTON -->
 
-    {% if song.chords %}
+{% if from_listed %}
 
-      <button
-        type="button"
-        id="toggleChords"
-        class="btn btn-secondary"
-      >
-        🎸 Show Chords
-      </button>
+  <a
+    href="{{ url_for('listed_songs') }}"
+    class="btn btn-secondary back-to-listed-btn"
+  >
+    &larr; Back to Listed Songs
+  </a>
 
-    {% endif %}
+{% else %}
 
+  <a
+    href="{{ url_for('song_list') }}"
+    class="btn btn-secondary back-to-songs-btn"
+  >
+    &larr; Back to Songs
+  </a>
 
-    <!-- EDIT CHORDS -->
-
-    {% if session.get("is_admin") %}
-
-      <a
-        href="{{ url_for('admin_edit_song', song_id=song.id) }}"
-        class="btn btn-secondary"
-      >
-        🎸 Edit Chords
-      </a>
-
-    {% endif %}
-
-
-    <!-- ADD TO LIST -->
-
-    {% if not from_listed %}
-
-      {% if session.get("user_id") %}
-
-        <form
-          method="POST"
-          action="{{ url_for('add_to_list', song_id=song.id) }}"
-          class="listed-song-form"
-        >
-
-          <button
-            type="submit"
-            class="btn btn-secondary"
-          >
-            ❤️ Add to Listed Songs
-          </button>
-
-        </form>
-
-      {% endif %}
-
-    {% endif %}
-
-
-    <!-- BACK BUTTON -->
-
-    {% if from_listed %}
-
-      <a
-        href="{{ url_for('listed_songs') }}"
-        class="btn btn-secondary back-to-listed-btn"
-      >
-        &larr; Back to Listed Songs
-      </a>
-
-    {% else %}
-
-      <a
-        href="{{ url_for('song_list') }}"
-        class="btn btn-secondary back-to-songs-btn"
-      >
-        &larr; Back to Songs
-      </a>
-
-    {% endif %}
+{% endif %}
+```
 
   </div>
-
 
   <!-- =====================================================
        SONG KEY
   ====================================================== -->
 
-  {% if song.chord_key %}
+{% if song.chord_key %}
 
-    <div class="song-key-display">
+```
+<div class="song-key-display">
 
-      <span class="song-key-label">
-        Key
-      </span>
+  <span class="song-key-label">
+    Key
+  </span>
 
-      <select
-        id="songKeySelector"
-        class="song-key-selector"
-      >
+  <select
+    id="songKeySelector"
+    class="song-key-selector"
+  >
 
-        <optgroup label="Major">
+    <optgroup label="Major">
 
-          <option value="C">C</option>
-          <option value="C#">C#</option>
-          <option value="D">D</option>
-          <option value="D#">D#</option>
-          <option value="E">E</option>
-          <option value="F">F</option>
-          <option value="F#">F#</option>
-          <option value="G">G</option>
-          <option value="G#">G#</option>
-          <option value="A">A</option>
-          <option value="A#">A#</option>
-          <option value="B">B</option>
+      <option value="C">C</option>
+      <option value="C#">C#</option>
+      <option value="D">D</option>
+      <option value="D#">D#</option>
+      <option value="E">E</option>
+      <option value="F">F</option>
+      <option value="F#">F#</option>
+      <option value="G">G</option>
+      <option value="G#">G#</option>
+      <option value="A">A</option>
+      <option value="A#">A#</option>
+      <option value="B">B</option>
 
-        </optgroup>
+    </optgroup>
 
-        <optgroup label="Minor">
+    <optgroup label="Minor">
 
-          <option value="Cm">Cm</option>
-          <option value="C#m">C#m</option>
-          <option value="Dm">Dm</option>
-          <option value="D#m">D#m</option>
-          <option value="Em">Em</option>
-          <option value="Fm">Fm</option>
-          <option value="F#m">F#m</option>
-          <option value="Gm">Gm</option>
-          <option value="G#m">G#m</option>
-          <option value="Am">Am</option>
-          <option value="A#m">A#m</option>
-          <option value="Bm">Bm</option>
+      <option value="Cm">Cm</option>
+      <option value="C#m">C#m</option>
+      <option value="Dm">Dm</option>
+      <option value="D#m">D#m</option>
+      <option value="Em">Em</option>
+      <option value="Fm">Fm</option>
+      <option value="F#m">F#m</option>
+      <option value="Gm">Gm</option>
+      <option value="G#m">G#m</option>
+      <option value="Am">Am</option>
+      <option value="A#m">A#m</option>
+      <option value="Bm">Bm</option>
 
-        </optgroup>
+    </optgroup>
 
-      </select>
+  </select>
 
-    </div>
+</div>
+```
 
-  {% endif %}
-
+{% endif %}
 
   <!-- =====================================================
        TRANSPOSE
   ====================================================== -->
 
-  {% if song.chords %}
+{% if song.chords %}
 
-    <div
-      class="transpose-controls"
-      id="transposeControls"
-    >
+```
+<div
+  class="transpose-controls"
+  id="transposeControls"
+>
 
-      <span class="transpose-label">
-        Transpose
-      </span>
+  <span class="transpose-label">
+    Transpose
+  </span>
 
-      <button
-        type="button"
-        id="transposeDown"
-        class="btn btn-secondary"
-      >
-        −
-      </button>
+  <button
+    type="button"
+    id="transposeDown"
+    class="btn btn-secondary"
+  >
+    −
+  </button>
 
-      <span id="transposeValue">
-        0
-      </span>
+  <span id="transposeValue">
+    0
+  </span>
 
-      <button
-        type="button"
-        id="transposeUp"
-        class="btn btn-secondary"
-      >
-        +
-      </button>
+  <button
+    type="button"
+    id="transposeUp"
+    class="btn btn-secondary"
+  >
+    +
+  </button>
 
-      <button
-        type="button"
-        id="transposeReset"
-        class="btn btn-secondary"
-      >
-        Reset
-      </button>
+  <button
+    type="button"
+    id="transposeReset"
+    class="btn btn-secondary"
+  >
+    Reset
+  </button>
 
-    </div>
+</div>
+```
 
-  {% endif %}
-
+{% endif %}
 
   <!-- =====================================================
        SONG CONTENT
@@ -340,112 +343,162 @@ Read {{ song.title }} Kannada Christian song lyrics with English pronunciation o
     class="song-content {% if lang == 'both' %}both-language-view{% endif %}"
   >
 
-    <!-- KANNADA -->
+```
+<!-- KANNADA -->
 
-    {% if lang == "kannada" %}
+{% if lang == "kannada" %}
 
-      <div
-        class="lyrics-section"
-        data-language="kannada"
-      >
+  <div
+    class="lyrics-section"
+    data-language="kannada"
+  >
 
-        <h3>
-          ಕನ್ನಡ
-        </h3>
+    <h3>
+      ಕನ್ನಡ
+    </h3>
 
-        <div
-          id="kannadaLyrics"
-          class="lyrics-display"
-        ></div>
-
-      </div>
-
-
-    <!-- ENGLISH -->
-
-    {% elif lang == "english" %}
-
-      <div
-        class="lyrics-section"
-        data-language="english"
-      >
-
-        <h3>
-          English Pronunciation
-        </h3>
-
-        <div
-          id="englishLyrics"
-          class="lyrics-display"
-        ></div>
-
-      </div>
-
-
-    <!-- BOTH -->
-
-    {% elif lang == "both" %}
-
-      <div
-        class="lyrics-section both-language-section"
-        data-language="kannada"
-      >
-
-        <h3>
-          ಕನ್ನಡ
-        </h3>
-
-        <div
-          id="kannadaLyrics"
-          class="lyrics-display"
-        ></div>
-
-      </div>
-
-
-      <div
-        class="lyrics-section both-language-section"
-        data-language="english"
-      >
-
-        <h3>
-          English Pronunciation
-        </h3>
-
-        <div
-          id="englishLyrics"
-          class="lyrics-display"
-        ></div>
-
-      </div>
-
-
-    <!-- DEFAULT -->
-
-    {% else %}
-
-      <div
-        class="lyrics-section"
-        data-language="kannada"
-      >
-
-        <h3>
-          ಕನ್ನಡ
-        </h3>
-
-        <div
-          id="kannadaLyrics"
-          class="lyrics-display"
-        ></div>
-
-      </div>
-
-    {% endif %}
+    <div
+      id="kannadaLyrics"
+      class="lyrics-display"
+    ></div>
 
   </div>
 
-</div>
 
+<!-- ENGLISH -->
+
+{% elif lang == "english" %}
+
+  <div
+    class="lyrics-section"
+    data-language="english"
+  >
+
+    <h3>
+      English Pronunciation
+    </h3>
+
+    <div
+      id="englishLyrics"
+      class="lyrics-display"
+    ></div>
+
+  </div>
+
+
+<!-- BOTH -->
+
+{% elif lang == "both" %}
+
+  <div
+    class="lyrics-section both-language-section"
+    data-language="kannada"
+  >
+
+    <h3>
+      ಕನ್ನಡ
+    </h3>
+
+    <div
+      id="kannadaLyrics"
+      class="lyrics-display"
+    ></div>
+
+  </div>
+
+
+  <div
+    class="lyrics-section both-language-section"
+    data-language="english"
+  >
+
+    <h3>
+      English Pronunciation
+    </h3>
+
+    <div
+      id="englishLyrics"
+      class="lyrics-display"
+    ></div>
+
+  </div>
+
+
+<!-- DEFAULT -->
+
+{% else %}
+
+  <div
+    class="lyrics-section"
+    data-language="kannada"
+  >
+
+    <h3>
+      ಕನ್ನಡ
+    </h3>
+
+    <div
+      id="kannadaLyrics"
+      class="lyrics-display"
+    ></div>
+
+  </div>
+
+{% endif %}
+```
+
+  </div>
+
+  <!-- =====================================================
+       SEO LYRICS CONTENT
+       Server-rendered lyrics for search engines.
+       This is intentionally OUTSIDE the <style> block.
+  ====================================================== -->
+
+  <section class="seo-lyrics-content">
+
+```
+<h2>
+  {{ song.title }} - Kannada Christian Song Lyrics
+</h2>
+
+{% if song.kannada_text %}
+
+  <div class="seo-kannada-lyrics">
+
+    <h3>
+      Kannada Christian Lyrics
+    </h3>
+
+    <p>
+      {{ song.kannada_text }}
+    </p>
+
+  </div>
+
+{% endif %}
+
+
+{% if song.english_text %}
+
+  <div class="seo-english-lyrics">
+
+    <h3>
+      English Pronunciation Lyrics
+    </h3>
+
+    <p>
+      {{ song.english_text }}
+    </p>
+
+  </div>
+
+{% endif %}
+```
+
+  </section>
+
+</div>
 
 <script>
 
@@ -919,9 +972,6 @@ function createLyricsDisplay(
   lines.forEach(
     function(line, index) {
 
-      /*
-       * One independent lyric row.
-       */
       const row =
         document.createElement("div");
 
@@ -929,9 +979,6 @@ function createLyricsDisplay(
         "song-line";
 
 
-      /*
-       * Lyric element.
-       */
       const lyricElement =
         document.createElement("div");
 
@@ -954,42 +1001,21 @@ function createLyricsDisplay(
       );
 
 
-      /*
-       * Keep the REAL text node.
-       *
-       * This gives accurate character
-       * positions on Android and iPhone.
-       */
       lyricElement._textNode =
         textNode;
 
 
-      /*
-       * Add lyric to row.
-       */
       row.appendChild(
         lyricElement
       );
 
 
-      /*
-       * Get saved chord for this lyric row.
-       */
       const savedChord =
         chordMap[String(index)];
 
 
       if (savedChord) {
 
-        /*
-         * IMPORTANT:
-         *
-         * This class reserves vertical space
-         * for the chord line.
-         *
-         * It does NOT change horizontal
-         * positioning.
-         */
         row.classList.add(
           "has-chord"
         );
@@ -1018,11 +1044,6 @@ function createLyricsDisplay(
   );
 
 
-  /*
-   * Initially chords are hidden.
-   * Remove the reserved chord spacing
-   * until user presses Show Chords.
-   */
   if (!chordsVisible) {
 
     lyricsElement
@@ -1158,14 +1179,6 @@ function getTextPosition(
   }
 
 
-  /*
-   * Calculate chord X position
-   * from the actual lyric text.
-   *
-   * This keeps the chord exactly
-   * above the character where it was
-   * placed in Admin.
-   */
   const visualLeft =
     rangeRect.left -
     lyricRect.left;
@@ -1469,13 +1482,6 @@ function updateChordVisibility() {
   );
 
 
-  /*
-   * Reserve vertical space ONLY
-   * when chords are actually visible.
-   *
-   * This prevents normal lyrics from
-   * having unnecessary blank space.
-   */
   const rows =
     document.querySelectorAll(
       ".song-line.has-chord"
@@ -1519,13 +1525,6 @@ function updateChordVisibility() {
   }
 
 
-  /*
-   * The vertical layout changes when
-   * chords are shown/hidden.
-   *
-   * Wait until browser finishes layout
-   * before measuring chord X positions.
-   */
   waitForLayout(
     function() {
 
@@ -1915,7 +1914,6 @@ refreshChordDisplay();
 
 </script>
 
-
 <style>
 
 /* =========================================================
@@ -1943,6 +1941,56 @@ refreshChordDisplay();
 .song-header h2 {
 
   margin: 0;
+
+}
+
+
+/* =========================================================
+   SEO CONTENT
+========================================================= */
+
+.seo-lyrics-content {
+
+  margin-top: 40px;
+
+  padding: 20px;
+
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #111111;
+
+  line-height: 1.6;
+
+}
+
+
+.seo-lyrics-content h2 {
+
+  margin-top: 0;
+
+  font-size: 22px;
+
+}
+
+
+.seo-lyrics-content h3 {
+
+  font-size: 18px;
+
+  margin-top: 20px;
+
+}
+
+
+.seo-lyrics-content p {
+
+  white-space: pre-line;
+
+  word-break: normal;
+
+  overflow-wrap: anywhere;
 
 }
 
@@ -2644,6 +2692,35 @@ refreshChordDisplay();
     min-width: 85px;
 
     font-size: 15px;
+
+  }
+
+
+  /* =================================================
+     MOBILE SEO CONTENT
+  ================================================== */
+
+  .seo-lyrics-content {
+
+    margin-top: 30px;
+
+    padding: 15px;
+
+    font-size: 14px;
+
+  }
+
+
+  .seo-lyrics-content h2 {
+
+    font-size: 19px;
+
+  }
+
+
+  .seo-lyrics-content h3 {
+
+    font-size: 16px;
 
   }
 
