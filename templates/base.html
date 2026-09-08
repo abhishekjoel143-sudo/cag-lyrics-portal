@@ -97,9 +97,9 @@
   >
 
   <meta
-    property="og:url"
-    content="{{ request.url }}"
-  >
+  property="og:url"
+  content="{% if song is defined %}{{ url_for('song_view', song_id=song.id, _external=True) }}{% else %}{{ request.url.split('?')[0] }}{% endif %}"
+>
 
   <meta
     property="og:site_name"
