@@ -5,11 +5,21 @@
 CAG Lyrics Portal | Kannada Christian Songs & Worship Lyrics
 {% endblock %}
 
+
+{% block meta_description %}
+CAG Lyrics Portal is a Kannada Christian songs and worship lyrics website. Search Kannada Christian songs, church songs, worship lyrics, and English pronunciation lyrics for singing and worship.
+{% endblock %}
+
+
 {% block content %}
 
 <div class="welcome-screen">
 
   <div class="welcome-card">
+
+    <!-- ============================================================
+         CHURCH LOGO
+         ============================================================ -->
 
     <img
       src="{{ url_for('static', filename='cag-logo.png') }}"
@@ -17,19 +27,39 @@ CAG Lyrics Portal | Kannada Christian Songs & Worship Lyrics
       class="church-logo"
     >
 
+
+    <!-- ============================================================
+         WEBSITE TITLE
+         ============================================================ -->
+
     <h1>
       CAG Lyrics Portal
     </h1>
 
+
+    <!-- ============================================================
+         CHURCH NAME
+         ============================================================ -->
+
     <p class="tagline">
       Calvary Assembly of God Church
     </p>
+
+
+    <!-- ============================================================
+         WEBSITE DESCRIPTION
+         ============================================================ -->
 
     <p class="welcome-description">
       Welcome to the CAG Lyrics Portal, a Christian song lyrics
       website featuring Kannada Christian songs, worship songs,
       church songs, and English pronunciation lyrics for worship.
     </p>
+
+
+    <!-- ============================================================
+         WELCOME BUTTONS
+         ============================================================ -->
 
     <div class="welcome-buttons">
 
@@ -40,12 +70,14 @@ CAG Lyrics Portal | Kannada Christian Songs & Worship Lyrics
         User Login
       </a>
 
+
       <a
         class="btn btn-secondary"
         href="{{ url_for('register') }}"
       >
         New User? Register
       </a>
+
 
       <a
         class="btn btn-admin"
@@ -61,10 +93,10 @@ CAG Lyrics Portal | Kannada Christian Songs & Worship Lyrics
 </div>
 
 
-<!-- ============================================================
+<!-- ================================================================
      WEBSITE STRUCTURED DATA
      Helps Google understand the website.
-     ============================================================ -->
+     ================================================================ -->
 
 <script type="application/ld+json">
 {
@@ -81,9 +113,9 @@ CAG Lyrics Portal | Kannada Christian Songs & Worship Lyrics
 </script>
 
 
-<!-- ============================================================
+<!-- ================================================================
      HOMEPAGE STRUCTURED DATA
-     ============================================================ -->
+     ================================================================ -->
 
 <script type="application/ld+json">
 {
