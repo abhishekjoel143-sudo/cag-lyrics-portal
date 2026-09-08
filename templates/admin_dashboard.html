@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 
 {% block title %}Admin Dashboard{% endblock %}
@@ -9,35 +8,57 @@
 
     <!-- =====================================================
          DASHBOARD HEADER
-         ===================================================== -->
+    ====================================================== -->
 
     <div class="dashboard-header">
 
-        <div>
-            <p class="eyebrow">Administration</p>
-            <h2>Song Database</h2>
+        <div class="dashboard-title">
+
+            <p class="eyebrow">
+                Administration
+            </p>
+
+            <h2>
+                Song Database
+            </h2>
+
         </div>
+
+
+        <!-- =================================================
+             ADMIN ACTIONS
+        ================================================== -->
 
         <div class="dashboard-actions">
 
-            <a class="btn btn-primary"
-               href="{{ url_for('admin_upload') }}">
+            <a
+                class="btn btn-primary admin-action-btn"
+                href="{{ url_for('admin_upload') }}"
+            >
                 + Upload PPT
             </a>
 
-            <a class="btn btn-primary"
-               href="{{ url_for('admin_bulk_upload') }}">
+
+            <a
+                class="btn btn-primary admin-action-btn"
+                href="{{ url_for('admin_bulk_upload') }}"
+            >
                 + Bulk Upload PPTs
             </a>
 
-            <!-- VISITOR RECORDS -->
-            <a class="btn btn-primary"
-               href="{{ url_for('admin_visitors') }}">
+
+            <a
+                class="btn btn-primary admin-action-btn"
+                href="{{ url_for('admin_visitors') }}"
+            >
                 👥 Visitor Records
             </a>
 
-            <a class="btn btn-link"
-               href="{{ url_for('admin_logout') }}">
+
+            <a
+                class="btn btn-link admin-logout-btn"
+                href="{{ url_for('admin_logout') }}"
+            >
                 Log Out
             </a>
 
@@ -48,27 +69,31 @@
 
     <!-- =====================================================
          ADMIN NOTE
-         ===================================================== -->
+    ====================================================== -->
 
     <div class="admin-note">
 
         <strong>Upload flow:</strong>
 
-        PPTX → Nudi/Unicode converter → Kannada + English
-        pronunciation → database.
+        <span>
+            PPTX → Nudi/Unicode converter → Kannada + English
+            pronunciation → database.
+        </span>
 
     </div>
 
 
     <!-- =====================================================
          ADMIN SEARCH
-         ===================================================== -->
+    ====================================================== -->
 
     <div class="admin-search-box">
 
-        <form method="GET"
-              action="{{ url_for('admin_dashboard') }}"
-              class="search-form">
+        <form
+            method="GET"
+            action="{{ url_for('admin_dashboard') }}"
+            class="search-form"
+        >
 
             <input
                 type="text"
@@ -78,15 +103,21 @@
                 autocomplete="off"
             >
 
-            <button type="submit"
-                    class="btn btn-primary">
+
+            <button
+                type="submit"
+                class="btn btn-primary search-btn"
+            >
                 Search
             </button>
 
+
             {% if query %}
 
-                <a href="{{ url_for('admin_dashboard') }}"
-                   class="btn btn-secondary">
+                <a
+                    href="{{ url_for('admin_dashboard') }}"
+                    class="btn btn-secondary clear-btn"
+                >
                     Clear
                 </a>
 
@@ -99,7 +130,7 @@
 
     <!-- =====================================================
          SONG COUNT
-         ===================================================== -->
+    ====================================================== -->
 
     <div class="admin-song-count">
 
@@ -131,7 +162,7 @@
 
     <!-- =====================================================
          SONG TABLE
-         ===================================================== -->
+    ====================================================== -->
 
     {% if songs %}
 
@@ -143,13 +174,21 @@
 
                     <tr>
 
-                        <th>Title</th>
+                        <th>
+                            Title
+                        </th>
 
-                        <th>Uploaded</th>
+                        <th>
+                            Uploaded
+                        </th>
 
-                        <th>Original PPT</th>
+                        <th>
+                            Original PPT
+                        </th>
 
-                        <th>Actions</th>
+                        <th>
+                            Actions
+                        </th>
 
                     </tr>
 
@@ -162,7 +201,7 @@
 
                         <tr>
 
-                            <td>
+                            <td data-label="Title">
 
                                 <strong>
                                     {{ song.title }}
@@ -171,7 +210,7 @@
                             </td>
 
 
-                            <td>
+                            <td data-label="Uploaded">
 
                                 {% if song.uploaded_at %}
 
@@ -188,14 +227,17 @@
                             </td>
 
 
-                            <td>
+                            <td data-label="Original PPT">
 
                                 {{ song.original_filename or '—' }}
 
                             </td>
 
 
-                            <td class="actions-cell">
+                            <td
+                                class="actions-cell"
+                                data-label="Actions"
+                            >
 
                                 <a
                                     class="btn btn-secondary btn-small"
@@ -266,31 +308,600 @@
 
     {% endif %}
 
-
 </div>
 
+
+<!-- =========================================================
+     ADMIN DASHBOARD RESPONSIVE CSS
+========================================================= -->
+
+<style>
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+.dashboard-screen {
+
+    width: 100%;
+
+    max-width: 1100px;
+
+    margin: 0 auto;
+
+    padding: 20px;
+
+    box-sizing: border-box;
+
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.dashboard-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+    gap: 20px;
+
+    margin-bottom: 18px;
+
+}
+
+
+.dashboard-title {
+
+    min-width: 0;
+
+}
+
+
+.dashboard-title h2 {
+
+    margin: 0;
+
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
+
+.dashboard-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+}
+
+
+.admin-action-btn {
+
+    min-height: 40px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    white-space: nowrap;
+
+}
+
+
+.admin-logout-btn {
+
+    min-height: 40px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    white-space: nowrap;
+
+}
+
+
+/* =========================================================
+   ADMIN NOTE
+========================================================= */
+
+.admin-note {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 5px;
+
+    padding: 11px 13px;
+
+    margin-bottom: 15px;
+
+    border: 1px solid #ead7a0;
+
+    border-radius: 8px;
+
+    font-size: 13px;
+
+    line-height: 1.4;
+
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.admin-search-box {
+
+    width: 100%;
+
+    margin-bottom: 15px;
+
+}
+
+
+.search-form {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    width: 100%;
+
+}
+
+
+.search-form input {
+
+    flex: 1;
+
+    min-width: 0;
+
+    box-sizing: border-box;
+
+}
+
+
+.search-btn,
+.clear-btn {
+
+    flex-shrink: 0;
+
+}
+
+
+/* =========================================================
+   SONG COUNT
+========================================================= */
+
+.admin-song-count {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    flex-wrap: wrap;
+
+    margin-bottom: 10px;
+
+    font-size: 14px;
+
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap {
+
+    width: 100%;
+
+    overflow-x: auto;
+
+    -webkit-overflow-scrolling: touch;
+
+    border-radius: 8px;
+
+}
+
+
+.song-table {
+
+    width: 100%;
+
+    min-width: 720px;
+
+    border-collapse: collapse;
+
+}
+
+
+.song-table th,
+.song-table td {
+
+    padding: 10px;
+
+    text-align: left;
+
+    vertical-align: top;
+
+}
+
+
+.song-table th {
+
+    white-space: nowrap;
+
+}
+
+
+.song-table td {
+
+    line-height: 1.4;
+
+}
+
+
+.song-table td:first-child {
+
+    min-width: 180px;
+
+}
+
+
+.song-table td:nth-child(2) {
+
+    min-width: 150px;
+
+}
+
+
+.song-table td:nth-child(3) {
+
+    min-width: 180px;
+
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.actions-cell {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    white-space: nowrap;
+
+}
+
+
+.actions-cell form {
+
+    margin: 0;
+
+}
+
+
+.actions-cell .btn {
+
+    white-space: nowrap;
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .dashboard-screen {
+
+        padding: 12px;
+
+    }
+
+
+    /* -------------------------------
+       HEADER
+    -------------------------------- */
+
+    .dashboard-header {
+
+        display: block;
+
+        margin-bottom: 15px;
+
+    }
+
+
+    .dashboard-title {
+
+        margin-bottom: 14px;
+
+    }
+
+
+    .dashboard-title h2 {
+
+        font-size: 22px;
+
+    }
+
+
+    /* -------------------------------
+       ADMIN BUTTONS
+    -------------------------------- */
+
+    .dashboard-actions {
+
+        display: grid;
+
+        grid-template-columns: 1fr 1fr;
+
+        gap: 8px;
+
+        width: 100%;
+
+    }
+
+
+    .admin-action-btn,
+    .admin-logout-btn {
+
+        width: 100%;
+
+        min-height: 44px;
+
+        padding: 10px 8px;
+
+        box-sizing: border-box;
+
+        text-align: center;
+
+        font-size: 13px;
+
+        border-radius: 7px;
+
+    }
+
+
+    /* Visitor button gets full row */
+
+    .dashboard-actions
+    .admin-action-btn:nth-child(3) {
+
+        grid-column: 1 / -1;
+
+    }
+
+
+    /* Logout gets full row */
+
+    .dashboard-actions
+    .admin-logout-btn {
+
+        grid-column: 1 / -1;
+
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+
+        margin-top: 2px;
+
+        padding-top: 10px;
+
+    }
+
+
+    /* -------------------------------
+       NOTE
+    -------------------------------- */
+
+    .admin-note {
+
+        display: block;
+
+        padding: 10px 11px;
+
+        font-size: 12px;
+
+        line-height: 1.45;
+
+    }
+
+
+    .admin-note strong {
+
+        display: block;
+
+        margin-bottom: 2px;
+
+    }
+
+
+    /* -------------------------------
+       SEARCH
+    -------------------------------- */
+
+    .search-form {
+
+        display: flex;
+
+        flex-wrap: wrap;
+
+        gap: 7px;
+
+    }
+
+
+    .search-form input {
+
+        width: 100%;
+
+        flex-basis: 100%;
+
+        min-height: 42px;
+
+        font-size: 14px;
+
+    }
+
+
+    .search-btn,
+    .clear-btn {
+
+        min-height: 40px;
+
+    }
+
+
+    /* -------------------------------
+       SONG COUNT
+    -------------------------------- */
+
+    .admin-song-count {
+
+        font-size: 13px;
+
+        margin-bottom: 8px;
+
+    }
+
+
+    /* -------------------------------
+       TABLE
+    -------------------------------- */
+
+    .table-wrap {
+
+        width: 100%;
+
+        overflow-x: auto;
+
+        border-radius: 7px;
+
+    }
+
+
+    .song-table {
+
+        min-width: 700px;
+
+        font-size: 12px;
+
+    }
+
+
+    .song-table th,
+    .song-table td {
+
+        padding: 8px;
+
+    }
+
+
+    .actions-cell {
+
+        gap: 5px;
+
+    }
+
+
+    .actions-cell .btn {
+
+        font-size: 12px;
+
+        padding: 7px 9px;
+
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+========================================================= */
+
+@media (max-width: 390px) {
+
+    .dashboard-screen {
+
+        padding: 9px;
+
+    }
+
+
+    .dashboard-title h2 {
+
+        font-size: 20px;
+
+    }
+
+
+    .dashboard-actions {
+
+        grid-template-columns: 1fr;
+
+        gap: 7px;
+
+    }
+
+
+    .dashboard-actions
+    .admin-action-btn:nth-child(3),
+    .dashboard-actions
+    .admin-logout-btn {
+
+        grid-column: auto;
+
+    }
+
+
+    .admin-action-btn,
+    .admin-logout-btn {
+
+        min-height: 43px;
+
+        font-size: 13px;
+
+    }
+
+
+    .admin-note {
+
+        font-size: 11.5px;
+
+    }
+
+}
+
+</style>
+
 {% endblock %}
-
-
-### Now check the visitor page
-
-
-@app.route("/admin/visitors")
-@admin_required
-def admin_visitors():
-
-    visitors = (
-        Visitor.query
-        .order_by(
-            Visitor.visited_at.desc()
-        )
-        .all()
-    )
-
-    total_visitors = Visitor.query.count()
-
-    return render_template(
-        "admin_visitors.html",
-        visitors=visitors,
-        total_visitors=total_visitors
-    )
