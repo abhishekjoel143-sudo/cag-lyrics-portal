@@ -1,15 +1,12 @@
-﻿
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 
 {% block title %}
 CAG Lyrics Portal | Kannada Christian Songs & Worship Lyrics
 {% endblock %}
 
-
 {% block meta_description %}
 CAG Lyrics Portal is a Kannada Christian songs and worship lyrics website. Search Kannada Christian songs, church songs, worship lyrics, and English pronunciation lyrics for singing and worship.
 {% endblock %}
-
 
 {% block content %}
 
@@ -17,81 +14,99 @@ CAG Lyrics Portal is a Kannada Christian songs and worship lyrics website. Searc
 
   <div class="welcome-card">
 
-    <!-- ============================================================
-         CHURCH LOGO
-         ============================================================ -->
+```
+<!-- ============================================================
+     CHURCH LOGO
+     ============================================================ -->
 
-    <img
-      src="{{ url_for('static', filename='cag-logo.png') }}"
-      alt="CAG Lyrics Portal - Calvary Assembly of God Church"
-      class="church-logo"
-    >
-
-
-    <!-- ============================================================
-         WEBSITE TITLE
-         ============================================================ -->
-
-    <h1>
-      CAG Lyrics Portal
-    </h1>
+<img
+  src="{{ url_for('static', filename='cag-logo.png') }}"
+  alt="CAG Lyrics Portal - Calvary Assembly of God Church"
+  class="church-logo"
+>
 
 
-    <!-- ============================================================
-         CHURCH NAME
-         ============================================================ -->
+<!-- ============================================================
+     WEBSITE TITLE
+     ============================================================ -->
 
-    <p class="tagline">
-      Calvary Assembly of God Church
-    </p>
-
-
-    <!-- ============================================================
-         WEBSITE DESCRIPTION
-         ============================================================ -->
-
-    <p class="welcome-description">
-      Welcome to the CAG Lyrics Portal, a Christian song lyrics
-      website featuring Kannada Christian songs, worship songs,
-      church songs, and English pronunciation lyrics for worship.
-    </p>
+<h1>
+  CAG Lyrics Portal
+</h1>
 
 
-    <!-- ============================================================
-         WELCOME BUTTONS
-         ============================================================ -->
+<!-- ============================================================
+     CHURCH NAME
+     ============================================================ -->
 
-    <div class="welcome-buttons">
-
-      <a
-        class="btn btn-primary"
-        href="{{ url_for('user_login') }}"
-      >
-        User Login
-      </a>
+<p class="tagline">
+  Calvary Assembly of God Church
+</p>
 
 
-      <a
-        class="btn btn-secondary"
-        href="{{ url_for('register') }}"
-      >
-        New User? Register
-      </a>
+<!-- ============================================================
+     WEBSITE DESCRIPTION
+     ============================================================ -->
+
+<p class="welcome-description">
+  Welcome to the CAG Lyrics Portal, a Christian song lyrics
+  website featuring Kannada Christian songs, worship songs,
+  church songs, and English pronunciation lyrics for worship.
+</p>
 
 
-      <a
-        class="btn btn-admin"
-        href="{{ url_for('admin_login') }}"
-      >
-        Admin Login
-      </a>
+<!-- ============================================================
+     PUBLIC SONG COLLECTION
+     Helps users and Google discover the song pages.
+     ============================================================ -->
 
-    </div>
+<div class="welcome-song-link">
+
+  <a
+    class="btn btn-primary"
+    href="{{ url_for('song_list') }}"
+  >
+    Browse Kannada Christian Songs
+  </a>
+
+</div>
+
+
+<!-- ============================================================
+     WELCOME BUTTONS
+     ============================================================ -->
+
+<div class="welcome-buttons">
+
+  <a
+    class="btn btn-primary"
+    href="{{ url_for('user_login') }}"
+  >
+    User Login
+  </a>
+
+
+  <a
+    class="btn btn-secondary"
+    href="{{ url_for('register') }}"
+  >
+    New User? Register
+  </a>
+
+
+  <a
+    class="btn btn-admin"
+    href="{{ url_for('admin_login') }}"
+  >
+    Admin Login
+  </a>
+
+</div>
+```
 
   </div>
 
 </div>
-
 
 <!-- ================================================================
      WEBSITE STRUCTURED DATA
@@ -112,7 +127,6 @@ CAG Lyrics Portal is a Kannada Christian songs and worship lyrics website. Searc
 }
 </script>
 
-
 <!-- ================================================================
      HOMEPAGE STRUCTURED DATA
      ================================================================ -->
@@ -128,4 +142,3 @@ CAG Lyrics Portal is a Kannada Christian songs and worship lyrics website. Searc
 </script>
 
 {% endblock %}
-
