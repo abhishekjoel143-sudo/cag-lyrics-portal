@@ -93,24 +93,18 @@ Read {{ song.title }} Kannada Christian song lyrics with English pronunciation o
 
 <div class="language-controls">
 
-  <a
-    href="{{ url_for('song_view', song_id=song.id, lang='kannada', from_listed=from_listed) }}"
-    class="btn {% if lang == 'kannada' %}btn-primary{% else %}btn-secondary{% endif %}"
-  >
+  <a href="{{ url_for('song_view', song_id=song.id, lang='kannada', from_listed=from_listed) }}"
+     class="btn {% if lang == 'kannada' %}btn-primary{% else %}btn-secondary{% endif %}">
     ಕನ್ನಡ
   </a>
 
-  <a
-    href="{{ url_for('song_view', song_id=song.id, lang='english', from_listed=from_listed) }}"
-    class="btn {% if lang == 'english' %}btn-primary{% else %}btn-secondary{% endif %}"
-  >
+  <a href="{{ url_for('song_view', song_id=song.id, lang='english', from_listed=from_listed) }}"
+     class="btn {% if lang == 'english' %}btn-primary{% else %}btn-secondary{% endif %}">
     English
   </a>
 
-  <a
-    href="{{ url_for('song_view', song_id=song.id, lang='both', from_listed=from_listed) }}"
-    class="btn {% if lang == 'both' %}btn-primary{% else %}btn-secondary{% endif %}"
-  >
+  <a href="{{ url_for('song_view', song_id=song.id, lang='both', from_listed=from_listed) }}"
+     class="btn {% if lang == 'both' %}btn-primary{% else %}btn-secondary{% endif %}">
     Both
   </a>
 
@@ -455,48 +449,31 @@ Read {{ song.title }} Kannada Christian song lyrics with English pronunciation o
        This is intentionally OUTSIDE the <style> block.
   ====================================================== -->
 
-  <section class="seo-lyrics-content">
+  <!-- =====================================================
+     SEO LYRICS CONTENT
+     Hidden because the actual song lyrics above already
+     display according to the selected language.
+     ===================================================== -->
 
+<section class="seo-lyrics-content" aria-hidden="true">
 
-<h2>
-  {{ song.title }} - Kannada Christian Song Lyrics
-</h2>
+  <h2>{{ song.title }} - Kannada Christian Song Lyrics</h2>
 
-{% if song.kannada_text %}
+  {% if song.kannada_text %}
+    <div class="seo-kannada-lyrics">
+      <h3>Kannada Christian Lyrics</h3>
+      <p>{{ song.kannada_text }}</p>
+    </div>
+  {% endif %}
 
-  <div class="seo-kannada-lyrics">
+  {% if song.english_text %}
+    <div class="seo-english-lyrics">
+      <h3>English Pronunciation Lyrics</h3>
+      <p>{{ song.english_text }}</p>
+    </div>
+  {% endif %}
 
-    <h3>
-      Kannada Christian Lyrics
-    </h3>
-
-    <p>
-      {{ song.kannada_text }}
-    </p>
-
-  </div>
-
-{% endif %}
-
-
-{% if song.english_text %}
-
-  <div class="seo-english-lyrics">
-
-    <h3>
-      English Pronunciation Lyrics
-    </h3>
-
-    <p>
-      {{ song.english_text }}
-    </p>
-
-  </div>
-
-{% endif %}
-
-
-  </section>
+</section>
 
 </div>
 
@@ -1951,17 +1928,7 @@ refreshChordDisplay();
 
 .seo-lyrics-content {
 
-  margin-top: 40px;
-
-  padding: 20px;
-
-  border-radius: 8px;
-
-  background: #ffffff;
-
-  color: #111111;
-
-  line-height: 1.6;
+  display: none !important;
 
 }
 
